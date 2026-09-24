@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f2ece0">
-<meta name="application-name" content="Ravito">
+<meta name="application-name" content="Traversée 2027">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Ravito">
+<meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Ravito — Traversée 2027 · v1.137 hors ligne</title>
+<title>Traversée 2027 · v1.139 hors ligne</title>
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -220,6 +220,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
 .bivouacView.active{position:fixed;inset:0;z-index:140;width:100vw;height:100dvh;display:block;background:#eef0ec;overflow:hidden}
 #bivouacHost{display:block;width:100%;height:100%;border:0;background:#eef0ec}
 
+/* v1.139 — accueil unifié Traversée */
+.homeView{height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 20px)}
+.homeCard{height:100%;display:flex;flex-direction:column;gap:18px}
+.homeHero{display:flex;align-items:center;gap:13px;flex:0 0 auto;padding:2px 4px 0}
+.homeBrandIcon{width:54px;height:54px;border-radius:17px;box-shadow:0 8px 20px rgba(23,55,47,.18)}
+.homeHeroText{min-width:0}
+.homeHero h1{margin:0;font-size:28px;line-height:1;letter-spacing:-.045em}
+.homeHero p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.25;font-weight:750}
+.homeChoices{flex:1 1 auto;min-height:0;height:auto;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:12px}
+.homeChoice{position:relative;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto minmax(0,1fr);align-items:start;gap:10px;min-width:0;padding:18px;border-radius:27px}
+.homeChoice .homeIcon,.homeChoice.menuChoice .homeIcon,.homeChoice:not(.primary) .homeIcon{grid-column:1;grid-row:1;width:58px;height:58px;border-radius:19px;font-size:29px}
+.homeChoice .homeText{grid-column:1/-1;grid-row:2;align-self:end;min-width:0}
+.homeChoice b{font-size:24px;line-height:.98;letter-spacing:-.04em}
+.homeChoice small{margin-top:7px;font-size:11px;line-height:1.2;max-width:15ch}
+.homeChoice .arrow{grid-column:2;grid-row:1;font-size:27px;line-height:58px}
+@media(max-width:390px){
+  .homeCard{gap:14px}.homeHero{gap:11px}.homeBrandIcon{width:48px;height:48px;border-radius:15px}.homeHero h1{font-size:25px}.homeHero p{font-size:11px}
+  .homeChoices{gap:9px}.homeChoice{padding:14px;border-radius:23px}.homeChoice .homeIcon,.homeChoice.menuChoice .homeIcon,.homeChoice:not(.primary) .homeIcon{width:50px;height:50px;border-radius:16px;font-size:25px}.homeChoice b{font-size:21px}.homeChoice small{font-size:10px}.homeChoice .arrow{font-size:23px;line-height:50px}
+}
+
 /* v1.131 — recherche de points d'eau */
 .waterView{height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 20px);overflow:hidden}
 .waterCard{height:100%;position:relative;background:#fff;border-radius:32px;padding:22px 18px;box-shadow:0 14px 34px rgba(0,0,0,.10);display:flex;flex-direction:column}
@@ -246,25 +266,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
 
   <section class="homeView appView active" id="homeView">
     <div class="homeCard">
-<div class="homeChoices">
+      <header class="homeHero">
+        <img class="homeBrandIcon" src="./icons/icon-192.png" alt="">
+        <div class="homeHeroText">
+          <h1>Traversée 2027</h1>
+          <p>Tout pour avancer, du ravito au bivouac.</p>
+        </div>
+      </header>
+      <div class="homeChoices">
         <button class="homeChoice primary" id="openStoreBtn">
           <span class="homeIcon">🛒</span>
-          <span><b>Prochain magasin</b></span>
+          <span class="homeText"><b>Magasins</b><small>Trouver le prochain ravito</small></span>
           <span class="arrow">→</span>
         </button>
         <button class="homeChoice menuChoice" id="openMenuBtn">
           <span class="homeIcon">🍽️</span>
-          <span><b id="openMenuLabel">Création de menus</b></span>
+          <span class="homeText"><b id="openMenuLabel">Menus</b><small>Préparer les repas et les courses</small></span>
           <span class="arrow">→</span>
         </button>
         <button class="homeChoice waterChoice" id="openWaterBtn">
           <span class="homeIcon">💧</span>
-          <span><b>Trouver un point d’eau</b></span>
+          <span class="homeText"><b>Points d’eau</b><small>Voir les points les plus proches</small></span>
           <span class="arrow">→</span>
         </button>
         <button class="homeChoice bivouacChoice" id="openBivouacBtn">
           <span class="homeIcon">🏕️</span>
-          <span><b>Bivouac Scout</b></span>
+          <span class="homeText"><b>Bivouacs</b><small>Placer les nuits sur la trace</small></span>
           <span class="arrow">→</span>
         </button>
       </div>

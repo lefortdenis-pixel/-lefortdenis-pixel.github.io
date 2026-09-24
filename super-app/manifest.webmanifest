@@ -1,7 +1,7 @@
 {
-  "name": "Ravito — Traversée 2027",
-  "short_name": "Ravito",
-  "description": "Assistant de ravitaillement hors ligne pour la Traversée 2027",
+  "name": "Traversée 2027",
+  "short_name": "Traversée",
+  "description": "Les outils hors ligne de la Traversée 2027 : magasins, menus, eau et bivouacs",
   "id": "./",
   "start_url": "./",
   "scope": "./",
