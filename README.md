@@ -9,3 +9,5 @@ Relier ce dépôt GitHub au projet Vercel existant `bivouac-scout-free`. Choisir
 ## Données de relief
 
 Le calcul sur la zone de ±3 km utilise l'API altimétrique IGN lors de la demande de l'utilisateur. Si le service est inaccessible, l'application indique qu'elle utilise uniquement les altitudes du GPX. Ces mesures aident à repérer le relief et ne valident pas à elles seules un emplacement de bivouac.
+
+Chaque commit sur `main` déclenche désormais un déploiement automatique du projet Vercel `bivouac-scout-free`.
