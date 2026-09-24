@@ -23,7 +23,7 @@ main{height:100dvh;display:grid;grid-template-rows:minmax(0,1fr) 136px}.mapwrap{
 .leaflet-popup-pane{z-index:1400!important}.leaflet-popup-content-wrapper{border-radius:10px!important;box-shadow:0 8px 28px rgba(0,0,0,.22)!important}.leaflet-popup-content{margin:8px!important}.mapPopup{display:flex;align-items:center;gap:7px;white-space:nowrap}.mapPopup b{font-size:12px}.mapPopup button{border:0;border-radius:7px;background:var(--green);padding:7px 9px;color:#17210f;font-size:11px;font-weight:700;cursor:pointer}
 .profile{background:#fff;border-top:1px solid var(--line);display:grid;grid-template-rows:20px 1fr;min-height:0}.profileHead{display:flex;align-items:center;justify-content:flex-end;padding:0 10px;color:#68726a;font-size:11px}#profileBox{position:relative;min-height:0;overflow:hidden;cursor:crosshair}#profileSvg{position:absolute;inset:0;width:100%;height:100%;display:block}#profileEmpty{position:absolute;inset:0;display:grid;place-items:center;color:#747e76}.gridline{stroke:#e3e6e1;stroke-width:1}.profileFill{fill:rgba(126,177,41,.07)}.profilePath{fill:none;stroke:#78b129;stroke-width:2}.cursorLine{stroke:#737d75;stroke-width:1;stroke-dasharray:4 4}.axisLabel{fill:#667068;font-size:11px}.profileCursor{position:absolute;width:11px;height:11px;border-radius:50%;background:#168cff;border:2px solid #fff;transform:translate(-50%,-50%);pointer-events:none;display:none;z-index:5}.cursorLabel{position:absolute;transform:translate(-50%,-100%);top:16px;background:#fff;border:1px solid var(--line);padding:4px 7px;border-radius:7px;font-size:11px;white-space:nowrap;pointer-events:none;display:none;z-index:6}
 .km-icon,.dir-icon{background:transparent!important;border:0!important}.km-pill{display:flex;align-items:center;justify-content:center;min-width:34px;height:22px;padding:0 6px;background:#fff;color:#111;border:1px solid rgba(0,0,0,.26);border-radius:5px;font-size:11px;font-weight:700;white-space:nowrap}.dir-arrow svg{display:block;filter:drop-shadow(0 0 1px rgba(0,0,0,.8))}.leaflet-control-attribution{font-size:8px!important;background:rgba(255,255,255,.82)!important}
-.reliefRow{display:flex;align-items:center;gap:7px;margin-top:6px}.reliefButton{flex:none;border:1px solid #b9c9b3;border-radius:6px;background:#f3f8ef;color:#244b31;padding:5px 7px;font-weight:700;cursor:pointer}.reliefStatus{font-size:10px;color:#59665c;line-height:1.3}.reliefLegend{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px;font-size:10px;color:#455249}.reliefLegend b{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:3px}.reliefNote{font-size:10px;color:#68736b;line-height:1.3;margin-top:4px}
+.reliefRow{display:flex;align-items:center;gap:7px;margin-top:6px}.reliefButton{flex:none;border:1px solid #b9c9b3;border-radius:6px;background:#f3f8ef;color:#244b31;padding:5px 7px;font-weight:700;cursor:pointer}.reliefStatus{font-size:10px;color:#59665c;line-height:1.3}
 @media(min-width:2560px){main{grid-template-rows:minmax(0,1fr) 170px}.hud{width:380px;left:14px;top:14px}.hudHead{height:42px;font-size:15px}.importBtn{height:31px;font-size:12px}.zoneName{font-size:13px}.cum{font-size:11px}.distanceRow{grid-template-columns:82px minmax(0,1fr) auto}.kmBox{height:38px}.kmBox input{width:50px;min-width:50px;font-size:17px}.chip{font-size:10px}.remaining{font-size:16px}.mapStyle{top:14px}.mapStyleLeft{right:calc(50% + 14px)}.mapStyleRight{right:14px}.mapStyle select,.overlayToggle{font-size:13px}.axisLabel{font-size:12px}}
 @media(max-width:760px){
  main{grid-template-rows:minmax(0,1fr) 0}main.profileOpen{grid-template-rows:minmax(0,1fr) 118px}.profile{display:none}main.profileOpen .profile{display:grid}
@@ -71,7 +71,7 @@ function nearest(latlng,map=S.map){const P=map.latLngToLayerPoint(latlng),n=S.pt
 function setCurrent(p){if(!p)return;S.current=p;[S.mark,S.markIgn].forEach(m=>{if(m){m.setLatLng([p.lat,p.lng]);m.bringToFront()}});updateCursor(p.km,p.ele)}
 function usedBefore(i){return S.zones.slice(0,i).reduce((a,z)=>a+z.dayKm,0)}function center(i){return Math.min(S.total,usedBefore(i)+S.zones[i].dayKm)}function bounds(i){const z=S.zones[i],c=center(i);return[Math.max(0,c-WINDOW_KM),Math.min(S.total,c+WINDOW_KM)]}function maxFor(i){return Math.max(0,S.total-usedBefore(i))}
 function normalize(){let u=0;S.zones.forEach(z=>{const m=Math.max(0,S.total-u);z.dayKm=Math.max(0,Math.min(z.dayKm,m));u+=z.dayKm})}
-function renderCards(){const root=q('#zonesList');root.innerHTML='';S.zones.forEach((z,i)=>{const color=COLORS[i%COLORS.length],card=document.createElement('div');card.className='zoneCard';card.innerHTML='<div class="zoneHead"><div class="zoneTitle"><span class="zoneDot" style="background:'+color+'"></span><span class="zoneName">Nuit '+(i+1)+'</span></div><div class="zoneMeta"><span class="cum" data-cum="'+i+'"></span><button class="deleteZone" data-del="'+i+'">×</button></div></div><div class="distanceRow"><label class="kmBox"><input data-num="'+i+'" type="number" min="0" step=".5"><span>km</span></label><input class="zoneSlider" data-slider="'+i+'" type="range" min="0" step=".5" style="accent-color:'+color+'"><span class="chip">±3 km</span></div><div class="reliefRow"><button class="reliefButton" data-relief="'+i+'">Analyser le relief</button><span class="reliefStatus" data-relief-status="'+i+'"></span></div><div class="reliefDetail" data-relief-detail="'+i+'"></div>';root.appendChild(card)});root.querySelectorAll('[data-num]').forEach(el=>el.oninput=()=>{const i=+el.dataset.num;S.zones[i].dayKm=Math.max(0,+el.value||0);normalize();sync();drawZones();renderProfile()});root.querySelectorAll('[data-slider]').forEach(el=>el.oninput=()=>{const i=+el.dataset.slider;S.zones[i].dayKm=+el.value;normalize();sync();drawZones();renderProfile()});root.querySelectorAll('[data-del]').forEach(el=>el.onclick=()=>{S.zones.splice(+el.dataset.del,1);normalize();renderCards();drawZones();renderProfile()});root.querySelectorAll('[data-relief]').forEach(b=>b.onclick=()=>analyzeRelief(+b.dataset.relief));sync()}
+function renderCards(){const root=q('#zonesList');root.innerHTML='';S.zones.forEach((z,i)=>{const color=COLORS[i%COLORS.length],card=document.createElement('div');card.className='zoneCard';card.innerHTML='<div class="zoneHead"><div class="zoneTitle"><span class="zoneDot" style="background:'+color+'"></span><span class="zoneName">Nuit '+(i+1)+'</span></div><div class="zoneMeta"><span class="cum" data-cum="'+i+'"></span><button class="deleteZone" data-del="'+i+'">×</button></div></div><div class="distanceRow"><label class="kmBox"><input data-num="'+i+'" type="number" min="0" step=".5"><span>km</span></label><input class="zoneSlider" data-slider="'+i+'" type="range" min="0" step=".5" style="accent-color:'+color+'"><span class="chip">±3 km</span></div><div class="reliefRow"><button class="reliefButton" data-relief="'+i+'">Analyser le relief</button><span class="reliefStatus" data-relief-status="'+i+'"></span></div>';root.appendChild(card)});root.querySelectorAll('[data-num]').forEach(el=>el.oninput=()=>{const i=+el.dataset.num;S.zones[i].dayKm=Math.max(0,+el.value||0);normalize();sync();drawZones();renderProfile()});root.querySelectorAll('[data-slider]').forEach(el=>el.oninput=()=>{const i=+el.dataset.slider;S.zones[i].dayKm=+el.value;normalize();sync();drawZones();renderProfile()});root.querySelectorAll('[data-del]').forEach(el=>el.onclick=()=>{S.zones.splice(+el.dataset.del,1);normalize();renderCards();drawZones();renderProfile()});root.querySelectorAll('[data-relief]').forEach(b=>b.onclick=()=>analyzeRelief(+b.dataset.relief));sync()}
 function sync(){S.zones.forEach((z,i)=>{const num=q('[data-num="'+i+'"]'),slider=q('[data-slider="'+i+'"]'),cum=q('[data-cum="'+i+'"]'),m=maxFor(i);if(num){num.max=m;num.value=z.dayKm.toFixed(1).replace('.0','')}if(slider){slider.max=Math.max(.5,m);slider.value=z.dayKm}if(cum)cum.textContent='km '+center(i).toFixed(1);});const rem=Math.max(0,S.total-S.zones.reduce((a,z)=>a+z.dayKm,0)).toFixed(1)+' km';q('#remaining').textContent='Reste '+rem;q('#mobileRemain').textContent=S.total?'Reste '+rem:'—';q('#profileInfo').textContent=S.total?S.total.toFixed(1)+' km':'—'}
 function updateBulk(){const n=Math.max(1,Math.min(200,Math.round(+q('#bulkCount').value||1))),avg=S.total/(n+1);q('#bulkAvg').textContent=S.total?'≈ '+avg.toFixed(1)+' km par étape, arrivée comprise':'Importe d’abord un GPX'}
 function clearRelief(){
@@ -80,7 +80,6 @@ function clearRelief(){
  S.reliefLayers.forEach(l=>S.map.removeLayer(l));S.reliefLayersIgn.forEach(l=>S.mapIgn.removeLayer(l));
  S.reliefLayers=[];S.reliefLayersIgn=[];
  document.querySelectorAll('[data-relief-status]').forEach(el=>el.textContent='');
- document.querySelectorAll('[data-relief-detail]').forEach(el=>el.replaceChildren());
 }
 function offsetPoint(p,prev,next,metres){
  const latRadians=p.lat*Math.PI/180,dx=(next.lng-prev.lng)*Math.cos(latRadians),dy=next.lat-prev.lat;
@@ -89,8 +88,8 @@ function offsetPoint(p,prev,next,metres){
 }
 async function analyzeRelief(i){
  clearRelief();
- const boundsNow=bounds(i),status=q('[data-relief-status="'+i+'"]'),detail=q('[data-relief-detail="'+i+'"]');
- if(!status||!detail)return;
+ const boundsNow=bounds(i),status=q('[data-relief-status="'+i+'"]');
+ if(!status)return;
  S.reliefIndex=i;status.textContent='Calcul en cours…';
  const controller=new AbortController();S.reliefAbort=controller;
  try{
@@ -111,7 +110,7 @@ async function analyzeRelief(i){
   const result=await response.json(),rows=result.elevations;
   if(!Array.isArray(rows)||rows.length!==coords.length)throw Error('Réponse IGN incomplète');
   if(controller.signal.aborted)return;
-  const z=rows.map(v=>+v.z),colors=['#40a368','#e4aa2f','#dd6260'],counts=[0,0,0],segmentMetres=(boundsNow[1]-boundsNow[0])*1000/steps;
+  const z=rows.map(v=>+v.z),colors=['#40a368','#e4aa2f','#dd6260'],segmentMetres=(boundsNow[1]-boundsNow[0])*1000/steps;
   let valid=0;
   for(let n=0;n<steps;n++){
    const a=n*3,b=(n+1)*3;
@@ -119,34 +118,32 @@ async function analyzeRelief(i){
    const along=Math.abs(z[b]-z[a])/segmentMetres;
    const across=Math.max(Math.abs(z[a+2]-z[a+1]),Math.abs(z[b+2]-z[b+1]))/30;
    const grade=Math.max(along,across),category=grade<.05?0:grade<.12?1:2;
-   counts[category]++;valid++;
+   valid++;
    const line=slice(kms[n],kms[n+1]),style={pane:'reliefPane',color:colors[category],weight:11,opacity:.9,interactive:false,lineCap:'butt'};
    S.reliefLayers.push(L.polyline(line,style).addTo(S.map));
    S.reliefLayersIgn.push(L.polyline(line,style).addTo(S.mapIgn));
   }
   if(!valid)throw Error('Aucune altitude disponible sur cette zone');
-  status.textContent='Relief estimé · '+(boundsNow[1]-boundsNow[0]).toFixed(1)+' km';
-  detail.innerHTML='<div class="reliefLegend"><span><b style="background:#40a368"></b>Faible '+Math.round(100*counts[0]/valid)+' %</span><span><b style="background:#e4aa2f"></b>Modéré '+Math.round(100*counts[1]/valid)+' %</span><span><b style="background:#dd6260"></b>Marqué '+Math.round(100*counts[2]/valid)+' %</span></div><div class="reliefNote">Estimation IGN par tronçons de 50 m, sur le tracé et à 15 m de chaque côté. Ne garantit pas un sol plat pour la tente.</div>';
+  status.textContent='';
   S.reliefAbort=null;
  }catch(error){
   if(controller.signal.aborted)return;
   S.reliefLayers.forEach(l=>S.map.removeLayer(l));S.reliefLayersIgn.forEach(l=>S.mapIgn.removeLayer(l));
   S.reliefLayers=[];S.reliefLayersIgn=[];
   // Repli limité à la pente du parcours si le service IGN n'est pas joignable.
-  const steps=Math.max(2,Math.ceil((boundsNow[1]-boundsNow[0])/.1)),counts=[0,0,0];
+  const steps=Math.max(2,Math.ceil((boundsNow[1]-boundsNow[0])/.1));
+  let valid=0;
   for(let n=0;n<steps;n++){
    const a=boundsNow[0]+(boundsNow[1]-boundsNow[0])*n/steps,b=boundsNow[0]+(boundsNow[1]-boundsNow[0])*(n+1)/steps;
    const za=at(a).ele,zb=at(b).ele;
    if(za==null||zb==null||!Number.isFinite(za)||!Number.isFinite(zb))continue;
    const grade=Math.abs(zb-za)/((b-a)*1000),category=grade<.05?0:grade<.12?1:2;
-   counts[category]++;
+   valid++;
    const style={pane:'reliefPane',color:['#40a368','#e4aa2f','#dd6260'][category],weight:11,opacity:.9,interactive:false,lineCap:'butt'};
    S.reliefLayers.push(L.polyline(slice(a,b),style).addTo(S.map));
    S.reliefLayersIgn.push(L.polyline(slice(a,b),style).addTo(S.mapIgn));
   }
-  const valid=counts.reduce((a,b)=>a+b,0);
-  status.textContent=valid?'Pente du tracé · '+(boundsNow[1]-boundsNow[0]).toFixed(1)+' km':'Relief indisponible';
-  if(valid)detail.innerHTML='<div class="reliefLegend"><span><b style="background:#40a368"></b>Faible '+Math.round(100*counts[0]/valid)+' %</span><span><b style="background:#e4aa2f"></b>Modéré '+Math.round(100*counts[1]/valid)+' %</span><span><b style="background:#dd6260"></b>Marqué '+Math.round(100*counts[2]/valid)+' %</span></div><div class="reliefNote">Altitudes IGN indisponibles : calcul tiré du GPX, seulement sur le sentier. Il ne décrit pas le terrain où planter la tente.</div>';
+  status.textContent=valid?'GPX':'Indisponible';
   S.reliefAbort=null;
  }
 }
