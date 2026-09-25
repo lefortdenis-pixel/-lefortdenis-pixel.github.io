@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.153 hors ligne</title>
+<title>Traversée 2027 · v1.155 hors ligne</title>
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -476,6 +476,31 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
   font-size:12px;line-height:1.35;font-weight:750;
 }
 .appNotice[hidden]{display:none}
+
+/* v1.155 — terrain une main / pluie */
+.fieldOptions{
+  margin-top:10px;border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden;
+}
+.fieldOptions>summary{
+  min-height:48px;display:flex;align-items:center;padding:0 14px;cursor:pointer;
+  list-style:none;color:var(--muted);font-size:12px;font-weight:850;touch-action:manipulation;
+}
+.fieldOptions>summary::-webkit-details-marker{display:none}
+.fieldOptions[open]>summary{border-bottom:1px solid var(--line);color:var(--ink)}
+.fieldOptions .waterSim{margin:10px;border:0;background:#fff}
+.fieldOptions .manual{margin:0 10px 10px}
+.gpsBtn,.waterGpsBtn,.continueBtn,.waterKmBtn,.secondary,.day{min-height:50px}
+.continueBtn{font-size:15px;font-weight:900}
+.waterRoute{min-height:46px;display:inline-flex;align-items:center;justify-content:center;padding:0 14px}
+.waterItem{min-height:72px}
+.waterDistance{font-size:13px}
+#status,.waterStatus{line-height:1.4}
+@media(max-width:390px){
+  .fieldOptions>summary{min-height:46px}
+  .gpsBtn,.waterGpsBtn,.continueBtn,.waterKmBtn,.secondary,.day{min-height:48px}
+  .waterItem{min-height:68px}
+}
+
 </style>
 </head>
 <body>
@@ -532,22 +557,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
 
       <div class="block">
         <button class="gpsBtn" id="gpsBtn">⌖ Utiliser ma position GPS</button>
-        <div class="waterSim">
-          <label for="storeKmInput">Simuler une position sur la randonnée</label>
-          <div class="waterSimRow">
-            <input class="waterKmInput" id="storeKmInput" type="number" inputmode="decimal" min="0" max="2048.052" step="0.1" placeholder="Ex. 375">
-            <button class="waterKmBtn" id="storeKmBtn">Afficher ce km</button>
-          </div>
-        </div>
         <div id="status"></div>
-
-        <details class="manual">
-          <summary>Saisir des coordonnées manuellement</summary>
-          <div class="coords">
-            <div class="field"><label for="lat">Latitude</label><input id="lat" inputmode="decimal" placeholder="45.5117"></div>
-            <div class="field"><label for="lon">Longitude</label><input id="lon" inputmode="decimal" placeholder="2.8554"></div>
+        <details class="fieldOptions">
+          <summary>••• Autres façons de se positionner</summary>
+          <div class="waterSim">
+            <label for="storeKmInput">Saisir ton km sur la randonnée</label>
+            <div class="waterSimRow">
+              <input class="waterKmInput" id="storeKmInput" type="number" inputmode="decimal" min="0" max="2048.052" step="0.1" placeholder="Ex. 375">
+              <button class="waterKmBtn" id="storeKmBtn">Afficher</button>
+            </div>
           </div>
-          <button class="secondary" id="calcBtn">Calculer depuis ces coordonnées</button>
+          <details class="manual">
+            <summary>Coordonnées GPS manuelles</summary>
+            <div class="coords">
+              <div class="field"><label for="lat">Latitude</label><input id="lat" inputmode="decimal" placeholder="45.5117"></div>
+              <div class="field"><label for="lon">Longitude</label><input id="lon" inputmode="decimal" placeholder="2.8554"></div>
+            </div>
+            <button class="secondary" id="calcBtn">Calculer depuis ces coordonnées</button>
+          </details>
         </details>
       </div>
 
@@ -573,14 +600,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
       <h1>Trouver de l’eau</h1>
       <div class="waterSearch">
         <button class="waterGpsBtn" id="waterGpsBtn">⌖ Utiliser ma position GPS</button>
-        <div class="waterSim">
-          <label for="waterKmInput">Simuler une position sur la randonnée</label>
-          <div class="waterSimRow">
-            <input class="waterKmInput" id="waterKmInput" type="number" inputmode="decimal" min="0" max="2048.052" step="0.1" placeholder="Ex. 375">
-            <button class="waterKmBtn" id="waterKmBtn">Afficher ce km</button>
-          </div>
-        </div>
         <div class="waterStatus" id="waterStatus"></div>
+        <details class="fieldOptions">
+          <summary>••• Autre position</summary>
+          <div class="waterSim">
+            <label for="waterKmInput">Saisir ton km sur la randonnée</label>
+            <div class="waterSimRow">
+              <input class="waterKmInput" id="waterKmInput" type="number" inputmode="decimal" min="0" max="2048.052" step="0.1" placeholder="Ex. 375">
+              <button class="waterKmBtn" id="waterKmBtn">Afficher</button>
+            </div>
+          </div>
+        </details>
       </div>
       <div class="waterList" id="waterList"><div class="waterEmpty">Utilise ta position pour afficher les points les plus proches.</div></div>
     </div>
@@ -971,6 +1001,40 @@ function escapeHtml(v){
   return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 }
 
+const STORE_DETOUR_CACHE_KEY='store-detour-cache-v1';
+let storeDetourCache=parseJSON(safeStorageGet(STORE_DETOUR_CACHE_KEY))||{};
+async function resolveStoreDetour(store){
+  const direct=Number(store?.offRouteMeters??store?.detourMeters);
+  if(Number.isFinite(direct))return Math.max(0,direct);
+  if(Object.prototype.hasOwnProperty.call(storeDetourCache,store.name))return storeDetourCache[store.name];
+  if(!navigator.onLine)return null;
+  try{
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),6500);
+    const url='https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=fr&q='+encodeURIComponent(store.name+' France');
+    const response=await fetch(url,{signal:controller.signal,headers:{Accept:'application/json'}});
+    clearTimeout(timer);
+    if(!response.ok)throw Error('geocode');
+    const rows=await response.json(),row=rows?.[0];
+    const lat=Number(row?.lat),lon=Number(row?.lon);
+    let value=null;
+    if(Number.isFinite(lat)&&Number.isFinite(lon)){
+      const p=projectGps(lat,lon);
+      if(p&&Math.abs(p.km-store.km)<=8)value=Math.round(p.distanceMeters/10)*10;
+    }
+    storeDetourCache[store.name]=value;
+    safeStorageSet(STORE_DETOUR_CACHE_KEY,JSON.stringify(storeDetourCache));
+    return value;
+  }catch(_){return null}
+}
+function storeWalkLabel(delta){return 'Dans '+delta.toFixed(1).replace('.',',')+' km de marche'}
+async function enrichStoreMeta(store,km,baseText,meta){
+  if(!store||!meta)return;
+  meta.dataset.storeName=store.name;
+  const detour=await resolveStoreDetour(store);
+  if(meta.dataset.storeName!==store.name)return;
+  const detourText=Number.isFinite(detour)?(detour<=40?' · sur la trace':' · +'+(detour>=1000?(detour/1000).toFixed(1).replace('.',',')+' km':Math.round(detour)+' m')+' hors trace'):'';
+  meta.textContent=baseText+detourText;
+}
 function show(km,stage,offRoute=null){
   lastShown={km,stage,offRoute};
   let r=select(km,stage),autoAdjusted=false;
@@ -994,7 +1058,9 @@ function show(km,stage,offRoute=null){
   if(meta){
     if(r.store){
       const delta=Math.max(0,r.store.km-km);
-      meta.textContent="Magasin au km "+r.store.km.toFixed(1)+" · dans "+delta.toFixed(1)+" km"+(autoAdjusted?" · autonomie ajustée à "+autonomy+" jours":"")+(r.requiredDays?" · "+r.requiredDays+" jours nécessaires":"");
+      const base=storeWalkLabel(delta)+(autoAdjusted?" · autonomie ajustée à "+autonomy+" jours":"")+(r.requiredDays?" · "+r.requiredDays+" jours nécessaires":"");
+      meta.textContent=base;
+      enrichStoreMeta(r.store,km,base,meta);
     }else meta.textContent="Fin de la Traversée";
   }
   ignoredStores(km,r);
@@ -1234,17 +1300,32 @@ async function ignWater(origin){
   if(!values.length&&settled.every(item=>item.status==='rejected'))throw new Error('IGN indisponible');
   return values;
 }
-function preparePoints(points,origin){
-  return points.map(point=>({...point,distance:waterDistanceMeters(origin,point)})).filter(point=>Number.isFinite(point.distance));
+function preparePoints(points,origin,originKm=null){
+  const originProjection=Number.isFinite(originKm)?{km:originKm}:projectGps(origin.lat,origin.lon);
+  const startKm=Number(originProjection?.km);
+  return points.map(point=>{
+    const distance=waterDistanceMeters(origin,point),route=projectGps(point.lat,point.lon);
+    const routeKm=Number(route?.km),offRouteMeters=Number(route?.distanceMeters);
+    const alongDelta=Number.isFinite(startKm)&&Number.isFinite(routeKm)?routeKm-startKm:null;
+    const walkDistanceKm=Number.isFinite(alongDelta)&&Number.isFinite(offRouteMeters)?Math.abs(alongDelta)+offRouteMeters/1000:null;
+    return {...point,distance,routeKm,offRouteMeters,alongDelta,walkDistanceKm};
+  }).filter(point=>Number.isFinite(point.distance));
 }
 function dedupeWater(points){
   const selected=[];
-  const byPriority=[...points].sort((a,b)=>b.priority-a.priority||a.distance-b.distance);
+  const byPriority=[...points].sort((a,b)=>b.priority-a.priority||(a.walkDistanceKm??a.distance/1000)-(b.walkDistanceKm??b.distance/1000));
   for(const point of byPriority){
     const duplicate=selected.some(other=>other.category===point.category&&waterDistanceMeters(point,other)<70);
     if(!duplicate)selected.push(point);
   }
-  return selected.sort((a,b)=>a.distance-b.distance).slice(0,WATER_LIMIT);
+  return selected.sort((a,b)=>(a.walkDistanceKm??a.distance/1000)-(b.walkDistanceKm??b.distance/1000)).slice(0,WATER_LIMIT);
+}
+function waterRouteLabel(point){
+  if(!Number.isFinite(point.alongDelta)||!Number.isFinite(point.offRouteMeters))return formatWaterDistance(point.distance)+' à vol d’oiseau';
+  const delta=point.alongDelta,along=Math.abs(delta);
+  const direction=delta>=-.15?'dans '+along.toFixed(1).replace('.',',')+' km':along.toFixed(1).replace('.',',')+' km derrière';
+  const off=point.offRouteMeters<=40?'sur la trace':(point.offRouteMeters>=1000?(point.offRouteMeters/1000).toFixed(1).replace('.',',')+' km':Math.round(point.offRouteMeters/10)*10+' m')+' hors trace';
+  return direction+' · '+off;
 }
 function renderWater(points){
   if(!points.length){
@@ -1254,10 +1335,10 @@ function renderWater(points){
   waterList.innerHTML=points.map(point=>{
     const description=point.description?'<div class="waterDesc">'+waterEscape(point.description)+'</div>':'';
     const route='https://maps.apple.com/?daddr='+encodeURIComponent(point.lat+','+point.lon)+'&dirflg=w';
-    return '<article class="waterItem"><div class="waterItemText"><div class="waterDistance">'+formatWaterDistance(point.distance)+'</div><div class="waterName">'+waterEscape(point.name)+'</div>'+description+'</div><a class="waterRoute" href="'+route+'" target="_blank" rel="noopener">Itinéraire</a></article>';
+    return '<article class="waterItem"><div class="waterItemText"><div class="waterDistance">'+waterEscape(waterRouteLabel(point))+'</div><div class="waterName">'+waterEscape(point.name)+'</div>'+description+'</div><a class="waterRoute" href="'+route+'" target="_blank" rel="noopener">Plans</a></article>';
   }).join('');
 }
-async function searchWater(origin,context=''){
+async function searchWater(origin,context='',originKm=null){
   waterGpsBtn.disabled=true;
   waterStatus.textContent='Recherche dans les données hors ligne…';
   waterList.innerHTML='<div class="waterEmpty">Recherche en cours…</div>';
@@ -1268,7 +1349,7 @@ async function searchWater(origin,context=''){
   }catch(_){
     waterList.innerHTML='<div class="waterEmpty">Les données hors ligne ne sont pas disponibles.</div>';
   }
-  const offline=dedupeWater(preparePoints(gpxPoints,origin).filter(point=>point.distance<=30000));
+  const offline=dedupeWater(preparePoints(gpxPoints,origin,originKm).filter(point=>point.distance<=30000));
   renderWater(offline);
   waterStatus.textContent=context+offline.length+' point'+(offline.length>1?'s':'')+' trouvé'+(offline.length>1?'s':'')+' dans les données embarquées';
   waterGpsBtn.textContent='⌖ Actualiser ma position';
@@ -1284,7 +1365,7 @@ function locateWater(){
   navigator.geolocation.getCurrentPosition(position=>{
     const accuracy=Number(position.coords.accuracy)||9999;
     const context=accuracy>150?'GPS imprécis ±'+Math.round(accuracy)+' m · ':accuracy>60?'GPS ±'+Math.round(accuracy)+' m · ':'';
-    searchWater({lat:position.coords.latitude,lon:position.coords.longitude},context);
+    searchWater({lat:position.coords.latitude,lon:position.coords.longitude},context,null);
   },err=>{
     waterStatus.textContent=typeof gpsErrorMessage==='function'?gpsErrorMessage(err):'GPS indisponible. Utilise le km simulé.';
     waterGpsBtn.disabled=false;
@@ -1308,7 +1389,7 @@ async function simulateWaterKm(){
     return;
   }
   const point=routePointAtKm(km);
-  await searchWater(point,'Km '+km.toFixed(1).replace('.',',')+' simulé · ');
+  await searchWater(point,'Km '+km.toFixed(1).replace('.',',')+' simulé · ',km);
 }
 waterKmBtn?.addEventListener('click',simulateWaterKm);
 waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();simulateWaterKm()}});
@@ -1327,7 +1408,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 .menu-body{padding:8px 14px 104px;min-height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch}.screen{max-width:520px;margin:0 auto}.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.brand{font-weight:900;letter-spacing:.14em;font-size:12px}.counter{font-size:12px;color:var(--muted);font-weight:800}.resetTop{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:7px 10px;font-weight:800;font-size:11px}
 #prepCard{max-width:520px;margin:0 auto;background:var(--card);border:1px solid #e7e7e0;border-radius:28px;padding:22px 20px;box-shadow:0 12px 30px rgba(0,0,0,.09);min-height:0}.prepTag{display:inline-flex;background:var(--ink);color:white;padding:7px 11px;border-radius:999px;font-size:11px;font-weight:900}.prepTitle{font-size:39px;line-height:.95;letter-spacing:-.045em;margin:8px 54px 7px 0}.prepSub{color:var(--muted);font-size:13px;line-height:1.35;font-weight:650;max-width:30ch;margin:0 0 18px}.days{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:0}.daybtn{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:16px 3px;font-weight:900;color:var(--ink)}.daybtn.active{background:var(--green);border-color:var(--green)}.prepActions{margin-top:18px;display:grid;gap:9px}.primary{border:0;background:#ff4f8b;color:white;border-radius:16px;padding:16px;font-weight:900;box-shadow:0 7px 18px rgba(255,79,139,.16)}.secondary{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:14px;padding:12px;font-weight:850}.resetLink{border:0;background:transparent;color:var(--muted);padding:8px;font-size:12px;font-weight:800}.summaryWeight{margin-top:20px;background:var(--ink);color:white;border-radius:18px;padding:14px 16px}.summaryWeight span{font-size:11px;color:#b8b9b3;font-weight:900}.summaryWeight #planSummary{font-size:30px;font-weight:950;margin-top:2px}
 #menus{max-width:520px;margin:0 auto}.heroLine{margin-bottom:10px}.blockMeta{font-size:12px;color:var(--muted);font-weight:800}.deck{position:relative;height:625px}.daycard{position:absolute;inset:0;background:var(--card);border-radius:30px;padding:20px;box-shadow:0 16px 34px rgba(0,0,0,.10);border:1px solid #ecece6;transition:.25s transform,.25s opacity;overflow:hidden}.daycard.back1{transform:translateY(10px) scale(.97);opacity:.48;z-index:1}.daycard.back2{transform:translateY(20px) scale(.94);opacity:.16;z-index:0}.daycard.front{z-index:3}.daytag,.cardSub{display:none}.daycard h1{font-size:50px;line-height:.9;font-weight:900;margin:10px 0 12px;letter-spacing:-.055em}.meals{display:grid;gap:8px;margin-top:16px}.meal{border-radius:21px;padding:16px 15px;border:1px solid var(--line);display:grid;grid-template-columns:54px 1fr;gap:14px;align-items:center}.mealIcon{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;font-size:27px}.mealIcon.morning{background:#fff3ba}.mealIcon.lunch{background:#dff5e8}.mealIcon.dinner{background:#e9e2ff}.meal small,.snackMini small{display:block;letter-spacing:.1em;color:var(--muted);font-size:10px;font-weight:900;margin-bottom:3px}.meal b{font-size:18px;display:block;line-height:1.18}.meal span{display:block;color:var(--muted);font-size:12px;line-height:1.28;margin-top:4px}.snackMini{display:flex;align-items:center;gap:10px;margin-top:10px;padding:11px 13px;background:#fff4df;border-radius:17px;font-size:19px}.snackMini b{font-size:13px;display:block}.weightBox{margin-top:9px;background:var(--ink);color:#fff;border-radius:17px;padding:11px 13px;display:flex;justify-content:space-between;align-items:end}.weightBox span{font-size:9px;color:#b9bbb4;font-weight:900;letter-spacing:.07em}.weightBox b{font-size:23px}.cardActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.changeDayBtn,.newProposalBtn{border-radius:14px;padding:10px 7px;font-weight:900;font-size:11px;min-height:40px}.changeDayBtn{border:1px dashed #bbbdb4;background:#fafaf7;color:var(--ink)}.newProposalBtn{border:0;background:var(--orange);color:#fff}.topActions{display:flex;gap:8px}.topActions button{border:1px solid var(--line);background:transparent;border-radius:999px;padding:7px 9px;font-size:10px;font-weight:900;color:var(--muted)}
-#buy{max-width:520px;margin:0 auto}.shopHeader{display:flex;justify-content:space-between;align-items:end;margin:6px 0 12px}.shopHeader h2{font-size:38px;letter-spacing:-.045em;margin:0}.progress{margin:0 0 12px}.progress-top{display:none}.progress-track{height:5px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:7px}.progress-fill{height:100%;background:var(--green)}.shop{display:grid;grid-template-columns:38px 1fr;gap:10px;align-items:start;padding:15px 4px;border-bottom:1px solid var(--line);cursor:pointer;border-radius:12px;touch-action:manipulation;-webkit-tap-highlight-color:rgba(99,91,255,.12)}.shop:active{background:#e9e9e3}.shop:focus-visible{outline:3px solid #8d85ff;outline-offset:2px}.checkWrap{width:32px;height:32px;position:relative;pointer-events:none}.checkWrap span{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);display:grid;place-items:center;color:transparent;font-size:17px;font-weight:900}.shop.checked .checkWrap span{background:var(--ink);border-color:var(--ink);color:var(--green)}.shopText b{font-size:15px;display:block}.shopText b em{font-style:normal;font-size:8px;background:var(--green);padding:3px 5px;border-radius:999px;margin-left:5px}.shopText small{display:block;color:var(--muted);font-size:11px;margin-top:2px}.shopText small.remaining{color:#52634e;font-weight:800;margin-top:4px}.shopTap{pointer-events:none}.inlineUnavailable{grid-column:1/-1;margin:8px 0 2px;cursor:default}.inlineUnavailable button{touch-action:manipulation}.shop.checked{opacity:.46}.shop.checked .shopText b{text-decoration:line-through}.bad{border:0;background:transparent;color:var(--red);padding:5px 0 0;font-size:10px;font-weight:900}.section-title{font-size:10px;letter-spacing:.1em;font-weight:900;color:var(--muted);margin:15px 0 5px}.verify{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:10px 11px;margin:6px 0}.verify b{font-size:13px}.verify small{display:block;color:var(--muted);font-size:10px;margin-top:2px}.empty-shop{color:var(--muted);font-size:13px;padding:18px 0}.validationBox{margin:15px 0 5px;padding:14px;border:1px solid var(--line);border-radius:18px;background:var(--card)}.validation-hint{font-size:11px;color:var(--muted);margin-bottom:9px}.validation-hint.done{color:#36572f;font-weight:900}.validate{width:100%;border:0;background:var(--green);color:var(--ink);border-radius:14px;padding:13px;font-weight:900}
+#buy{max-width:520px;margin:0 auto}.shopHeader{display:flex;justify-content:space-between;align-items:end;margin:6px 0 12px}.shopHeader h2{font-size:38px;letter-spacing:-.045em;margin:0}.progress{margin:0 0 12px}.progress-top{display:none}.progress-track{height:5px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:7px}.progress-fill{height:100%;background:var(--green)}.shop{display:grid;grid-template-columns:46px 1fr;gap:11px;align-items:center;min-height:76px;padding:12px 5px;border-bottom:1px solid var(--line);cursor:pointer;border-radius:14px;touch-action:manipulation;-webkit-tap-highlight-color:rgba(99,91,255,.12)}.shop:active{background:#e9e9e3}.shop:focus-visible{outline:3px solid #8d85ff;outline-offset:2px}.checkWrap{width:42px;height:42px;position:relative;pointer-events:none}.checkWrap span{width:42px;height:42px;border-radius:9px;border:1px solid var(--line);display:grid;place-items:center;color:transparent;font-size:17px;font-weight:900}.shop.checked .checkWrap span{background:var(--ink);border-color:var(--ink);color:var(--green)}.shopText b{font-size:15px;display:block}.shopText b em{font-style:normal;font-size:8px;background:var(--green);padding:3px 5px;border-radius:999px;margin-left:5px}.shopText small{display:block;color:var(--muted);font-size:11px;margin-top:2px}.shopText small.remaining{color:#52634e;font-weight:800;margin-top:4px}.shopTap{pointer-events:none}.inlineUnavailable{grid-column:1/-1;margin:8px 0 2px;cursor:default}.inlineUnavailable button{touch-action:manipulation}.shop.checked{opacity:.46}.shop.checked .shopText b{text-decoration:line-through}.bad{border:0;background:transparent;color:var(--red);padding:5px 0 0;font-size:10px;font-weight:900}.section-title{font-size:10px;letter-spacing:.1em;font-weight:900;color:var(--muted);margin:15px 0 5px}.verify{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:10px 11px;margin:6px 0}.verify b{font-size:13px}.verify small{display:block;color:var(--muted);font-size:10px;margin-top:2px}.empty-shop{color:var(--muted);font-size:13px;padding:18px 0}.validationBox{margin:15px 0 5px;padding:14px;border:1px solid var(--line);border-radius:18px;background:var(--card)}.validation-hint{font-size:11px;color:var(--muted);margin-bottom:9px}.validation-hint.done{color:#36572f;font-weight:900}.validate{width:100%;border:0;background:var(--green);color:var(--ink);border-radius:14px;padding:13px;font-weight:900}
 #msg{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:40;width:min(480px,calc(100% - 28px));pointer-events:none}.toast{background:var(--ink);color:white;padding:10px 12px;border-radius:999px;font-size:11px;font-weight:900;text-align:center;box-shadow:0 8px 25px rgba(0,0,0,.18)}.toast.ok{background:#244d35}.unavailable{position:relative;margin-top:14px;padding:16px;background:var(--card);border:2px solid #e0b58f;border-radius:20px}.unavailable h3{margin:0 34px 10px 0;font-size:17px;line-height:1.15}.ua-close{position:absolute;top:10px;right:10px;width:30px;height:30px;border:0;border-radius:999px;background:#efefe9;color:var(--ink);font-size:18px;font-weight:900}.ua-impact{background:#f5efe7;border-radius:14px;padding:12px;margin:9px 0 12px}.ua-impact>strong{display:block;font-size:12px;letter-spacing:.06em;margin-bottom:9px}.ua-proposal{padding:10px 0;border-top:1px solid rgba(0,0,0,.08)}.ua-proposal:first-of-type{border-top:0;padding-top:0}.ua-proposal small{display:block;color:var(--muted);font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}.ua-old{font-size:12px;color:#8b8b82;text-decoration:line-through;line-height:1.3}.ua-arrow{font-size:13px;color:var(--muted);margin:3px 0}.ua-new{font-size:13px;color:var(--ink);font-weight:900;line-height:1.3}.ua-note{font-size:11px;color:var(--muted);line-height:1.35;margin:8px 0 2px}.ua-actions{display:grid;gap:8px}.ua-actions button{border:0;border-radius:13px;padding:12px 10px;font-weight:900;font-size:12px}.ua-primary{background:var(--ink);color:white}.ua-secondary{background:var(--green);color:var(--ink)}
 .bottomNav{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);width:min(492px,calc(100% - 20px));background:rgba(255,255,255,.95);border:1px solid var(--line);border-radius:22px;padding:7px;box-shadow:0 10px 32px rgba(0,0,0,.13);z-index:25}.navgrid{display:grid;grid-template-columns:1fr 1.45fr 1fr;gap:7px}.navgrid-two{grid-template-columns:1fr 1.45fr}.navgrid button{border:0;border-radius:15px;padding:13px 5px;font-size:11px;font-weight:900;background:#eeeeea;color:#454740}.navgrid .main{background:var(--orange);color:white}.navgrid button:disabled{opacity:.35}.shopStatus{font-size:10px;color:var(--muted);font-weight:900}
 @media(max-height:760px){.deck{height:600px}.daycard{padding:15px}.daycard h1{font-size:44px;margin-top:8px}.meals{margin-top:9px}.meal{padding:12px}.mealIcon{width:48px;height:48px;font-size:24px}.meal b{font-size:17px}.snackMini{padding:8px 10px}.weightBox{padding:10px 12px}}
@@ -1704,20 +1785,24 @@ const CANNED_DAYS=[
 CANNED_DAYS.forEach((day,i)=>DAYS.splice(3+i*5,0,day));
 const SNACK_PACKS=[['cho','pfruit'],['pea','bars'],['almond','sab'],['carrot','cho'],['pfruit','pea'],['bars','almond'],['sab','carrot']];
 const SNACK_TARGET_PER_DAY=165;
-let d=2,plan=null,rotationCursor=0,proposalStart=0,proposalSerial=0,ravitoCount=0,settingsOpen=false,checkedShop={},resolvedEquivalent={},replacementMeals={},replacementProducts={},leftoverMeals={},singleSnackToggle=Array(SNACK_PACKS.length).fill(0),snackOverride=null,pendingUnavailable=null,currentDayIndex=0,currentView='prep',savedMode=false,archivedMode=false,savedNextState=null,loadedSavedId=null;
+let d=2,plan=null,rotationCursor=0,proposalStart=0,proposalSerial=0,ravitoCount=0,settingsOpen=false,checkedShop={},resolvedEquivalent={},replacementMeals={},replacementProducts={},leftoverMeals={},singleSnackToggle=Array(SNACK_PACKS.length).fill(0),snackOverride=null,pendingUnavailable=null,currentDayIndex=0,currentView='prep',shopScrollTop=0,savedMode=false,archivedMode=false,savedNextState=null,loadedSavedId=null;
 let unavailableOptions=[],unavailableOptionIndex=0,unavailableProductId=null,unavailableBox=null;
 let dayActionIndex=0,leftoverOptions=[],leftoverOptionIndex=0,leftoverProductId=null,suggestedLeftovers=[],selectedLeftoverIds=[],leftoverQueue=[],leftoverPickerShowAll=false;
 const menuRoot=document.getElementById('menuHost').shadowRoot;
 const menuApp=menuRoot.getElementById('menuApp');
 const $=id=>menuRoot.getElementById(id);
-function goHome(){scheduleDraftSave(true);window.postMessage({type:'ravito-menu-home'},'*')}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')scheduleDraftSave(true)});
-window.addEventListener('pagehide',()=>scheduleDraftSave(true));
+function captureShopScroll(){if(currentView!=='shop')return;shopScrollTop=Math.max(0,host.scrollTop||menuApp.scrollTop||0)}
+function restoreShopScroll(){requestAnimationFrame(()=>{host.scrollTop=shopScrollTop;menuApp.scrollTop=shopScrollTop})}
+function goHome(){captureShopScroll();scheduleDraftSave(true);window.postMessage({type:'ravito-menu-home'},'*')}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){captureShopScroll();scheduleDraftSave(true)}});
+window.addEventListener('pagehide',()=>{captureShopScroll();scheduleDraftSave(true)});
+host.addEventListener('scroll',()=>{if(currentView==='shop'){shopScrollTop=host.scrollTop;scheduleDraftSave()}},{passive:true});
+menuApp.addEventListener('scroll',()=>{if(currentView==='shop'){shopScrollTop=menuApp.scrollTop;scheduleDraftSave()}},{passive:true});
 function clone(o){try{return typeof structuredClone==='function'?structuredClone(o):JSON.parse(JSON.stringify(o))}catch(_){return JSON.parse(JSON.stringify(o))}}
 let draftTimer=0;
 function makeDraftSnapshot(){
   if(savedMode||archivedMode||!plan||!plan.length)return null;
-  return {version:6,updatedAt:Date.now(),savedMode:false,d,plan:clone(plan),rotationCursor,proposalStart,proposalSerial,ravitoCount,checkedShop:clone(checkedShop),resolvedEquivalent:clone(resolvedEquivalent),replacementMeals:clone(replacementMeals),replacementProducts:clone(replacementProducts),leftoverMeals:clone(leftoverMeals),suggestedLeftovers:clone(suggestedLeftovers),singleSnackToggle:clone(singleSnackToggle),snackOverride,currentDayIndex,currentView:currentView==='shop'?'shop':'menus'};
+  return {version:7,updatedAt:Date.now(),savedMode:false,d,plan:clone(plan),rotationCursor,proposalStart,proposalSerial,ravitoCount,checkedShop:clone(checkedShop),resolvedEquivalent:clone(resolvedEquivalent),replacementMeals:clone(replacementMeals),replacementProducts:clone(replacementProducts),leftoverMeals:clone(leftoverMeals),suggestedLeftovers:clone(suggestedLeftovers),singleSnackToggle:clone(singleSnackToggle),snackOverride,currentDayIndex,currentView:currentView==='shop'?'shop':'menus',shopScrollTop:Math.max(0,shopScrollTop||0)};
 }
 function scheduleDraftSave(immediate=false){
   if(savedMode||archivedMode||!plan||!plan.length)return;
@@ -1733,8 +1818,8 @@ function restoreDraft(data){
   setSavedMode(false);archivedMode=false;savedNextState=null;loadedSavedId=null;
   d=Math.max(1,Math.min(4,Number(data.d)||data.plan.length));plan=clone(data.plan);rotationCursor=Number(data.rotationCursor)||0;proposalStart=Number(data.proposalStart)||rotationCursor;proposalSerial=Number(data.proposalSerial)||0;ravitoCount=Number(data.ravitoCount)||0;
   checkedShop=clone(data.checkedShop||{});resolvedEquivalent=clone(data.resolvedEquivalent||{});replacementMeals=clone(data.replacementMeals||{});replacementProducts=clone(data.replacementProducts||{});leftoverMeals=clone(data.leftoverMeals||{});suggestedLeftovers=clone(data.suggestedLeftovers||[]);
-  singleSnackToggle=clone(data.singleSnackToggle||Array(SNACK_PACKS.length).fill(0));snackOverride=data.snackOverride==null?null:data.snackOverride;currentDayIndex=Math.max(0,Math.min(plan.length-1,Number(data.currentDayIndex)||0));currentView=data.currentView==='shop'?'shop':'menus';settingsOpen=false;pendingUnavailable=null;
-  render();if(currentView==='shop')showShopView();else showMenuView();
+  singleSnackToggle=clone(data.singleSnackToggle||Array(SNACK_PACKS.length).fill(0));snackOverride=data.snackOverride==null?null:data.snackOverride;currentDayIndex=Math.max(0,Math.min(plan.length-1,Number(data.currentDayIndex)||0));currentView=data.currentView==='shop'?'shop':'menus';shopScrollTop=Math.max(0,Number(data.shopScrollTop)||0);settingsOpen=false;pendingUnavailable=null;
+  render();if(currentView==='shop')showShopView(true);else showMenuView();
 }
 function setSavedMode(on,archived=false){
   savedMode=!!on;
@@ -2135,7 +2220,7 @@ function renderDeckClasses(){
 }
 function setDeckIndex(delta){if(!plan)return;currentDayIndex=Math.max(0,Math.min(plan.length-1,currentDayIndex+delta));renderDeckClasses();scheduleDraftSave()}
 function showMenuView(){if(!plan)return;currentView='menus';menuApp.classList.add('allDaysMode');scheduleDraftSave();if(menuNeedsRender){menuNeedsRender=false;render()}$('prepCard').classList.add('hide');$('menus').classList.remove('hide');$('buy').classList.add('hide');$('validation').classList.add('hide');$('bottomNav').classList.remove('hide');$('menuNav').classList.remove('hide');$('shopNav').classList.add('hide');renderDeckClasses();scrollTopAll()}
-function showShopView(){if(!plan)return;currentView='shop';menuApp.classList.remove('allDaysMode');scheduleDraftSave();$('prepCard').classList.add('hide');$('menus').classList.add('hide');$('buy').classList.remove('hide');$('validation').classList.toggle('hide',savedMode);$('bottomNav').classList.remove('hide');$('menuNav').classList.add('hide');$('shopNav').classList.remove('hide');renderShoppingOnly();scrollTopAll()}
+function showShopView(restorePosition=false){if(!plan)return;currentView='shop';menuApp.classList.remove('allDaysMode');scheduleDraftSave();$('prepCard').classList.add('hide');$('menus').classList.add('hide');$('buy').classList.remove('hide');$('validation').classList.toggle('hide',savedMode);$('bottomNav').classList.remove('hide');$('menuNav').classList.add('hide');$('shopNav').classList.remove('hide');renderShoppingOnly();if(restorePosition)restoreShopScroll();else{shopScrollTop=0;scrollTopAll()}}
 function openDuration(){if(!plan)return;settingsOpen=true;currentView='prep';menuApp.classList.remove('allDaysMode');$('prepCard').classList.remove('hide');$('menus').classList.add('hide');$('buy').classList.add('hide');$('validation').classList.add('hide');$('bottomNav').classList.add('hide');renderPrepState();scrollTopAll()}
 window.addEventListener('message',e=>{
   if(!e.data)return;
