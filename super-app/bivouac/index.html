@@ -24,7 +24,7 @@ main{height:100dvh;display:grid;grid-template-rows:minmax(0,1fr) 136px}.mapwrap{
 .reliefRow{display:flex;align-items:center;gap:7px;margin-top:6px}.reliefButton{flex:none;border:1px solid #b9c9b3;border-radius:6px;background:#f3f8ef;color:#244b31;padding:5px 7px;font-weight:700;cursor:pointer}.reliefStatus{font-size:10px;color:#59665c;line-height:1.3}
 .modeSwitch{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin:0 0 7px;padding:3px;border:1px solid var(--line);border-radius:11px;background:#f0f2ed}.modeSwitch button{min-height:34px;border:0;border-radius:8px;background:transparent;color:#59635b;font-size:11px;font-weight:800;cursor:pointer}.modeSwitch button.active{background:#fff;color:#17210f;box-shadow:0 1px 4px rgba(0,0,0,.08)}.stageNav,.spotTools{display:flex;align-items:center;gap:5px;margin:0 0 7px}.stageNav button,.spotTools button{border:1px solid var(--line);border-radius:8px;background:#fff;color:#263027;min-height:32px;padding:5px 9px;font-weight:700;cursor:pointer}.stageNav button:disabled{opacity:.4}.stageNav strong{flex:1;text-align:center;font-size:12px}.stageNav small{display:block;color:#69736b;font-size:10px;font-weight:400}.toolsMenuBtn{width:38px;height:38px;border:1px solid var(--line);border-radius:11px;background:#fff;color:#263027;font-size:16px;font-weight:800;cursor:pointer;line-height:1}.projectTools{display:none;grid-template-columns:1fr;gap:4px;padding:6px 10px 8px;background:#fbfcfa;border-bottom:1px solid var(--line)}.projectTools.open{display:grid}.projectTools button{width:100%;min-height:38px;border:0;border-radius:9px;background:#fff;color:#263027;text-align:left;padding:0 12px;font-size:12px;font-weight:750;cursor:pointer}.projectTools button:disabled{opacity:.4}.zoneCard.selected{border-color:#74a83d;box-shadow:0 0 0 1px #74a83d}.zoneTitle{cursor:pointer}.spotTools{margin:6px 0 0}.spotTools button{min-height:30px;font-size:10px}.poiIcon{border:0!important;background:transparent!important}.poiIcon div{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:#fff;border:2px solid #5b8b4a;box-shadow:0 1px 5px #3335;font-size:13px}.mapPopup{flex-wrap:wrap;max-width:230px;white-space:normal}.mapPopup .popupActions{display:flex;flex-wrap:wrap;gap:5px}.mapPopup .secondary{background:#edf1e9}.mapPopup button:disabled{opacity:.45;cursor:not-allowed}.mapPopup small{width:100%;color:#667068}
 .hudHead>span:first-child::after{content:" ▾";font-size:10px;color:#68726a}.hud:not(.collapsed) .hudHead>span:first-child::after{content:" ▴"}.hudHead:focus-visible{outline:2px solid #74a83d;outline-offset:-3px}.stageNav[hidden]{display:none}.projectTools button:disabled{opacity:.4}
-.profileHead{justify-content:space-between}.mapActions{align-items:center}.mapActions #locateFab{display:none}.campActions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px}.campActions button{min-height:42px;border:1px solid var(--line);border-radius:10px;background:#fff;color:#263027;font-size:10px;font-weight:800;padding:5px 4px;touch-action:manipulation}.campActions .campPlans{background:#eef5ff;border-color:#cfdff6}.campActions .campIphi{background:#edf7e9;border-color:#cfe1c7}.campActions .campCopy{background:#f4f2ed}.reliefButton,.projectTools button,.importBtn{min-height:42px}
+.profileHead{justify-content:space-between}.mapActions{align-items:center}.mapActions #locateFab{display:none}.reliefButton,.projectTools button,.importBtn{min-height:42px}
 .superHome{position:fixed;top:calc(10px + env(safe-area-inset-top));right:10px;z-index:1600;width:42px;height:42px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.96);color:var(--text);font-size:19px;font-weight:900;box-shadow:0 7px 20px rgba(0,0,0,.10);display:grid;place-items:center;padding:0}.systemNotice{position:fixed;left:12px;right:12px;top:calc(62px + env(safe-area-inset-top));z-index:1700;max-width:520px;margin:0 auto;padding:10px 12px;border:1px solid #dfc77f;border-radius:14px;background:#fff8df;color:#594713;box-shadow:0 9px 24px rgba(0,0,0,.13);font-size:11px;line-height:1.35;font-weight:750}.systemNotice[hidden]{display:none}.mapStyleRight{right:64px}
 @media(min-width:2560px){main{grid-template-rows:minmax(0,1fr) 170px}.hud{width:380px;left:14px;top:14px}.hudHead{height:42px;font-size:15px}.importBtn{height:31px;font-size:12px}.zoneName{font-size:13px}.cum{font-size:11px}.distanceRow{grid-template-columns:82px minmax(0,1fr) auto}.kmBox{height:38px}.kmBox input{width:50px;min-width:50px;font-size:17px}.chip{font-size:10px}.remaining{font-size:16px}.mapStyle{top:14px}.mapStyleLeft{right:calc(50% + 14px)}.mapStyleRight{right:14px}.mapStyle select,.overlayToggle{font-size:13px}.axisLabel{font-size:12px}}
 @media(max-width:760px){
@@ -172,43 +172,6 @@ function toggleCardDetails(i){
  renderCards();
  renderProfile()
 }
-function campPoint(i){
- if(!S.total||!S.zones[i])return null;
- const p=at(center(i));
- return {lat:p.lat,lng:p.lng,km:center(i),name:S.mode==='three'?'Bivouac '+(i+1):'Bivouac de ce soir'}
-}
-function campActionsHtml(i){
- return '<div class="campActions"><button class="campPlans" data-camp-plans="'+i+'">Plans</button><button class="campIphi" data-camp-iphi="'+i+'">iPhiGéNie</button><button class="campCopy" data-camp-copy="'+i+'">Copier</button></div>'
-}
-function openCampPlans(i){
- const p=campPoint(i);if(!p)return;
- const url='https://maps.apple.com/?ll='+encodeURIComponent(p.lat+','+p.lng)+'&q='+encodeURIComponent(p.name+' · km '+p.km.toFixed(1));
- window.open(url,'_blank','noopener')
-}
-function gpxEscape(value){return String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[ch]))}
-function campGpx(p){
- return '<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Traversée 2027" xmlns="http://www.topografix.com/GPX/1/1"><wpt lat="'+p.lat.toFixed(7)+'" lon="'+p.lng.toFixed(7)+'"><name>'+gpxEscape(p.name)+'</name><desc>km '+p.km.toFixed(1)+'</desc></wpt></gpx>'
-}
-async function openCampIphi(i){
- const p=campPoint(i);if(!p)return;
- const file=new File([campGpx(p)],'bivouac-'+p.km.toFixed(1).replace('.','-')+'.gpx',{type:'application/gpx+xml'});
- try{
-  if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){
-   showBivNotice('Choisis iPhiGéNie dans la feuille de partage.',2500);
-   await navigator.share({files:[file],title:p.name});
-   return
-  }
- }catch(e){if(e?.name==='AbortError')return}
- const url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download=file.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);
- showBivNotice('Fichier GPX créé. Ouvre-le avec iPhiGéNie.')
-}
-async function copyCampCoords(i){
- const p=campPoint(i);if(!p)return;
- const value=p.lat.toFixed(6)+', '+p.lng.toFixed(6);
- try{await navigator.clipboard.writeText(value)}
- catch(_){const ta=document.createElement('textarea');ta.value=value;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove()}
- showBivNotice('Coordonnées copiées · '+value,3500)
-}
 function renderCards(){
  syncModeUi();const root=q('#zonesList');root.replaceChildren();q('#stageNav').hidden=true;
  if(S.zones.length){q('#prevStage').disabled=S.selected===0;q('#nextStage').disabled=S.selected===S.zones.length-1;q('#stageSummary').innerHTML='Ce soir<small>km '+center(0).toFixed(1)+' · D+ ≈ '+stageGain(0)+' m</small>'}
@@ -218,10 +181,10 @@ function renderCards(){
    if(S.mode==='three'){
      const expanded=S.expandedCard===i;
      card.className='zoneCard compactThree'+(expanded?' expanded':'');
-     card.innerHTML='<div class="compactRow"><div class="compactName" data-toggle-details="'+i+'"><span class="zoneDot" style="background:'+color+'"></span><span>'+name+'</span><span class="expandChevron">▼</span></div><label class="compactKm"><input data-num="'+i+'" type="number" step=".5" aria-label="Distance du jour '+(i+1)+'"><span>km</span></label><input class="zoneSlider" data-slider="'+i+'" type="range" step=".5" style="accent-color:'+color+'" aria-label="Régler '+name+'"></div><div class="cardDetails"><div class="campFacts" data-facts="'+i+'"></div><div class="reliefRow"><button class="reliefButton" data-relief="'+i+'">Analyser le relief</button><span class="reliefStatus" data-relief-status="'+i+'"></span></div>'+campActionsHtml(i)+'</div>';
+     card.innerHTML='<div class="compactRow"><div class="compactName" data-toggle-details="'+i+'"><span class="zoneDot" style="background:'+color+'"></span><span>'+name+'</span><span class="expandChevron">▼</span></div><label class="compactKm"><input data-num="'+i+'" type="number" step=".5" aria-label="Distance du jour '+(i+1)+'"><span>km</span></label><input class="zoneSlider" data-slider="'+i+'" type="range" step=".5" style="accent-color:'+color+'" aria-label="Régler '+name+'"></div><div class="cardDetails"><div class="campFacts" data-facts="'+i+'"></div><div class="reliefRow"><button class="reliefButton" data-relief="'+i+'">Analyser le relief</button><span class="reliefStatus" data-relief-status="'+i+'"></span></div></div>';
    }else{
      card.className='zoneCard selected';
-     card.innerHTML='<div class="zoneHead"><div class="zoneTitle"><span class="zoneDot" style="background:'+color+'"></span><span class="zoneName">Ce soir</span><small class="todayHint">depuis ta position actuelle</small></div><div class="zoneMeta"><span class="cum" data-cum="'+i+'"></span></div></div><div class="distanceRow"><label class="kmBox"><input data-num="'+i+'" type="number" step=".5" aria-label="Distance à marcher aujourd’hui"><span>km</span></label><input class="zoneSlider" data-slider="'+i+'" type="range" step=".5" style="accent-color:'+color+'" aria-label="Régler le bivouac de ce soir"><span class="chip">20–35</span></div><div class="campFacts" data-facts="'+i+'"></div>'+campActionsHtml(i);
+     card.innerHTML='<div class="zoneHead"><div class="zoneTitle"><span class="zoneDot" style="background:'+color+'"></span><span class="zoneName">Ce soir</span><small class="todayHint">depuis ta position actuelle</small></div><div class="zoneMeta"><span class="cum" data-cum="'+i+'"></span></div></div><div class="distanceRow"><label class="kmBox"><input data-num="'+i+'" type="number" step=".5" aria-label="Distance à marcher aujourd’hui"><span>km</span></label><input class="zoneSlider" data-slider="'+i+'" type="range" step=".5" style="accent-color:'+color+'" aria-label="Régler le bivouac de ce soir"><span class="chip">20–35</span></div><div class="campFacts" data-facts="'+i+'"></div>';
    }
    root.appendChild(card)
  });
@@ -229,9 +192,6 @@ function renderCards(){
  root.querySelectorAll('[data-num]').forEach(el=>{el.onfocus=checkpoint;el.onchange=()=>{const i=+el.dataset.num;S.zones[i].dayKm=+el.value||0;normalize();resetSliderRange(i);sync();drawZones();renderProfile()}});
  root.querySelectorAll('[data-slider]').forEach(el=>{el.onpointerdown=checkpoint;el.onkeydown=e=>{if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key))checkpoint()};el.oninput=()=>{const i=+el.dataset.slider;S.zones[i].dayKm=+el.value;normalize();sync();drawZones();renderProfile()};el.onchange=()=>{resetSliderRange(+el.dataset.slider);sync()}});
  root.querySelectorAll('[data-relief]').forEach(b=>b.onclick=()=>analyzeRelief(+b.dataset.relief));
- root.querySelectorAll('[data-camp-plans]').forEach(b=>b.onclick=e=>{e.stopPropagation();openCampPlans(+b.dataset.campPlans)});
- root.querySelectorAll('[data-camp-iphi]').forEach(b=>b.onclick=e=>{e.stopPropagation();openCampIphi(+b.dataset.campIphi)});
- root.querySelectorAll('[data-camp-copy]').forEach(b=>b.onclick=e=>{e.stopPropagation();copyCampCoords(+b.dataset.campCopy)});
  sync()
 }
 function sync(){S.zones.forEach((z,i)=>{const num=q('[data-num="'+i+'"]'),slider=q('[data-slider="'+i+'"]'),cum=q('[data-cum="'+i+'"]'),facts=q('[data-facts="'+i+'"]'),l=limitsFor(i);if(num){num.min=l.min;num.max=l.max;num.disabled=l.locked;num.value=z.dayKm.toFixed(1).replace('.0','')}if(slider){slider.min=l.min;slider.max=l.max;slider.disabled=l.locked;slider.value=z.dayKm}if(cum)cum.textContent='km '+center(i).toFixed(1);if(facts){const remain=Math.max(0,S.total-center(i));facts.innerHTML='<span><b>'+z.dayKm.toFixed(1)+' km</b></span><span>D+ ≈ <b>'+stageGain(i)+' m</b></span><span>reste <b>'+remain.toFixed(1)+' km</b></span>'}});if(S.zones.length)q('#stageSummary').innerHTML='Ce soir<small>km '+center(0).toFixed(1)+' · D+ ≈ '+stageGain(0)+' m</small>';let remainingText='Importe une trace GPX pour commencer';if(S.total){if(S.mode==='three'){const j1=S.zones[0]?.dayKm||0,j2=S.zones[1]?.dayKm||0,j3=Math.max(0,S.total-j1-j2);remainingText='J1 '+j1.toFixed(1)+' km · J2 '+j2.toFixed(1)+' km · J3 '+j3.toFixed(1)+' km'}else{const today=S.zones[0]?.dayKm||0;remainingText='Bivouac dans '+today.toFixed(1)+' km'}}q('#remaining').textContent=remainingText;q('#mobileRemain').textContent=remainingText;const pb=profileBounds();q('#profileInfo').textContent=S.total&&S.zones.length?Math.max(0,pb[1]-pb[0]).toFixed(1)+' km':'—';syncProfileUi();scheduleSave()}
