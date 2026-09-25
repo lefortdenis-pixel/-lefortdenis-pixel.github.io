@@ -1,4 +1,4 @@
-const CACHE='traversee-v1-152-finition';
+const CACHE='traversee-v1-153-robustness';
 const TILE_CACHE='traversee-map-tiles-v1';
 const ASSETS=['./','./index.html','./water-points.json','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./bivouac/index.html','./vendor/leaflet.css','./vendor/leaflet.js','./vendor/leaflet.sync.js'];
 
@@ -29,12 +29,13 @@ self.addEventListener('fetch',event=>{
   if(url.origin===self.location.origin){
     const htmlRequest=event.request.mode==='navigate'||url.pathname.endsWith('/index.html');
     if(htmlRequest){
+      const fallback=url.pathname.includes('/bivouac')?'./bivouac/index.html':'./index.html';
       event.respondWith(
         fetch(event.request).then(resp=>{
           const copy=resp.clone();
           caches.open(CACHE).then(c=>c.put(event.request,copy));
           return resp;
-        }).catch(()=>caches.match(event.request).then(cached=>cached||caches.match('./index.html')))
+        }).catch(()=>caches.match(event.request).then(cached=>cached||caches.match(fallback)))
       );
     }else{
       event.respondWith(
