@@ -65,8 +65,8 @@ const WINDOW_KM=3;
 const COLORS=['#f1b93a','#a475e8','#39b5a7','#ef8650','#5797db','#db6fa3','#8fbd42','#d8a637'];
 let systemNoticeTimer=0;
 function showBivNotice(message,ms=8000){const el=document.getElementById('systemNotice');if(!el)return;clearTimeout(systemNoticeTimer);el.textContent=message;el.hidden=false;if(ms>0)systemNoticeTimer=setTimeout(()=>{el.hidden=true},ms)}
-function safeLsGet(key){try{return safeLsGet(key)}catch(_){return null}}
-function safeLsSet(key,value){try{safeLsSet(key,value);return true}catch(_){showBivNotice('Stockage local indisponible : les derniers changements peuvent ne pas être conservés.',0);return false}}
+function safeLsGet(key){try{return window.localStorage.getItem(key)}catch(_){return null}}
+function safeLsSet(key,value){try{window.localStorage.setItem(key,value);return true}catch(_){showBivNotice('Stockage local indisponible : les derniers changements peuvent ne pas être conservés.',0);return false}}
 const S={map:null,mapIgn:null,pts:[],cum:[],total:0,line:null,lineIgn:null,hitLine:null,hitLineIgn:null,mark:null,markIgn:null,current:null,zoneLayers:[],zoneLayersIgn:[],kmLayers:[],kmLayersIgn:[],dirLayers:[],dirLayersIgn:[],base:null,ignBase:null,hiking:null,guides:false,profile:{min:0,max:0,valid:false},zones:[],moveRAF:0,reliefLayers:[],reliefLayersIgn:[],reliefAbort:null,reliefIndex:-1,selected:0,focus:false,poiLayers:[],undo:[],gpxText:'',restoring:false,touched:false,progressKm:0,completed:[],mode:(safeLsGet('bivouac-mode')==='three'?'three':'traverse'),profileChoice:(safeLsGet('bivouac-profile')||'j1'),expandedCard:-1};
 const q=s=>document.querySelector(s),app=q('#app'),g=q('#gpx'),hud=q('#hud'),svg=q('#profileSvg'),box=q('#profileBox'),label=q('#cursorLabel'),profileCursor=q('#profileCursor');
 q('#superHome').onclick=()=>{if(window.parent!==window)window.parent.postMessage({type:'bivouac-home'},'*');else window.location.href='https://optimiseur-ravitaillement.vercel.app/'};
