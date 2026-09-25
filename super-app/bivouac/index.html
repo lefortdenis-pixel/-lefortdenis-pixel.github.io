@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Bivouac Scout">
 <link rel="apple-touch-icon" sizes="180x180" href="../icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
-<link rel="stylesheet" href="../../vendor/leaflet.css">
+<link rel="stylesheet" href="../vendor/leaflet.css">
 <style>
 :root{--soft:#f8f8f4;--line:#d9dad2;--text:#12130f;--muted:#73756d;--green:#dff36a;--forest:#557a4e}
 *{box-sizing:border-box}html,body{height:100%;margin:0}body,input,button,select{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial,sans-serif;font-weight:400}body{background:#f0f0ec;color:var(--text);overflow:hidden}button,input,select{font-size:12px}.zoneName,.remaining{font-weight:800}
@@ -56,8 +56,8 @@ main{height:100dvh;display:grid;grid-template-rows:minmax(0,1fr) 136px}.mapwrap{
 </section>
 <section class="profile"><div class="profileHead"><span id="profileLabel">Position → bivouac</span><span id="profileInfo">—</span></div><div class="profileTabs" id="profileTabs" hidden><button data-profile="j1">J1</button><button data-profile="j2">J2</button><button data-profile="j3">J3</button><button data-profile="all">Tout</button></div><div id="profileBox"><svg id="profileSvg"></svg><div id="profileEmpty">—</div><div class="profileCursor" id="profileCursor"></div><div class="cursorLabel" id="cursorLabel"></div></div></section>
 </main>
-<script src="../../vendor/leaflet.js"></script>
-<script src="../../vendor/leaflet.sync.js"></script>
+<script src="../vendor/leaflet.js"></script>
+<script src="../vendor/leaflet.sync.js"></script>
 <script>
 (function(){
 const WINDOW_KM=3;
