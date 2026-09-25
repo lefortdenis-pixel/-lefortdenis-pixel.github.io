@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.152 hors ligne</title>
+<title>Traversée 2027 · v1.153 hors ligne</title>
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -468,6 +468,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
   .gpsBtn,.waterGpsBtn{min-height:50px;padding:14px;font-size:14px}
 }
 
+
+.appNotice{
+  position:fixed;left:14px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:300;
+  max-width:492px;margin:0 auto;padding:11px 13px;border:1px solid #e1c88b;border-radius:15px;
+  background:#fff8df;color:#5b4715;box-shadow:0 10px 28px rgba(0,0,0,.14);
+  font-size:12px;line-height:1.35;font-weight:750;
+}
+.appNotice[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -587,6 +595,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
     <div id="menuHost" aria-label="Créateur de menus"></div>
   </section>
 </div>
+<div id="appNotice" class="appNotice" role="status" aria-live="polite" hidden></div>
 
 <div id="historyBackdrop" class="historyBackdrop hide">
   <div class="historySheet" role="dialog" aria-modal="true" aria-label="Historique des ravitos">
@@ -609,6 +618,15 @@ const RAVITO_HISTORY_KEY='ravito-history-v1';
 const RAVITO_HISTORY_BACKUP_KEY='ravito-history-v1-backup';
 const RAVITO_DRAFT_KEY='ravito-draft-v2';
 const RAVITO_DRAFT_BACKUP_KEY='ravito-draft-v2-backup';
+let appNoticeTimer=0;
+function showAppNotice(message,ms=7000){
+  const el=document.getElementById('appNotice');
+  if(!el)return;
+  clearTimeout(appNoticeTimer);
+  el.textContent=message;
+  el.hidden=false;
+  if(ms>0)appNoticeTimer=setTimeout(()=>{el.hidden=true},ms);
+}
 function safeStorageGet(key){
   try{return localStorage.getItem(key)}catch(_){return null}
 }
@@ -618,6 +636,7 @@ function safeStorageSet(key,value){
 function safeStorageSetPair(primary,backup,value){
   const a=safeStorageSet(primary,value);
   const b=safeStorageSet(backup,value);
+  if(!a&&!b)showAppNotice('Sauvegarde locale impossible. Garde l’app ouverte et évite de fermer Safari tant que le stockage iPhone n’est pas disponible.',0);
   return a||b;
 }
 function parseJSON(raw){
@@ -642,12 +661,17 @@ function validDraftRavito(x){
   return true;
 }
 function loadRedundant(primary,backup,validator,fallback){
-  const first=parseJSON(safeStorageGet(primary));
+  const rawFirst=safeStorageGet(primary),first=parseJSON(rawFirst);
   if(validator(first))return first;
-  const second=parseJSON(safeStorageGet(backup));
+  const rawSecond=safeStorageGet(backup),second=parseJSON(rawSecond);
   if(validator(second)){
-    try{safeStorageSet(primary,JSON.stringify(second))}catch(_){}
+    safeStorageSet(primary,JSON.stringify(second));
+    if(rawFirst)showAppNotice('Une sauvegarde locale était illisible. La copie de secours a été restaurée.');
     return second;
+  }
+  if(rawFirst||rawSecond){
+    safeStorageSet(primary,null);safeStorageSet(backup,null);
+    showAppNotice('Une sauvegarde locale illisible a été écartée. Le reste de l’app continue normalement.');
   }
   return fallback;
 }
@@ -991,7 +1015,7 @@ document.querySelectorAll(".day").forEach(b=>b.addEventListener("click",()=>setA
 
 document.getElementById("calcBtn").addEventListener("click",()=>{
   const lat=Number(document.getElementById("lat").value), lon=Number(document.getElementById("lon").value);
-  if(!Number.isFinite(lat)||!Number.isFinite(lon)) return alert("Coordonnées invalides.");
+  if(!Number.isFinite(lat)||!Number.isFinite(lon)){document.getElementById("status").textContent="Coordonnées invalides. Vérifie latitude et longitude.";return}
   document.getElementById("status").textContent="Projection sur la trace…";
   setTimeout(()=>{
     const p=projectGps(lat,lon);
@@ -1000,25 +1024,41 @@ document.getElementById("calcBtn").addEventListener("click",()=>{
   },20);
 });
 
+function gpsErrorMessage(err){
+  if(err?.code===1)return "Accès GPS refusé. Autorise la localisation dans les réglages, ou utilise le km simulé.";
+  if(err?.code===2)return "Position GPS indisponible. Réessaie dehors ou utilise le km simulé.";
+  if(err?.code===3)return "Le GPS met trop de temps à répondre. Réessaie ou utilise le km simulé.";
+  return "GPS indisponible. Utilise le km simulé ou les coordonnées manuelles.";
+}
 document.getElementById("gpsBtn").addEventListener("click",()=>{
+  const status=document.getElementById("status");
   if(!navigator.geolocation){
-    document.getElementById("status").textContent="Géolocalisation non disponible dans ce navigateur.";
+    status.textContent="GPS non disponible. Utilise le km simulé ou les coordonnées manuelles.";
     return;
   }
-  document.getElementById("status").textContent="Recherche de la position…";
+  status.textContent="Recherche de la position…";
   navigator.geolocation.getCurrentPosition(pos=>{
-    const lat=pos.coords.latitude, lon=pos.coords.longitude;
+    const lat=pos.coords.latitude,lon=pos.coords.longitude,accuracy=Number(pos.coords.accuracy)||9999;
     document.getElementById("lat").value=lat.toFixed(6);
     document.getElementById("lon").value=lon.toFixed(6);
-    document.getElementById("status").textContent="Projection sur la trace…";
+    if(accuracy>150){
+      status.textContent="GPS trop imprécis (±"+Math.round(accuracy)+" m). Réessaie ou utilise le km simulé.";
+      return;
+    }
+    status.textContent="Projection sur la trace…";
     setTimeout(()=>{
       const p=projectGps(lat,lon);
-      document.getElementById("status").textContent="Position projetée : E"+p.stage+" · km "+p.km.toFixed(2);
+      if(!p){status.textContent="Impossible de projeter cette position sur la trace.";return}
+      if(p.distanceMeters>750){
+        status.textContent="Tu sembles à "+(p.distanceMeters/1000).toFixed(1).replace(".",",")+" km de la trace. Position non utilisée : réessaie ou saisis ton km.";
+        return;
+      }
+      const quality=accuracy>60?"GPS ±"+Math.round(accuracy)+" m · ":"";
+      const offset=p.distanceMeters>150?" · "+Math.round(p.distanceMeters)+" m de la trace":"";
+      status.textContent=quality+"Position : E"+p.stage+" · km "+p.km.toFixed(2)+offset;
       show(p.km,p.stage,p.distanceMeters);
     },20);
-  },err=>{
-    document.getElementById("status").textContent="GPS refusé ou indisponible ici. Utilise les coordonnées manuelles.";
-  },{enableHighAccuracy:true,timeout:10000,maximumAge:30000});
+  },err=>{status.textContent=gpsErrorMessage(err)},{enableHighAccuracy:true,timeout:12000,maximumAge:15000});
 });
 
 function simulateStoreKm(){
@@ -1236,17 +1276,19 @@ async function searchWater(origin,context=''){
 }
 function locateWater(){
   if(!navigator.geolocation){
-    waterStatus.textContent='Position GPS indisponible.';
+    waterStatus.textContent='GPS non disponible. Utilise le km simulé juste dessous.';
     return;
   }
   waterStatus.textContent='Recherche de la position…';
   waterGpsBtn.disabled=true;
   navigator.geolocation.getCurrentPosition(position=>{
-    searchWater({lat:position.coords.latitude,lon:position.coords.longitude});
-  },()=>{
-    waterStatus.textContent='Impossible de récupérer la position.';
+    const accuracy=Number(position.coords.accuracy)||9999;
+    const context=accuracy>150?'GPS imprécis ±'+Math.round(accuracy)+' m · ':accuracy>60?'GPS ±'+Math.round(accuracy)+' m · ':'';
+    searchWater({lat:position.coords.latitude,lon:position.coords.longitude},context);
+  },err=>{
+    waterStatus.textContent=typeof gpsErrorMessage==='function'?gpsErrorMessage(err):'GPS indisponible. Utilise le km simulé.';
     waterGpsBtn.disabled=false;
-  },{enableHighAccuracy:true,timeout:12000,maximumAge:30000});
+  },{enableHighAccuracy:true,timeout:12000,maximumAge:15000});
 }
 waterGpsBtn?.addEventListener('click',locateWater);
 
