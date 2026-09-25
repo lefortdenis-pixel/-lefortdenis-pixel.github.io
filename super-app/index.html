@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.155 hors ligne</title>
+<title>Traversée 2027 · v1.156 hors ligne</title>
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -499,6 +499,49 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
   .fieldOptions>summary{min-height:46px}
   .gpsBtn,.waterGpsBtn,.continueBtn,.waterKmBtn,.secondary,.day{min-height:48px}
   .waterItem{min-height:68px}
+}
+
+
+/* v1.156 — eau plus légère */
+.waterStatus{
+  font-size:11px;
+  line-height:1.38;
+  font-weight:650;
+  color:#777b75;
+}
+.waterList{gap:8px}
+.waterItem{
+  min-height:0;
+  display:block;
+  padding:11px 13px 10px;
+  border-radius:17px;
+}
+.waterDistance{
+  margin-bottom:4px;
+  font-size:12px;
+  line-height:1.25;
+  font-weight:800;
+  letter-spacing:-.01em;
+}
+.waterName{
+  font-size:15px;
+  line-height:1.12;
+  font-weight:800;
+  letter-spacing:-.015em;
+}
+.waterDesc{
+  margin-top:4px;
+  font-size:10.5px;
+  line-height:1.28;
+  font-weight:600;
+  color:#7a7d76;
+}
+.waterRoute{display:none!important}
+@media(max-width:390px){
+  .waterItem{padding:10px 12px 9px}
+  .waterDistance{font-size:11.5px}
+  .waterName{font-size:14px}
+  .waterDesc{font-size:10px}
 }
 
 </style>
@@ -1327,15 +1370,33 @@ function waterRouteLabel(point){
   const off=point.offRouteMeters<=40?'sur la trace':(point.offRouteMeters>=1000?(point.offRouteMeters/1000).toFixed(1).replace('.',',')+' km':Math.round(point.offRouteMeters/10)*10+' m')+' hors trace';
   return direction+' · '+off;
 }
+function cleanWaterName(value){
+  let name=String(value||'Point d’eau').trim();
+  name=name.replace(/\s+\d+(?:[.,]\d+)?$/,'').trim();
+  const upper=name.toUpperCase();
+  if(upper==='CIMETIERE'||upper==='CIMETIÈRE')return 'Cimetière';
+  if(upper==='TOILETTES PUBLIQUES')return 'Toilettes publiques';
+  if(upper==='ROBINET')return 'Robinet';
+  if(upper==='FONTAINE')return 'Fontaine';
+  return /^[A-ZÀ-ÖØ-Þ0-9 '\-]+$/.test(name)&&name.length>3?name.charAt(0)+name.slice(1).toLowerCase():name;
+}
+function cleanWaterDescription(value){
+  return String(value||'')
+    .replace(/\s+-\s+/g,' · ')
+    .replace(/\s+vers\s+/i,' · vers ')
+    .replace(/km\s+(\d+)\.(\d+)/gi,'km $1,$2')
+    .trim();
+}
 function renderWater(points){
   if(!points.length){
     waterList.innerHTML='<div class="waterEmpty">Aucun point trouvé autour de cette position.</div>';
     return;
   }
   waterList.innerHTML=points.map(point=>{
-    const description=point.description?'<div class="waterDesc">'+waterEscape(point.description)+'</div>':'';
-    const route='https://maps.apple.com/?daddr='+encodeURIComponent(point.lat+','+point.lon)+'&dirflg=w';
-    return '<article class="waterItem"><div class="waterItemText"><div class="waterDistance">'+waterEscape(waterRouteLabel(point))+'</div><div class="waterName">'+waterEscape(point.name)+'</div>'+description+'</div><a class="waterRoute" href="'+route+'" target="_blank" rel="noopener">Plans</a></article>';
+    const name=cleanWaterName(point.name);
+    const desc=cleanWaterDescription(point.description);
+    const description=desc?'<div class="waterDesc">'+waterEscape(desc)+'</div>':'';
+    return '<article class="waterItem"><div class="waterItemText"><div class="waterDistance">'+waterEscape(waterRouteLabel(point))+'</div><div class="waterName">'+waterEscape(name)+'</div>'+description+'</div></article>';
   }).join('');
 }
 async function searchWater(origin,context='',originKm=null){
