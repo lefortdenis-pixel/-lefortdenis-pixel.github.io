@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.159 hors ligne</title>
+<title>Traversée 2027 · v1.160 hors ligne</title>
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -1906,8 +1906,8 @@ function startNewRavitoFromSaved(){
   if(!savedMode)return;
   startNewRavito(d,savedNextState);
 }
-function makeSavedSnapshot(displayRavitoCount,displaySingleSnackToggle){
-  const finalSim=simulate(plan),nextSuggestions=Object.entries(finalSim.leftovers).filter(([id,g])=>PRODUCTS[id]&&g>=Math.max(20,PRODUCTS[id].pack*.15)).map(([id])=>id);
+function makeSavedSnapshot(displayRavitoCount,displaySingleSnackToggle,finalSim=simulate(plan)){
+  const nextSuggestions=Object.entries(finalSim.leftovers).filter(([id,g])=>PRODUCTS[id]&&g>=Math.max(20,PRODUCTS[id].pack*.15)).map(([id])=>id);
   return {
     version:5,
     id:'ravito-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
@@ -2153,31 +2153,32 @@ function candidatePlans(start,avoid=null){
   }
   return beam
 }
+function repeatPlanPenalty(days,previous){
+  if(!previous?.length)return 0;
+  const ids=new Set(previous.map(x=>x.idx));
+  const titles={
+    b:new Set(previous.map(x=>x.b.title)),
+    l:new Set(previous.map(x=>x.l.title)),
+    d:new Set(previous.map(x=>x.d.title))
+  };
+  let penalty=0;
+  for(const day of days){
+    if(ids.has(day.idx))penalty+=180;
+    for(const slot of ['b','l','d'])if(titles[slot].has(day[slot].title))penalty+=70
+  }
+  return penalty
+}
 function buildPlan(start=rotationCursor,previous=null){
   proposalStart=((Number(start)||0)%DAYS.length+DAYS.length)%DAYS.length;
-  const strictAvoid=previous?.length?{
-    ids:new Set(previous.map(x=>x.idx)),
-    titles:{
-      b:new Set(previous.map(x=>x.b.title)),
-      l:new Set(previous.map(x=>x.l.title)),
-      d:new Set(previous.map(x=>x.d.title))
-    }
-  }:null;
-  const strictCandidates=candidatePlans(proposalStart,strictAvoid);
-  const idOnlyCandidates=previous?.length?candidatePlans(proposalStart,{ids:strictAvoid.ids,titles:{}}):strictCandidates;
-  const freeCandidates=previous?.length?candidatePlans(proposalStart):strictCandidates;
-  let candidates=strictCandidates.length?strictCandidates:(idOnlyCandidates.length?idOnlyCandidates:freeCandidates);
+  const candidates=candidatePlans(proposalStart);
   if(!candidates.length){plan=[];toast('Aucun menu compatible.');return}
-
-  candidates.sort((a,b)=>planScore(a,proposalStart)-planScore(b,proposalStart));
-
-  /* La rotation reste une préférence, jamais un plafond de poids ou une
-     interdiction de repas. Un jour plus lourd reste donc accessible. */
-  const bestScore=planScore(candidates[0],proposalStart);
-  const anchored=candidates.filter(days=>days[0]?.idx===proposalStart&&planScore(days,proposalStart)<=bestScore+450);
-  const pool=anchored.length?anchored:candidates;
-  const shortlist=pool.slice(0,Math.min(14,pool.length));
-  const selected=shortlist[proposalSerial%shortlist.length];
+  candidates.sort((a,b)=>
+    (planScore(a,proposalStart)+repeatPlanPenalty(a,previous))
+    -(planScore(b,proposalStart)+repeatPlanPenalty(b,previous))
+  );
+  /* La variété est seulement une préférence. On prend la meilleure proposition
+     globale, plutôt que d'imposer une rotation qui ferait gonfler le sac. */
+  const selected=candidates[0];
   plan=selected.map(x=>({idx:x.idx,...clone(DAYS[x.idx])}));
   render();scheduleDraftSave()
 }
@@ -2321,9 +2322,10 @@ function validate(){
   clearDraftAutosave();
   const displayRavitoCount=ravitoCount;
   const displaySingleSnackToggle=clone(singleSnackToggle);
+  const finalSim=simulate(plan);
   if(d===1){const idx=snackOverride==null?ravitoCount%SNACK_PACKS.length:snackOverride;singleSnackToggle[idx]=((Number(singleSnackToggle[idx])||0)+1)%2}
   rotationCursor=nextRotationStart(plan);ravitoCount++;
-  const saved=makeSavedSnapshot(displayRavitoCount,displaySingleSnackToggle);
+  const saved=makeSavedSnapshot(displayRavitoCount,displaySingleSnackToggle,finalSim);
   loadedSavedId=saved.id;
   savedNextState=clone(saved.nextState||{});
   setSavedMode(true);
