@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.158 hors ligne</title>
+<title>Traversée 2027 · v1.159 hors ligne</title>
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -1659,8 +1659,8 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 .allDaysMode .allDaysSnacks{min-width:0;display:flex;align-items:center;gap:6px}.allDaysMode .allDaysSnacks>span{font-size:17px}.allDaysMode .allDaysSnacks small{display:block;font-size:8px;line-height:1;color:#b9bbb4;font-weight:900;letter-spacing:.08em;margin-bottom:3px}.allDaysMode .allDaysSnacks b{display:block;font-size:11.5px;line-height:1.08;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .allDaysMode .allDaysSnacks{width:100%}.allDaysMode .allDaysSnacks small{color:#98631d!important}
 .allDaysMode .deck[data-days="3"] .daycard h1,.allDaysMode .deck[data-days="4"] .daycard h1{font-size:20px!important;margin-bottom:4px!important}.allDaysMode .deck[data-days="3"] .meal b,.allDaysMode .deck[data-days="4"] .meal b{font-size:12px!important}
-.allDaysMode #menuNav{grid-template-columns:.72fr 1fr 1.28fr!important}.allDaysMode #prevDayBtn,.allDaysMode #nextDayBtn{display:none!important}
-.allDaysMode #leftoverGlobalBtn{display:block!important;background:#e9f7e4!important;color:#397033!important}.allDaysMode #allDaysChangeBtn{display:block!important;background:#fff0d2!important;color:#a64c0c!important}.allDaysMode.saved-mode #leftoverGlobalBtn,.allDaysMode.saved-mode #allDaysChangeBtn{display:none!important}.allDaysMode.saved-mode #menuNav{grid-template-columns:1fr!important}
+.allDaysMode #menuNav{grid-template-columns:1fr 1.28fr!important}.allDaysMode #prevDayBtn,.allDaysMode #nextDayBtn{display:none!important}
+.allDaysMode #allDaysChangeBtn{display:block!important;background:#fff0d2!important;color:#a64c0c!important}.allDaysMode.saved-mode #allDaysChangeBtn{display:none!important}.allDaysMode.saved-mode #menuNav{grid-template-columns:1fr!important}
 .allDaysMode .bottomNav{position:fixed!important;left:0!important;right:0!important;bottom:0!important;transform:none!important;width:100%!important;max-width:none!important;margin:0!important;padding:6px 7px calc(6px + env(safe-area-inset-bottom))!important;border-radius:18px 18px 0 0!important}
 .allDaysMode .navgrid button{min-height:45px!important}
 .allDaysMode.saved-mode #menus{padding-top:82px!important}
@@ -1709,7 +1709,6 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 <div id="bottomNav" class="bottomNav hide">
   <div id="menuNav" class="navgrid">
     <button id="prevDayBtn" onclick="setDeckIndex(-1)">Jour 1</button>
-    <button id="leftoverGlobalBtn" class="hide" onclick="openGlobalLeftovers()">♻️ Restes</button>
     <button id="allDaysChangeBtn" class="hide" onclick="alternateProposal()">↻ Changer les 2 jours</button>
     <button id="shopViewBtn" class="main" onclick="showShopView()">🛒 Voir les courses</button>
     <button id="nextDayBtn" onclick="setDeckIndex(1)">Jour 2 →</button>
@@ -1722,48 +1721,48 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 </div>`;
 
 const PRODUCTS={
-  brio:{name:'Brioche tranchée',pack:500,kcal:360,unit:'paquet',format:'500 g',snackable:true},
-  mad:{name:'Madeleines',pack:250,kcal:430,unit:'paquet',format:'250 g',snackable:true},
-  mue:{name:'Muesli',pack:375,kcal:450,unit:'paquet',format:'375 g'},
-  milk:{name:'Lait en poudre entier',pack:300,kcal:508,unit:'paquet',format:'300 g',staple:true},
-  quart:{name:'Quatre-quarts',pack:250,kcal:430,unit:'paquet',format:'250 g',snackable:true},
-  painl:{name:'Pains au lait',pack:350,kcal:360,unit:'paquet',format:'350 g',snackable:true},
-  marb:{name:'Marbré',pack:250,kcal:430,unit:'paquet',format:'250 g',snackable:true},
-  sab:{name:'Biscuits sablés',pack:200,kcal:470,unit:'paquet',format:'200 g',snackable:true},
-  cho:{name:'Chocolat en tablette',pack:100,kcal:591,unit:'tablette',format:'100 g',snackable:true},
-  coffee:{name:'Café soluble',pack:20,kcal:0,unit:'boîte',format:'10 sticks',staple:true},
-  cra:{name:'Crackers',pack:150,kcal:436,unit:'paquet',format:'150 g'},
-  chip:{name:'Chips nature',pack:150,kcal:530,unit:'sachet',format:'150 g'},
-  sauc:{name:'Saucisson sec',pack:100,kcal:418,unit:'saucisson',format:'100 g'},
-  cheese:{name:'Fromage',pack:200,kcal:400,unit:'paquet',format:'200 g'},
-  tort:{name:'Tortillas',pack:192,kcal:315,unit:'paquet',format:'≈ 192 g'},
-  pate:{name:'Pâté / terrine',pack:78,kcal:320,unit:'portion',format:'≈ 78 g'},
-  painmie:{name:'Pain de mie',pack:500,kcal:265,unit:'paquet',format:'500 g'},
-  baguette:{name:'Baguette',pack:250,kcal:280,unit:'baguette',format:'≈ 250 g'},
-  knacki:{name:'Saucisses type Knacki',pack:140,kcal:280,unit:'paquet',format:'≈ 140 g'},
-  lent:{name:'Lentilles en conserve',pack:130,kcal:90,unit:'boîte',format:'≈ 130 g égouttés'},
-  chick:{name:'Pois chiches en conserve',pack:265,kcal:130,unit:'boîte',format:'≈ 265 g égouttés'},
-  redbean:{name:'Haricots rouges en conserve',pack:130,kcal:105,unit:'boîte',format:'≈ 130 g égouttés'},
-  corn:{name:'Maïs en conserve',pack:140,kcal:82,unit:'boîte',format:'≈ 140 g égouttés'},
-  noui:{name:'Nouilles instantanées',pack:85,kcal:450,unit:'sachet',format:'85 g'},
-  pur:{name:'Purée en flocons',pack:125,kcal:346,unit:'paquet',format:'125 g'},
-  pas:{name:'Pâtes cuisson rapide',pack:250,kcal:364,unit:'paquet',format:'250 g'},
-  soup:{name:'Soupe déshydratée',pack:60,kcal:340,unit:'sachet',format:'≈ 60 g'},
-  tom:{name:'Concentré de tomate en tube',pack:130,kcal:100,unit:'tube',format:'130 g',staple:true},
-  oil:{name:"Huile d'olive",pack:230,kcal:884,unit:'flacon',format:'230 g',staple:true},
-  pfruit:{name:'Pâte de fruits',pack:150,kcal:330,unit:'paquet',format:'150 g',snackable:true},
-  pea:{name:'Cacahuètes',pack:150,kcal:600,unit:'paquet',format:'150 g',snackable:true},
-  bars:{name:'Barres céréalières',pack:125,kcal:444,unit:'boîte',format:'125 g',snackable:true},
-  almond:{name:"Pâte d'amande",pack:200,kcal:450,unit:'paquet',format:'200 g',snackable:true},
-  carrot:{name:'Carotte crue',pack:100,kcal:41,unit:'carotte',format:'≈ 100 g / pièce',snackable:true},
-  riceReady:{name:'Riz précuit en sachet',pack:250,kcal:150,unit:'sachet',format:'250 g'},
-  quinoaReady:{name:'Quinoa aux légumes précuit',pack:250,kcal:145,unit:'sachet',format:'250 g'}
-  ,ravioliCan:{name:'Ravioli en conserve',pack:800,kcal:95,unit:'boîte',format:'800 g'}
-  ,cassouletCan:{name:'Cassoulet en conserve',pack:840,kcal:125,unit:'boîte',format:'≈ 840 g'}
-  ,lentSausCan:{name:'Lentilles-saucisses en conserve',pack:800,kcal:115,unit:'boîte',format:'800 g'}
-  ,chiliCan:{name:'Chili con carne en conserve',pack:420,kcal:115,unit:'boîte',format:'≈ 420 g'}
-  ,couscousCan:{name:'Couscous en conserve',pack:800,kcal:110,unit:'boîte',format:'800 g'}
-  ,petitSaleCan:{name:'Petit salé aux lentilles en conserve',pack:800,kcal:120,unit:'boîte',format:'800 g'}
+  brio:{name:'Brioche tranchée',pack:500,unit:'paquet',format:'500 g',snackable:true},
+  mad:{name:'Madeleines',pack:250,unit:'paquet',format:'250 g',snackable:true},
+  mue:{name:'Muesli',pack:375,unit:'paquet',format:'375 g'},
+  milk:{name:'Lait en poudre entier',pack:300,unit:'paquet',format:'300 g',staple:true},
+  quart:{name:'Quatre-quarts',pack:250,unit:'paquet',format:'250 g',snackable:true},
+  painl:{name:'Pains au lait',pack:350,unit:'paquet',format:'350 g',snackable:true},
+  marb:{name:'Marbré',pack:250,unit:'paquet',format:'250 g',snackable:true},
+  sab:{name:'Biscuits sablés',pack:200,unit:'paquet',format:'200 g',snackable:true},
+  cho:{name:'Chocolat en tablette',pack:100,unit:'tablette',format:'100 g',snackable:true},
+  coffee:{name:'Café soluble',pack:20,unit:'boîte',format:'10 sticks',staple:true},
+  cra:{name:'Crackers',pack:150,unit:'paquet',format:'150 g'},
+  chip:{name:'Chips nature',pack:150,unit:'sachet',format:'150 g'},
+  sauc:{name:'Saucisson sec',pack:100,unit:'saucisson',format:'100 g'},
+  cheese:{name:'Fromage',pack:200,unit:'paquet',format:'200 g'},
+  tort:{name:'Tortillas',pack:192,unit:'paquet',format:'≈ 192 g'},
+  pate:{name:'Pâté / terrine',pack:78,unit:'portion',format:'≈ 78 g'},
+  painmie:{name:'Pain de mie',pack:500,unit:'paquet',format:'500 g'},
+  baguette:{name:'Baguette',pack:250,unit:'baguette',format:'≈ 250 g'},
+  knacki:{name:'Saucisses type Knacki',pack:140,unit:'paquet',format:'≈ 140 g'},
+  lent:{name:'Lentilles en conserve',pack:130,unit:'boîte',format:'≈ 130 g égouttés'},
+  chick:{name:'Pois chiches en conserve',pack:265,unit:'boîte',format:'≈ 265 g égouttés'},
+  redbean:{name:'Haricots rouges en conserve',pack:130,unit:'boîte',format:'≈ 130 g égouttés'},
+  corn:{name:'Maïs en conserve',pack:140,unit:'boîte',format:'≈ 140 g égouttés'},
+  noui:{name:'Nouilles instantanées',pack:85,unit:'sachet',format:'85 g'},
+  pur:{name:'Purée en flocons',pack:125,unit:'paquet',format:'125 g'},
+  pas:{name:'Pâtes cuisson rapide',pack:250,unit:'paquet',format:'250 g'},
+  soup:{name:'Soupe déshydratée',pack:60,unit:'sachet',format:'≈ 60 g'},
+  tom:{name:'Concentré de tomate en tube',pack:130,unit:'tube',format:'130 g',staple:true},
+  oil:{name:"Huile d'olive",pack:230,unit:'flacon',format:'230 g',staple:true},
+  pfruit:{name:'Pâte de fruits',pack:150,unit:'paquet',format:'150 g',snackable:true},
+  pea:{name:'Cacahuètes',pack:150,unit:'paquet',format:'150 g',snackable:true},
+  bars:{name:'Barres céréalières',pack:125,unit:'boîte',format:'125 g',snackable:true},
+  almond:{name:"Pâte d'amande",pack:200,unit:'paquet',format:'200 g',snackable:true},
+  carrot:{name:'Carotte crue',pack:100,unit:'carotte',format:'≈ 100 g / pièce',snackable:true},
+  riceReady:{name:'Riz précuit en sachet',pack:250,unit:'sachet',format:'250 g'},
+  quinoaReady:{name:'Quinoa aux légumes précuit',pack:250,unit:'sachet',format:'250 g'}
+  ,ravioliCan:{name:'Ravioli en conserve',pack:800,unit:'boîte',format:'800 g'}
+  ,cassouletCan:{name:'Cassoulet en conserve',pack:840,unit:'boîte',format:'≈ 840 g'}
+  ,lentSausCan:{name:'Lentilles-saucisses en conserve',pack:800,unit:'boîte',format:'800 g'}
+  ,chiliCan:{name:'Chili con carne en conserve',pack:420,unit:'boîte',format:'≈ 420 g'}
+  ,couscousCan:{name:'Couscous en conserve',pack:800,unit:'boîte',format:'800 g'}
+  ,petitSaleCan:{name:'Petit salé aux lentilles en conserve',pack:800,unit:'boîte',format:'800 g'}
 };
 // Les produits humides / très périssables ne reportent pas un fond de paquet ouvert au ravito suivant.
 // Un conditionnement entier non ouvert peut en revanche rester dans le stock.
@@ -1846,7 +1845,7 @@ const CANNED_DAYS=[
 CANNED_DAYS.forEach((day,i)=>DAYS.splice(3+i*5,0,day));
 const SNACK_PACKS=[['cho','pfruit'],['pea','bars'],['almond','sab'],['carrot','cho'],['pfruit','pea'],['bars','almond'],['sab','carrot']];
 const SNACK_TARGET_PER_DAY=165;
-let d=2,plan=null,rotationCursor=0,proposalStart=0,proposalSerial=0,ravitoCount=0,settingsOpen=false,checkedShop={},resolvedEquivalent={},replacementMeals={},replacementProducts={},leftoverMeals={},singleSnackToggle=Array(SNACK_PACKS.length).fill(0),snackOverride=null,pendingUnavailable=null,currentDayIndex=0,currentView='prep',shopScrollTop=0,savedMode=false,archivedMode=false,savedNextState=null,loadedSavedId=null;
+let d=2,plan=null,rotationCursor=0,proposalStart=0,proposalSerial=0,ravitoCount=0,settingsOpen=false,checkedShop={},resolvedEquivalent={},replacementMeals={},replacementProducts={},leftoverMeals={},bagStock={},singleSnackToggle=Array(SNACK_PACKS.length).fill(0),snackOverride=null,pendingUnavailable=null,currentDayIndex=0,currentView='prep',shopScrollTop=0,savedMode=false,archivedMode=false,savedNextState=null,loadedSavedId=null;
 let unavailableOptions=[],unavailableOptionIndex=0,unavailableProductId=null,unavailableBox=null;
 let dayActionIndex=0,leftoverOptions=[],leftoverOptionIndex=0,leftoverProductId=null,suggestedLeftovers=[],selectedLeftoverIds=[],leftoverQueue=[],leftoverPickerShowAll=false;
 const menuRoot=document.getElementById('menuHost').shadowRoot;
@@ -1863,7 +1862,7 @@ function clone(o){try{return typeof structuredClone==='function'?structuredClone
 let draftTimer=0;
 function makeDraftSnapshot(){
   if(savedMode||archivedMode||!plan||!plan.length)return null;
-  return {version:7,updatedAt:Date.now(),savedMode:false,d,plan:clone(plan),rotationCursor,proposalStart,proposalSerial,ravitoCount,checkedShop:clone(checkedShop),resolvedEquivalent:clone(resolvedEquivalent),replacementMeals:clone(replacementMeals),replacementProducts:clone(replacementProducts),leftoverMeals:clone(leftoverMeals),suggestedLeftovers:clone(suggestedLeftovers),singleSnackToggle:clone(singleSnackToggle),snackOverride,currentDayIndex,currentView:currentView==='shop'?'shop':'menus',shopScrollTop:Math.max(0,shopScrollTop||0)};
+  return {version:8,updatedAt:Date.now(),savedMode:false,d,plan:clone(plan),rotationCursor,proposalStart,proposalSerial,ravitoCount,checkedShop:clone(checkedShop),resolvedEquivalent:clone(resolvedEquivalent),replacementMeals:clone(replacementMeals),replacementProducts:clone(replacementProducts),leftoverMeals:clone(leftoverMeals),bagStock:clone(bagStock),suggestedLeftovers:clone(suggestedLeftovers),singleSnackToggle:clone(singleSnackToggle),snackOverride,currentDayIndex,currentView:currentView==='shop'?'shop':'menus',shopScrollTop:Math.max(0,shopScrollTop||0)};
 }
 function scheduleDraftSave(immediate=false){
   if(savedMode||archivedMode||!plan||!plan.length)return;
@@ -1878,7 +1877,7 @@ function restoreDraft(data){
   clearTimeout(draftTimer);
   setSavedMode(false);archivedMode=false;savedNextState=null;loadedSavedId=null;
   d=Math.max(1,Math.min(4,Number(data.d)||data.plan.length));plan=clone(data.plan);rotationCursor=Number(data.rotationCursor)||0;proposalStart=Number(data.proposalStart)||rotationCursor;proposalSerial=Number(data.proposalSerial)||0;ravitoCount=Number(data.ravitoCount)||0;
-  checkedShop=clone(data.checkedShop||{});resolvedEquivalent=clone(data.resolvedEquivalent||{});replacementMeals=clone(data.replacementMeals||{});replacementProducts=clone(data.replacementProducts||{});leftoverMeals=clone(data.leftoverMeals||{});suggestedLeftovers=clone(data.suggestedLeftovers||[]);
+  checkedShop=clone(data.checkedShop||{});resolvedEquivalent=clone(data.resolvedEquivalent||{});replacementMeals=clone(data.replacementMeals||{});replacementProducts=clone(data.replacementProducts||{});leftoverMeals=clone(data.leftoverMeals||{});bagStock=clone(data.bagStock||{});suggestedLeftovers=clone(data.suggestedLeftovers||[]);
   singleSnackToggle=clone(data.singleSnackToggle||Array(SNACK_PACKS.length).fill(0));snackOverride=data.snackOverride==null?null:data.snackOverride;currentDayIndex=Math.max(0,Math.min(plan.length-1,Number(data.currentDayIndex)||0));currentView=data.currentView==='shop'?'shop':'menus';shopScrollTop=Math.max(0,Number(data.shopScrollTop)||0);settingsOpen=false;pendingUnavailable=null;
   render();if(currentView==='shop')showShopView(true);else showMenuView();
 }
@@ -1908,24 +1907,26 @@ function startNewRavitoFromSaved(){
   startNewRavito(d,savedNextState);
 }
 function makeSavedSnapshot(displayRavitoCount,displaySingleSnackToggle){
-  const finalSim=simulate(plan),nextSuggestions=Object.entries(finalSim.leftovers).filter(([id,g])=>PRODUCTS[id]&&!PRODUCTS[id].staple&&!NO_PARTIAL_CARRY.has(id)&&g>=Math.max(20,PRODUCTS[id].pack*.15)).map(([id])=>id);
+  const finalSim=simulate(plan),nextSuggestions=Object.entries(finalSim.leftovers).filter(([id,g])=>PRODUCTS[id]&&g>=Math.max(20,PRODUCTS[id].pack*.15)).map(([id])=>id);
   return {
-    version:4,
+    version:5,
     id:'ravito-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
     plan:clone(plan),d,
     snackOverride,
     replacementMeals:clone(replacementMeals),
     replacementProducts:clone(replacementProducts),
     leftoverMeals:clone(leftoverMeals),
+    startStock:clone(bagStock),
     displayRavitoCount,
     displaySingleSnackToggle:clone(displaySingleSnackToggle),
-    nextState:{ravitoCount,rotationCursor,proposalStart,singleSnackToggle:clone(singleSnackToggle),suggestedLeftovers:nextSuggestions}
+    nextState:{ravitoCount,rotationCursor,proposalStart,singleSnackToggle:clone(singleSnackToggle),suggestedLeftovers:nextSuggestions,carryStock:clone(finalSim.leftovers)}
   }
 }
 function allDaysSummaryHtml(sim,withChange){
   const snacks=sim.snackIds.map(id=>PRODUCTS[id].name).join(' · ');
   return '<div class="allDaysSummary">'
-    +'<div class="allDaysSnacks"><span>🍫</span><div><small>SNACKS</small><b>'+snacks+'</b></div></div>'
+    +'<div class="allDaysSnacks"><span>🍫</span><div><small>ENCAS</small><b>'+snacks+'</b></div></div>'
+    +'<div class="allDaysSnacks"><span>🎒</span><div><small>AU DÉPART</small><b>'+formatWeight(sim.startWeight)+' · achats '+formatWeight(sim.buyWeight)+'</b></div></div>'
     +'</div>';
 }
 function renderSavedMenusOnly(){
@@ -1933,10 +1934,10 @@ function renderSavedMenusOnly(){
   menuApp.classList.add('allDaysMode');
   $('innerReset').classList.remove('hide');
   const sim=simulate(plan);
-  $('topWeight').textContent='Achats '+formatWeight(sim.buyWeight);
+  $('topWeight').textContent='Dans le sac '+formatWeight(sim.startWeight);
   $('allDaysChangeBtn').textContent=plan.length===1?'↻ Changer la journée':'↻ Changer les '+plan.length+' jours';
   currentDayIndex=Math.max(0,Math.min(currentDayIndex,plan.length-1));
-  $('planSummary').innerHTML=formatWeight(sim.buyWeight);
+  $('planSummary').innerHTML=formatWeight(sim.startWeight);
   $('summaryWrap').classList.remove('hide');
   $('ml').dataset.days=String(plan.length);
   $('ml').innerHTML=plan.map((x,i)=>{
@@ -1949,7 +1950,7 @@ function renderSavedMenusOnly(){
       +'<div class="meal"><div class="mealIcon dinner">🍜</div><div><div class="mealHead"><small>DÎNER</small>'+mealBadge(i,'d')+sameDayMealBadge(x,'d')+'</div><b>'+x.d.title+'</b>'+(x.d.detail?'<span>'+x.d.detail+'</span>':'')+'</div></div>'
       +'</div>'
       +'<div class="snackMini">🍫 <div><small>SNACKS</small><b>'+sim.snackIds.map(id=>PRODUCTS[id].name).join(' · ')+'</b></div></div>'
-      +'<div class="weightBox"><span>POIDS ESTIMÉ DES ACHATS</span><b>'+formatWeight(sim.buyWeight)+'</b></div>'
+      +'<div class="weightBox"><span>NOURRITURE DE LA JOURNÉE</span><b>'+formatWeight(dayFoodWeight(x))+'</b></div>'
       +'<div class="cardActions"><button class="changeDayBtn">↻ Changer J'+(i+1)+'</button><button class="newProposalBtn">'+(plan.length===1?'↻ Changer la journée':'↻ Changer les '+plan.length+' jours')+'</button></div>'
       +'</article>'
   }).join('')+allDaysSummaryHtml(sim,false);
@@ -1983,6 +1984,7 @@ function openSavedRavito(data,archived=false){
   replacementMeals=clone(data.replacementMeals||{});
   replacementProducts=clone(data.replacementProducts||{});
   leftoverMeals=clone(data.leftoverMeals||{});
+  bagStock=clone(data.startStock||{});
   ravitoCount=Number(data.displayRavitoCount)||0;
   singleSnackToggle=clone(data.displaySingleSnackToggle||Array(SNACK_PACKS.length).fill(0));
   checkedShop={};resolvedEquivalent={};pendingUnavailable=null;currentDayIndex=0;settingsOpen=false;currentView='menus';
@@ -1998,7 +2000,8 @@ function startNewRavito(days,state=null){
     proposalStart=Number(next.proposalStart)||rotationCursor;
     singleSnackToggle=clone(next.singleSnackToggle||Array(SNACK_PACKS.length).fill(0));
     suggestedLeftovers=clone(next.suggestedLeftovers||[]);
-  }else suggestedLeftovers=[];
+    bagStock=clone(next.carryStock||{});
+  }else{suggestedLeftovers=[];bagStock={}}
   clearDraftAutosave();
   setSavedMode(false);savedNextState=null;loadedSavedId=null;plan=null;proposalSerial=0;snackOverride=null;replacementMeals={};replacementProducts={};leftoverMeals={};checkedShop={};resolvedEquivalent={};pendingUnavailable=null;currentDayIndex=0;settingsOpen=false;currentView='prep';
   d=Math.max(1,Math.min(4,Number(days)||2));
@@ -2013,7 +2016,7 @@ function leftoverIdsAt(key){const value=leftoverMeals[key],ids=Array.isArray(val
 function leftoverCreditsFor(days){const credits={};for(const key of Object.keys(leftoverMeals)){const match=key.match(/^(\d+)-([bld])$/);if(!match)continue;const meal=days?.[Number(match[1])]?.[match[2]];for(const id of leftoverIdsAt(key)){const amount=Number(meal?.parts?.[id])||0;if(amount>0)credits[id]=(credits[id]||0)+amount}}return credits}
 function sanitizeLeftoverMeals(){for(const key of Object.keys(leftoverMeals)){const match=key.match(/^(\d+)-([bld])$/),meal=match?plan?.[Number(match[1])]?.[match[2]]:null,ids=leftoverIdsAt(key).filter(id=>meal?.parts?.[id]);if(ids.length)leftoverMeals[key]=ids;else delete leftoverMeals[key]}}
 function simulate(days,overrideSnack=snackOverride){
-  const mealNeed=mergeNeeds(days),snackNeed={},totalNeed={...mealNeed},rotationIds=snackIdsForOverride(overrideSnack),snackTarget=SNACK_TARGET_PER_DAY*d,leftoverCredits=leftoverCreditsFor(days);
+  const mealNeed=mergeNeeds(days),snackNeed={},totalNeed={...mealNeed},rotationIds=snackIdsForOverride(overrideSnack),snackTarget=SNACK_TARGET_PER_DAY*d;
   const rotatingTarget=snackTarget;
   if(rotationIds.length){
     const hasCarrot=rotationIds.includes('carrot'),denseIds=rotationIds.filter(id=>id!=='carrot');
@@ -2034,10 +2037,13 @@ function simulate(days,overrideSnack=snackOverride){
   }
   for(const [id,g] of Object.entries(snackNeed))totalNeed[id]=(totalNeed[id]||0)+g;
 
-  const inventory={...leftoverCredits},purchases={};
+  const manualCredits=leftoverCreditsFor(days),inventory={...bagStock};
+  for(const [id,g] of Object.entries(manualCredits))inventory[id]=Math.max(Number(inventory[id])||0,g);
+  const existingWeight=Object.values(inventory).reduce((a,g)=>a+(Number(g)||0),0);
+  const purchases={};
   for(const [id,need] of Object.entries(totalNeed)){
     if(need<=0)continue;
-    const p=PRODUCTS[id],available=Math.max(0,inventory[id]||0);
+    const p=PRODUCTS[id],available=Math.max(0,Number(inventory[id])||0);
     const missing=Math.max(0,need-available);
     if(missing>.001){
       const count=Math.ceil(missing/p.pack-1e-9),grams=count*p.pack;
@@ -2048,7 +2054,8 @@ function simulate(days,overrideSnack=snackOverride){
     }
   }
   const buyWeight=Object.values(purchases).reduce((a,x)=>a+x.grams,0);
-  const startWeight=Object.values(inventory).reduce((a,g)=>a+g,0);
+  const startWeight=Object.values(inventory).reduce((a,g)=>a+(Number(g)||0),0);
+  const consumedWeight=Object.values(totalNeed).reduce((a,g)=>a+(Number(g)||0),0);
   const leftovers={...inventory};
   for(const [id,need] of Object.entries(totalNeed))leftovers[id]=Math.max(0,(leftovers[id]||0)-need);
   let nonCarriedRemainder=0;
@@ -2063,9 +2070,9 @@ function simulate(days,overrideSnack=snackOverride){
     if(g<.5)delete leftovers[id];else leftovers[id]=g;
   }
   for(const x of Object.values(purchases))x.remaining=Math.max(0,leftovers[x.id]||0);
-  const carryWeight=Object.values(leftovers).reduce((a,g)=>a+g,0);
+  const carryWeight=Object.values(leftovers).reduce((a,g)=>a+(Number(g)||0),0);
   const snackIds=[...new Set([...Object.keys(snackNeed).filter(id=>snackNeed[id]>.1),...rotationIds])];
-  return {mealNeed,snackNeed,totalNeed,purchases,startWeight,buyWeight,carryWeight,leftovers,leftoverCredits,snackTarget,snackIds,snackPurchasedIds:rotationIds.slice(),nonCarriedRemainder}
+  return {mealNeed,snackNeed,totalNeed,purchases,existingWeight,startWeight,buyWeight,consumedWeight,carryWeight,leftovers,manualCredits,snackTarget,snackIds,snackPurchasedIds:rotationIds.slice(),nonCarriedRemainder}
 }
 function pluralUnit(unit,count){if(count===1)return unit;if(unit==='saucisson')return 'saucissons';return unit+'s'}
 function formatBuy(x){const p=PRODUCTS[x.id];return x.count+' '+pluralUnit(p.unit,x.count)+' · '+p.format+(x.count>1?' par unité':'')}
@@ -2103,14 +2110,27 @@ function containsProduct(day,id){return !!(day?.b?.parts?.[id]||day?.l?.parts?.[
 function isSameDayCan(day){return [...SAME_DAY_CAN_IDS].some(id=>containsProduct(day,id))}
 function dayAllowed(day,position){return !(position>0&&containsProduct(day,'baguette'))&&!(position>1&&containsProduct(day,'knacki'))&&!(position>0&&isSameDayCan(day))}
 function uniqueMealTitles(days){return ['b','l','d'].every(slot=>new Set(days.map(x=>x[slot].title)).size===days.length)}
-function dayNutrition(day){const need=dayNeed(day);let grams=0,kcal=0;for(const [id,g] of Object.entries(need)){const p=PRODUCTS[id];if(!p)continue;grams+=g;kcal+=g*p.kcal/100}return {grams:grams+SNACK_TARGET_PER_DAY,kcal:kcal+SNACK_TARGET_PER_DAY*4.7}}
-function planAllowed(days){return Array.isArray(days)&&days.length===d&&uniqueMealTitles(days)&&days.every((day,i)=>{const n=dayNutrition(day);return dayAllowed(day,i)&&n.grams>=600})}
+function dayFoodWeight(day){return Object.values(dayNeed(day)).reduce((a,g)=>a+(Number(g)||0),0)+SNACK_TARGET_PER_DAY}
+function planAllowed(days){return Array.isArray(days)&&days.length===d&&uniqueMealTitles(days)&&days.every((day,i)=>dayAllowed(day,i))}
 function planScore(days,start){
-  const sim=simulate(days),nutrition=days.map(dayNutrition);
-  let score=sim.startWeight+sim.carryWeight*1.35+sim.nonCarriedRemainder*2.2;
-  for(let i=0;i<nutrition.length;i++){const n=nutrition[i],sameDayCan=isSameDayCan(days[i]);if(n.grams<600)score+=(600-n.grams)*4;if(n.grams>800)score+=(n.grams-800)*(sameDayCan?.35:1.25);if(n.kcal<2400)score+=(2400-n.kcal)*.7;if(n.kcal>3400)score+=(n.kcal-3400)*.25}
-  score+=days.reduce((sum,x,i)=>sum+cyclicDistance(start,x.idx)*(2+i*.25),0);
-  return score;
+  const sim=simulate(days);
+  /* Ce moteur n'évalue plus la nutrition. Il privilégie simplement ce que
+     l'on porte réellement, puis les restes et les conditionnements inutiles. */
+  let score=sim.startWeight+sim.carryWeight*.70+sim.nonCarriedRemainder*1.8;
+  score+=Math.max(0,sim.startWeight-sim.consumedWeight)*.30;
+  score+=days.reduce((sum,x,i)=>sum+cyclicDistance(start,x.idx)*(5+i),0);
+  return score
+}
+function pruneCandidateBeam(entries){
+  entries.sort((a,b)=>a.quick-b.quick);
+  const kept=[],perAnchor=new Map();
+  for(const entry of entries){
+    const anchor=entry.days[0]?.idx??-1,count=perAnchor.get(anchor)||0;
+    if(count>=14)continue;
+    perAnchor.set(anchor,count+1);kept.push(entry);
+    if(kept.length>=560)break
+  }
+  return kept.map(x=>x.days)
 }
 function candidatePlans(start,avoid=null){
   let beam=[[]];
@@ -2118,17 +2138,20 @@ function candidatePlans(start,avoid=null){
     const next=[];
     for(const partial of beam){
       for(let off=0;off<DAYS.length;off++){
-        const idx=(start+off)%DAYS.length;if(partial.some(x=>x.idx===idx)||avoid?.ids?.has(idx))continue;
-        const cand={idx,...DAYS[idx]};if(avoid&&['b','l','d'].some(slot=>avoid.titles?.[slot]?.has(cand[slot].title)))continue;if(!dayAllowed(cand,position))continue;const nutrition=dayNutrition(cand);if(nutrition.grams<600)continue;
-        const trial=[...partial,cand];if(!uniqueMealTitles(trial))continue;
-        const weightPreview=simulate(trial).buyWeight;
-        const rotationPenalty=off*1.5;
-        next.push({days:trial,quick:weightPreview+rotationPenalty});
+        const idx=(start+off)%DAYS.length;
+        if(partial.some(x=>x.idx===idx)||avoid?.ids?.has(idx))continue;
+        const cand={idx,...DAYS[idx]};
+        if(avoid&&['b','l','d'].some(slot=>avoid.titles?.[slot]?.has(cand[slot].title)))continue;
+        if(!dayAllowed(cand,position))continue;
+        const trial=[...partial,cand];
+        if(!uniqueMealTitles(trial))continue;
+        const mealWeight=trial.reduce((sum,x)=>sum+dayFoodWeight(x),0);
+        next.push({days:trial,quick:mealWeight+cyclicDistance(start,trial[0].idx)*10+off})
       }
     }
-    next.sort((a,b)=>a.quick-b.quick);beam=next.slice(0,420).map(x=>x.days);
+    beam=pruneCandidateBeam(next)
   }
-  return beam;
+  return beam
 }
 function buildPlan(start=rotationCursor,previous=null){
   proposalStart=((Number(start)||0)%DAYS.length+DAYS.length)%DAYS.length;
@@ -2140,36 +2163,20 @@ function buildPlan(start=rotationCursor,previous=null){
       d:new Set(previous.map(x=>x.d.title))
     }
   }:null;
-
   const strictCandidates=candidatePlans(proposalStart,strictAvoid);
   const idOnlyCandidates=previous?.length?candidatePlans(proposalStart,{ids:strictAvoid.ids,titles:{}}):strictCandidates;
   const freeCandidates=previous?.length?candidatePlans(proposalStart):strictCandidates;
-  let candidates=[];
-
-  if(d===3){
-    /* Poids prioritaire : on assouplit progressivement la variété
-       tant qu'il faut pour conserver un ravito de moins de 3 kg. */
-    for(const pool of [strictCandidates,idOnlyCandidates,freeCandidates]){
-      const light=pool.filter(days=>simulate(days).buyWeight<3000);
-      if(light.length){candidates=light;break}
-    }
-    if(!candidates.length)candidates=freeCandidates.length?freeCandidates:(idOnlyCandidates.length?idOnlyCandidates:strictCandidates)
-  }else{
-    candidates=strictCandidates.length?strictCandidates:(idOnlyCandidates.length?idOnlyCandidates:freeCandidates)
-  }
-
+  let candidates=strictCandidates.length?strictCandidates:(idOnlyCandidates.length?idOnlyCandidates:freeCandidates);
   if(!candidates.length){plan=[];toast('Aucun menu compatible.');return}
 
-  candidates.sort((a,b)=>{
-    const wa=simulate(a).buyWeight,wb=simulate(b).buyWeight;
-    if(d===3&&Math.abs(wa-wb)>80)return wa-wb;
-    return planScore(a,proposalStart)-planScore(b,proposalStart)
-  });
+  candidates.sort((a,b)=>planScore(a,proposalStart)-planScore(b,proposalStart));
 
-  const wantSameDayCan=d<=2&&proposalSerial%3===2;
-  const canned=wantSameDayCan?candidates.filter(days=>isSameDayCan(days[0])):[];
-  const pool=canned.length?canned:candidates;
-  const shortlist=pool.slice(0,Math.min(12,pool.length));
+  /* La rotation reste une préférence, jamais un plafond de poids ou une
+     interdiction de repas. Un jour plus lourd reste donc accessible. */
+  const bestScore=planScore(candidates[0],proposalStart);
+  const anchored=candidates.filter(days=>days[0]?.idx===proposalStart&&planScore(days,proposalStart)<=bestScore+450);
+  const pool=anchored.length?anchored:candidates;
+  const shortlist=pool.slice(0,Math.min(14,pool.length));
   const selected=shortlist[proposalSerial%shortlist.length];
   plan=selected.map(x=>({idx:x.idx,...clone(DAYS[x.idx])}));
   render();scheduleDraftSave()
@@ -2180,7 +2187,18 @@ function prepareRavito(){
 }
 function alternateProposal(){if(savedMode)return;if(!plan||!confirmRebuild('Créer une nouvelle proposition'))return;const previous=clone(plan);leftoverMeals={};closeDayAction();clearShoppingState();proposalSerial++;const currentSnack=snackOverride==null?ravitoCount%SNACK_PACKS.length:Number(snackOverride);snackOverride=(currentSnack+1)%SNACK_PACKS.length;proposalStart=(proposalStart+Math.max(1,d))%DAYS.length;buildPlan(proposalStart,previous);toast('')}
 function lunchFamily(l){const t=(l&&l.title||'').toLowerCase();if(t.includes('salade'))return 'salade';if(t.includes('pâté')||t.includes('terrine'))return 'pate';if(t.includes('knacki'))return 'knacki';if(t.includes('crackers')||t.includes('chips'))return 'classique';if(t.includes('saucisson')||t.includes('charcuterie'))return 'charcuterie';return t}
-function nextDayCandidate(currentIdx,excludedIds=new Set(),currentLunchFamily='',position=0){const choices=[];for(let off=1;off<=DAYS.length;off++){const idx=(currentIdx+off)%DAYS.length;if(plan.some(x=>x.idx===idx))continue;const cand={idx,...clone(DAYS[idx])},n=dayNeed(cand);if([...excludedIds].some(id=>n[id])||!dayAllowed(cand,position))continue;const trial=plan.map((x,j)=>j===position?cand:x);if(!uniqueMealTitles(trial))continue;choices.push({cand,score:planScore(trial,proposalStart)+(currentLunchFamily&&lunchFamily(cand.l)===currentLunchFamily?500:0)})}choices.sort((a,b)=>a.score-b.score);return choices[0]?.cand||null}
+function nextDayCandidate(currentIdx,excludedIds=new Set(),currentLunchFamily='',position=0){
+  for(let off=1;off<=DAYS.length;off++){
+    const idx=(currentIdx+off)%DAYS.length;
+    if(plan.some(x=>x.idx===idx))continue;
+    const cand={idx,...clone(DAYS[idx])},n=dayNeed(cand);
+    if([...excludedIds].some(id=>n[id])||!dayAllowed(cand,position))continue;
+    const trial=plan.map((x,j)=>j===position?cand:x);
+    if(!uniqueMealTitles(trial))continue;
+    return cand
+  }
+  return null
+}
 function changeDay(i,excluded=[]){if(savedMode)return;if(!plan||!confirmRebuild('Changer cette journée'))return;closeUnavailable();const currentFamily=lunchFamily(plan[i].l);const cand=nextDayCandidate(plan[i].idx,new Set(excluded),currentFamily,i);if(!cand){toast('Aucune autre journée compatible disponible.');return}for(const key of Object.keys(leftoverMeals)){if(key.startsWith(i+'-'))delete leftoverMeals[key]}plan[i]=cand;clearShoppingState();render();scheduleDraftSave();toast('')}
 function closeDayAction(){$('dayActionBackdrop').classList.add('hide');$('dayActionContent').innerHTML='';leftoverOptions=[];leftoverOptionIndex=0;leftoverProductId=null;selectedLeftoverIds=[];leftoverQueue=[];leftoverPickerShowAll=false}
 function openDayAction(i){changeDay(i)}
@@ -2222,6 +2240,7 @@ function refreshChecklistOnly(){
   $('validationHint').textContent=left?left+' article'+(left>1?'s':'')+' non coché'+(left>1?'s':'')+'.':'Liste terminée.';
   $('validationHint').className='validation-hint'+(left?'':' done');
   $('validateBtn').textContent=left?'Valider quand même':'Valider le ravito';
+  if($('shopBottomStatus')){const remainingWeight=Object.values(sim.purchases).filter(x=>!checkedShop[x.id]).reduce((sum,x)=>sum+x.grams,0);$('shopBottomStatus').textContent=left?'Reste '+left+' · '+formatWeight(remainingWeight):'Terminé'}
 }
 function updateShopRow(id){
   const row=menuRoot.querySelector('.shop[data-shop-id="'+id+'"]');
@@ -2238,14 +2257,14 @@ function renderShoppingOnly(){if(!plan)return;renderShop(simulate(plan))}
 function render(){
   const sim=simulate(plan);
   menuApp.classList.toggle('allDaysMode',currentView==='menus');
-  $('topWeight').textContent='Achats '+formatWeight(sim.buyWeight);
+  $('topWeight').textContent='Dans le sac '+formatWeight(sim.startWeight);
   $('allDaysChangeBtn').textContent=plan.length===1?'↻ Changer la journée':'↻ Changer les '+plan.length+' jours';
   currentDayIndex=Math.max(0,Math.min(currentDayIndex,plan.length-1));
-  $('planSummary').innerHTML=formatWeight(sim.buyWeight);$('summaryWrap').classList.remove('hide');
+  $('planSummary').innerHTML=formatWeight(sim.startWeight);$('summaryWrap').classList.remove('hide');
   $('menus').classList.remove('hide');$('validation').classList.remove('hide');
   if($('ravitoLabel')) $('ravitoLabel').textContent='RAVITO / '+(ravitoCount+1);
   if($('deckCounter')) $('deckCounter').textContent='Jour '+(currentDayIndex+1)+' / '+d;
-  if($('blockMeta')) $('blockMeta').textContent=d+' jour'+(d>1?'s':'')+' · '+formatWeight(sim.buyWeight)+' à acheter';
+  if($('blockMeta')) $('blockMeta').textContent=d+' jour'+(d>1?'s':'')+' · '+formatWeight(sim.startWeight)+' au départ';
   $('ml').dataset.days=String(plan.length);
   $('ml').innerHTML=plan.map((x,i)=>{
     const cls=i===currentDayIndex?'front':(i>currentDayIndex?'back1':'back2');
@@ -2259,7 +2278,7 @@ function render(){
       +'<div class="meal"><div class="mealIcon dinner">🍜</div><div><div class="mealHead"><small>DÎNER</small>'+mealBadge(i,'d')+sameDayMealBadge(x,'d')+'</div><b>'+x.d.title+'</b>'+(x.d.detail?'<span>'+x.d.detail+'</span>':'')+'</div></div>'
       +'</div>'
       +'<div class="snackMini">🍫 <div><small>SNACKS</small><b>'+sim.snackIds.map(id=>PRODUCTS[id].name).join(' · ')+'</b></div></div>'
-      +'<div class="weightBox"><span>POIDS ESTIMÉ DES ACHATS</span><b>'+formatWeight(sim.buyWeight)+'</b></div>'
+      +'<div class="weightBox"><span>NOURRITURE DE LA JOURNÉE</span><b>'+formatWeight(dayFoodWeight(x))+'</b></div>'
       +'<div class="cardActions"><button class="changeDayBtn" onclick="changeDay('+i+')">↻ Changer J'+(i+1)+'</button><button class="newProposalBtn" onclick="alternateProposal()">'+(plan.length===1?'↻ Changer la journée':'↻ Changer les '+plan.length+' jours')+'</button></div>'
       +'</article>'
   }).join('')+allDaysSummaryHtml(sim,true);
@@ -2281,14 +2300,14 @@ function renderShop(sim){
   regular.filter(x=>SAME_DAY_CAN_IDS.has(x.id)).forEach(x=>{const title=$('bl').querySelector('[data-shop-id="'+x.id+'"] .shopText b');if(title)title.insertAdjacentHTML('beforeend','<em class="sameDayShopTag">SOIR MÊME</em>')});
   const stapleNeedLabel=id=>{let count=0,label='repas';if(id==='coffee'){count=plan.length;label=count>1?'petits-déjeuners':'petit-déjeuner'}else if(id==='milk'){count=plan.filter(x=>x.b.parts&&x.b.parts.milk).length;label=count>1?'petits-déjeuners':'petit-déjeuner'}else if(id==='oil'){count=plan.filter(x=>x.d.parts&&x.d.parts.oil).length;label=count>1?'dîners':'dîner'}else if(id==='tom'){count=plan.filter(x=>x.d.parts&&x.d.parts.tom).length;label=count>1?'dîners':'dîner'}return 'Assez pour '+count+' '+label};
   const stapleHtml=staples.map(id=>{const p=PRODUCTS[id];return '<div class="verify"><b>'+p.name+'</b><small>'+stapleNeedLabel(id)+'</small></div>'}).join('');
-  const bagUses=Object.keys(leftoverMeals).flatMap(key=>{const m=key.match(/^(\d+)-([bld])$/);if(!m)return[];const meal=plan?.[Number(m[1])]?.[m[2]];return leftoverIdsAt(key).filter(id=>meal?.parts?.[id]).map(id=>'<div class="bagUse"><b>'+PRODUCTS[id].name+'</b><small>Jour '+(Number(m[1])+1)+' · '+slotLabel(m[2])+'</small></div>')}).join('');
-  $('verifyBox').innerHTML=(bagUses?'<div class="section-title">À UTILISER DU SAC</div><div class="bagUses">'+bagUses+'</div>':'')+((!firstRavito&&staples.length)?'<div class="section-title">PRODUITS DE FOND À CONTRÔLER</div>'+stapleHtml:'');
+  const bagUses=Object.entries(bagStock).filter(([id,g])=>PRODUCTS[id]&&g>0&&sim.totalNeed[id]>0).map(([id,g])=>'<div class="bagUse"><b>'+PRODUCTS[id].name+'</b><small>Déjà dans le sac · '+formatWeight(g)+'</small></div>').join('');
+  $('verifyBox').innerHTML=(bagUses?'<div class="section-title">DÉJÀ DANS LE SAC</div><div class="bagUses">'+bagUses+'</div>':'')+((!firstRavito&&staples.length)?'<div class="section-title">PRODUITS DE FOND À CONTRÔLER</div>'+stapleHtml:'');
   const checkable=regular.map(x=>x.id),done=checkable.filter(id=>checkedShop[id]).length,left=checkable.length-done,pct=checkable.length?Math.round(done/checkable.length*100):100;
   $('shopProgress').innerHTML='<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
   $('validationHint').textContent=left?left+' article'+(left>1?'s':'')+' non coché'+(left>1?'s':'')+'.':'Liste terminée.';
   $('validationHint').className='validation-hint'+(left?'':' done');
   $('validateBtn').textContent=left?'Valider quand même':'Valider le ravito';
-  if($('shopBottomStatus'))$('shopBottomStatus').textContent='';
+  if($('shopBottomStatus')){const remainingWeight=regular.filter(x=>!checkedShop[x.id]).reduce((sum,x)=>sum+x.grams,0);$('shopBottomStatus').textContent=left?'Reste '+left+' · '+formatWeight(remainingWeight):'Terminé';}
 }
 function clearPreparedResults(){
   closeUnavailable();closeDayAction();plan=null;leftoverMeals={};settingsOpen=false;currentDayIndex=0;currentView='prep';
@@ -2314,7 +2333,7 @@ function validate(){
 function resetAll(){
   if(!confirm('Réinitialiser les menus, les courses et l’historique des ravitos ?'))return;
   clearDraftAutosave();
-  d=2;plan=null;rotationCursor=0;proposalStart=0;proposalSerial=0;ravitoCount=0;settingsOpen=false;checkedShop={};resolvedEquivalent={};replacementMeals={};replacementProducts={};leftoverMeals={};suggestedLeftovers=[];singleSnackToggle=Array(SNACK_PACKS.length).fill(0);snackOverride=null;currentDayIndex=0;currentView='prep';savedNextState=null;loadedSavedId=null;setSavedMode(false);clearPreparedResults();window.postMessage({type:'ravito-menu-days-change',days:d},'*');window.postMessage({type:'ravito-menu-clear-saved'},'*');renderPrepState();toast('Reset effectué.','ok');scrollTopAll()
+  d=2;plan=null;rotationCursor=0;proposalStart=0;proposalSerial=0;ravitoCount=0;settingsOpen=false;checkedShop={};resolvedEquivalent={};replacementMeals={};replacementProducts={};leftoverMeals={};bagStock={};suggestedLeftovers=[];singleSnackToggle=Array(SNACK_PACKS.length).fill(0);snackOverride=null;currentDayIndex=0;currentView='prep';savedNextState=null;loadedSavedId=null;setSavedMode(false);clearPreparedResults();window.postMessage({type:'ravito-menu-days-change',days:d},'*');window.postMessage({type:'ravito-menu-clear-saved'},'*');renderPrepState();toast('Reset effectué.','ok');scrollTopAll()
 }
 
 function renderDeckClasses(){
