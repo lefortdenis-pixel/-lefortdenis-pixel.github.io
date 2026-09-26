@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.157 hors ligne</title>
+<title>Traversée 2027 · v1.158 hors ligne</title>
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -2132,22 +2132,33 @@ function candidatePlans(start,avoid=null){
 }
 function buildPlan(start=rotationCursor,previous=null){
   proposalStart=((Number(start)||0)%DAYS.length+DAYS.length)%DAYS.length;
-  let avoid=null,candidates=[];
-  if(previous?.length){
-    avoid={ids:new Set(previous.map(x=>x.idx)),titles:{b:new Set(previous.map(x=>x.b.title)),l:new Set(previous.map(x=>x.l.title)),d:new Set(previous.map(x=>x.d.title))}};
-    candidates=candidatePlans(proposalStart,avoid);
-    if(!candidates.length)candidates=candidatePlans(proposalStart,{ids:avoid.ids,titles:{}})
-  }
-  if(!candidates.length)candidates=candidatePlans(proposalStart);
-  if(!candidates.length){plan=[];toast('Aucun menu compatible.');return}
+  const strictAvoid=previous?.length?{
+    ids:new Set(previous.map(x=>x.idx)),
+    titles:{
+      b:new Set(previous.map(x=>x.b.title)),
+      l:new Set(previous.map(x=>x.l.title)),
+      d:new Set(previous.map(x=>x.d.title))
+    }
+  }:null;
 
-  /* Sur 3 jours, le poids devient un critère dur de terrain.
-     On garde les propositions < 3 kg dès qu'il en existe, au lieu de
-     sacrifier le poids à la simple rotation des menus. */
+  const strictCandidates=candidatePlans(proposalStart,strictAvoid);
+  const idOnlyCandidates=previous?.length?candidatePlans(proposalStart,{ids:strictAvoid.ids,titles:{}}):strictCandidates;
+  const freeCandidates=previous?.length?candidatePlans(proposalStart):strictCandidates;
+  let candidates=[];
+
   if(d===3){
-    const light=candidates.filter(days=>simulate(days).buyWeight<3000);
-    if(light.length)candidates=light
+    /* Poids prioritaire : on assouplit progressivement la variété
+       tant qu'il faut pour conserver un ravito de moins de 3 kg. */
+    for(const pool of [strictCandidates,idOnlyCandidates,freeCandidates]){
+      const light=pool.filter(days=>simulate(days).buyWeight<3000);
+      if(light.length){candidates=light;break}
+    }
+    if(!candidates.length)candidates=freeCandidates.length?freeCandidates:(idOnlyCandidates.length?idOnlyCandidates:strictCandidates)
+  }else{
+    candidates=strictCandidates.length?strictCandidates:(idOnlyCandidates.length?idOnlyCandidates:freeCandidates)
   }
+
+  if(!candidates.length){plan=[];toast('Aucun menu compatible.');return}
 
   candidates.sort((a,b)=>{
     const wa=simulate(a).buyWeight,wb=simulate(b).buyWeight;
@@ -2155,8 +2166,6 @@ function buildPlan(start=rotationCursor,previous=null){
     return planScore(a,proposalStart)-planScore(b,proposalStart)
   });
 
-  /* Les grosses conserves restent possibles sur 1–2 jours, mais ne sont
-     plus injectées volontairement dans un ravito de 3–4 jours. */
   const wantSameDayCan=d<=2&&proposalSerial%3===2;
   const canned=wantSameDayCan?candidates.filter(days=>isSameDayCan(days[0])):[];
   const pool=canned.length?canned:candidates;
