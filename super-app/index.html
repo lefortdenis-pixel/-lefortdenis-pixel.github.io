@@ -2182,13 +2182,12 @@ function memoryEntryFromPlan(days){
 function rememberValidatedPlan(days){
   validatedMealMemory=[memoryEntryFromPlan(days),...validatedMealMemory].slice(0,2)
 }
-function mealRepeatedInLastTwo(slot,title){
-  return validatedMealMemory.length>=2
-    &&validatedMealMemory[0]?.[slot]?.includes(title)
-    &&validatedMealMemory[1]?.[slot]?.includes(title)
-}
-function dayRepeatsValidatedStreak(day){
-  return ['b','l','d'].some(slot=>mealRepeatedInLastTwo(slot,day?.[slot]?.title))
+function lastValidatedOverlap(day){
+  const last=validatedMealMemory[0];
+  if(!last)return 0;
+  let n=0;
+  for(const slot of ['b','l','d'])if(last[slot]?.includes(day?.[slot]?.title))n++;
+  return n
 }
 function planMealOverlap(a,b){
   if(!a?.length||!b?.length)return 0;
@@ -2212,33 +2211,72 @@ function planBagSignature(days){
     .sort()
     .join('§')
 }
-
-function pickRotatedDay(position,start,excludedIds=new Set(),avoidSignature=''){
+function mealPackageWeight(days){
+  const need=mergeNeeds(days||[]);
+  let total=0;
+  for(const [id,g] of Object.entries(need)){
+    const p=PRODUCTS[id];
+    if(!p||g<=0)continue;
+    total+=Math.ceil(g/p.pack-1e-9)*p.pack
+  }
+  return total
+}
+function newProductCount(baseDays,candidate){
+  const before=new Set(Object.keys(mergeNeeds(baseDays||[])));
+  const needs=dayNeed(candidate),ids=Object.keys(needs);
+  return ids.reduce((n,id)=>n+(before.has(id)?0:1),0)
+}
+function pickAnchorDay(start,excludedIds=new Set(),avoidSignature=''){
+  const total=DAY_OPTIONS.length;
+  const base=((Number(start)||0)%total+total)%total;
+  let fallback=null;
+  for(let n=0;n<total;n++){
+    const idx=(base+n*MENU_DAY_STEP)%total,cand=DAY_OPTIONS[idx];
+    if(!dayAllowed(cand,0))continue;
+    if(excludedIds.size){
+      const needs=dayNeed(cand);
+      if([...excludedIds].some(id=>needs[id]))continue;
+    }
+    const sig=[cand.b.title,cand.l.title,cand.d.title].join('¦');
+    if(avoidSignature&&sig===avoidSignature)continue;
+    if(!fallback)fallback=cand;
+    if(lastValidatedOverlap(cand)===0)return clone(cand);
+  }
+  return fallback?clone(fallback):null
+}
+function pickReuseDay(position,start,baseDays,excludedIds=new Set(),avoidSignature=''){
   const total=DAY_OPTIONS.length;
   const base=((Number(start)||0)+position*MENU_DAY_STEP)%total;
-  for(let pass=0;pass<2;pass++){
-    for(let n=0;n<total;n++){
-      const idx=(base+n*MENU_DAY_STEP)%total;
-      const cand=DAY_OPTIONS[idx];
-      if(!dayAllowed(cand,position))continue;
-      if(pass===0&&dayRepeatsValidatedStreak(cand))continue;
-      if(excludedIds.size){
-        const needs=dayNeed(cand);
-        if([...excludedIds].some(id=>needs[id]))continue;
-      }
-      const sig=[cand.b.title,cand.l.title,cand.d.title].join('¦');
-      if(avoidSignature&&sig===avoidSignature)continue;
-      return clone(cand)
+  const currentWeight=mealPackageWeight(baseDays);
+  let best=null,bestAdded=Infinity,bestNew=Infinity,bestOrder=Infinity;
+  for(let n=0;n<total;n++){
+    const idx=(base+n*MENU_DAY_STEP)%total,cand=DAY_OPTIONS[idx];
+    if(!dayAllowed(cand,position))continue;
+    if(excludedIds.size){
+      const needs=dayNeed(cand);
+      if([...excludedIds].some(id=>needs[id]))continue;
+    }
+    const sig=[cand.b.title,cand.l.title,cand.d.title].join('¦');
+    if(avoidSignature&&sig===avoidSignature)continue;
+    const added=mealPackageWeight([...baseDays,cand])-currentWeight;
+    const newCount=newProductCount(baseDays,cand);
+    if(added<bestAdded||(added===bestAdded&&newCount<bestNew)||(added===bestAdded&&newCount===bestNew&&n<bestOrder)){
+      best=cand;bestAdded=added;bestNew=newCount;bestOrder=n
     }
   }
-  return null
+  return best?clone(best):null
+}
+function pickRotatedDay(position,start,excludedIds=new Set(),avoidSignature='',baseDays=[]){
+  return position===0
+    ?pickAnchorDay(start,excludedIds,avoidSignature)
+    :pickReuseDay(position,start,baseDays,excludedIds,avoidSignature)
 }
 function composePlan(start,previous=null){
   const out=[];
   for(let position=0;position<d;position++){
     const old=previous?.[position];
     const avoid=old?[old.b.title,old.l.title,old.d.title].join('¦'):'';
-    const day=pickRotatedDay(position,start,new Set(),avoid);
+    const day=pickRotatedDay(position,start,new Set(),avoid,out);
     if(!day)return [];
     out.push(day)
   }
@@ -2293,7 +2331,10 @@ function nextDayCandidate(currentIdx,excludedIds=new Set(),currentLunchFamily=''
   const start=(Number(currentIdx)+MENU_DAY_STEP)%DAY_OPTIONS.length;
   const current=plan[position];
   const avoid=current?[current.b.title,current.l.title,current.d.title].join('¦'):'';
-  return pickRotatedDay(position,start,excludedIds,avoid)
+  const otherDays=(plan||[]).filter((_,i)=>i!==position);
+  return position===0
+    ?pickAnchorDay(start,excludedIds,avoid)
+    :pickReuseDay(position,start,otherDays,excludedIds,avoid)
 }
 function changeDay(i,excluded=[]){
   if(savedMode)return;if(!plan||!confirmRebuild('Changer cette journée'))return;
