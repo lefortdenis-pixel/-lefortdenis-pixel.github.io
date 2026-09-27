@@ -1016,7 +1016,7 @@ function select(km,stage){
   if(normal) return {verdict:"OK",role:"NORMAL",store:normal,windowEnd,endStage};
 
   const secours=usable.filter(s=>s.role==="SECOURS"&&inWindow(s)).sort((a,b)=>b.km-a.km)[0];
-  if(secours) return {verdict:"SECOURS",role:"SECOURS",store:secours,windowEnd,endStage};
+  if(secours) return {verdict:"OK",role:"SECOURS",store:secours,windowEnd,endStage};
 
   const next=usable.filter(s=>s.role==="NORMAL"&&s.km>km).sort((a,b)=>a.km-b.km)[0];
   if(!next) return {verdict:"FIN",role:"FIN",store:null,windowEnd,endStage};
