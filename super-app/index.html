@@ -40,9 +40,10 @@ button{cursor:pointer}
 .blockLabel{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:9px}
 .blockLabel b{font-size:12px;text-transform:uppercase;letter-spacing:.09em}
 .blockLabel span{font-size:11px;color:var(--muted);font-weight:800}
-.days{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.days{display:grid;grid-template-columns:1.65fr repeat(4,1fr);gap:7px}
 .day{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:16px;padding:15px 3px;font-weight:900}
 .day.active{background:var(--green);border-color:var(--green)}
+.nearestStoreBtn{font-size:10px;line-height:1.08;padding:9px 5px;white-space:normal}
 .gpsBtn{width:100%;border:0;background:var(--orange);color:#fff;border-radius:16px;padding:16px;font-weight:900;font-size:15px;box-shadow:0 7px 18px rgba(255,122,26,.18)}
 #status{margin:9px 2px 0;font-size:12px;line-height:1.35;color:var(--muted);font-weight:700;min-height:17px}
 .manual{margin-top:13px;border-top:1px solid var(--line);padding-top:12px}
@@ -591,6 +592,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
       <div class="block">
         <div class="blockLabel"><b>Autonomie</b><span>jusqu’au prochain magasin</span></div>
         <div class="days" id="days">
+          <button class="day nearestStoreBtn" id="nearestStoreBtn" type="button">Magasin le plus proche</button>
           <button class="day" data-d="1">1 j</button>
           <button class="day active" data-d="2">2 j</button>
           <button class="day" data-d="3">3 j</button>
@@ -931,6 +933,7 @@ const DATA = {"version":"1.23","routeLengthKm":2048.052,"stageEndsKm":[27.221,51
 const R = 6371008.8;
 const rad = d => d * Math.PI / 180;
 let autonomy = 2;
+let storeSearchMode = 'autonomy';
 let lastShown = null;
 
 function havKm(a,b){
@@ -973,9 +976,23 @@ function stageFromKm(km){
 }
 
 function select(km,stage){
+  const usable=DATA.stores.filter(s=>s.role!=="EXCLU" && s.role!=="A_QUALIFIER");
+  if(storeSearchMode==='nearest'){
+    const nearest=usable.filter(s=>s.km>km).sort((a,b)=>a.km-b.km)[0];
+    if(!nearest){
+      const endStage=90,windowEnd=DATA.stageEndsKm[89];
+      return {verdict:"FIN",role:"FIN",store:null,windowEnd,endStage,nearestMode:true};
+    }
+    const required=Math.max(1,nearest.stage-stage+1);
+    const endStage=Math.max(stage,nearest.stage);
+    const windowEnd=DATA.stageEndsKm[endStage-1];
+    return {
+      verdict:nearest.role==="SECOURS"?"SECOURS":"PLUS PROCHE",
+      role:nearest.role,store:nearest,requiredDays:required,windowEnd,endStage,nearestMode:true
+    };
+  }
   const endStage=Math.min(90,stage+autonomy-1);
   const windowEnd=DATA.stageEndsKm[endStage-1];
-  const usable=DATA.stores.filter(s=>s.role!=="EXCLU" && s.role!=="A_QUALIFIER");
   const inWindow=s=>s.km>km && s.km<=windowEnd;
 
   const normal=usable.filter(s=>s.role==="NORMAL"&&inWindow(s)).sort((a,b)=>b.km-a.km)[0];
@@ -1084,7 +1101,7 @@ function show(km,stage,offRoute=null){
   const box=document.getElementById("result");
   const badge=document.getElementById("badge");
   box.classList.add("show");
-  badge.className="badge "+(r.verdict==="OK"?"ok":r.verdict==="SECOURS"?"warn":r.verdict==="FIN"?"ok":"bad");
+  badge.className="badge "+(r.verdict==="OK"||r.verdict==="PLUS PROCHE"?"ok":r.verdict==="SECOURS"?"warn":r.verdict==="FIN"?"ok":"bad");
   badge.textContent=r.verdict;
   document.getElementById("store").textContent=r.store?r.store.name:"Arrivée";
   const mini=document.getElementById("resultMini");
@@ -1100,18 +1117,30 @@ function show(km,stage,offRoute=null){
   }
   ignoredStores(km,r);
   const continueBtn=document.getElementById("continueBtn");
-  if(continueBtn)continueBtn.disabled=r.verdict==="FIN"||r.verdict===">4 JOURS"||r.verdict==="HORS FENÊTRE";
+  if(continueBtn){
+    const menuDays=r.nearestMode?Math.max(1,Math.min(4,Number(r.requiredDays)||1)):autonomy;
+    continueBtn.dataset.menuDays=String(menuDays);
+    continueBtn.disabled=r.verdict==="FIN"||r.verdict===">4 JOURS"||r.verdict==="HORS FENÊTRE"||(r.nearestMode&&Number(r.requiredDays)>4);
+  }
 }
 
 function setAutonomyUI(days,notifyMenu=true){
   autonomy=Math.max(1,Math.min(4,Number(days)||2));
-  document.querySelectorAll(".day").forEach(x=>x.classList.toggle("active",Number(x.dataset.d)===autonomy));
+  storeSearchMode='autonomy';
+  document.querySelectorAll(".day[data-d]").forEach(x=>x.classList.toggle("active",Number(x.dataset.d)===autonomy));
+  document.getElementById("nearestStoreBtn")?.classList.remove("active");
   const daysLabel=document.getElementById("menuDaysLabel");
   if(daysLabel) daysLabel.textContent=autonomy+" jour"+(autonomy>1?"s":"");
   if(notifyMenu)window.postMessage({type:"set-menu-days",days:autonomy},"*");
   if(lastShown)show(lastShown.km,lastShown.stage,lastShown.offRoute);
 }
-document.querySelectorAll(".day").forEach(b=>b.addEventListener("click",()=>setAutonomyUI(Number(b.dataset.d),true)));
+document.querySelectorAll(".day[data-d]").forEach(b=>b.addEventListener("click",()=>setAutonomyUI(Number(b.dataset.d),true)));
+document.getElementById("nearestStoreBtn")?.addEventListener("click",()=>{
+  storeSearchMode='nearest';
+  document.querySelectorAll(".day[data-d]").forEach(x=>x.classList.remove("active"));
+  document.getElementById("nearestStoreBtn")?.classList.add("active");
+  if(lastShown)show(lastShown.km,lastShown.stage,lastShown.offRoute);
+});
 
 
 document.getElementById("calcBtn").addEventListener("click",()=>{
@@ -1185,8 +1214,10 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 
 document.getElementById("continueBtn")?.addEventListener("click",()=>{
+  const btn=document.getElementById("continueBtn");
+  const days=Math.max(1,Math.min(4,Number(btn?.dataset.menuDays)||autonomy));
   openAppView("menu");
-  window.postMessage({type:"start-new-ravito",days:autonomy,nextState:savedRavito?.nextState||null},"*");
+  window.postMessage({type:"start-new-ravito",days,nextState:savedRavito?.nextState||null},"*");
 });
 </script>
 
