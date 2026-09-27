@@ -68,14 +68,6 @@ details.ignored{border-top:1px solid var(--line);padding-top:10px}
 details.ignored summary{cursor:pointer;color:var(--muted);font-size:11px;font-weight:900;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
 details.ignored summary::-webkit-details-marker{display:none}details.ignored summary::after{content:"＋";color:var(--orange);font-size:17px}details.ignored[open] summary::after{content:"−"}
 .ignored-list{margin-top:9px;display:grid;gap:7px}.ignored-item{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:9px 10px}.ignored-name{font-weight:900;font-size:11px}.ignored-reason{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.3}.ignored-reason.bad{color:var(--red)}.ignored-reason.warn{color:var(--warn)}.small{font-size:10px;color:var(--muted)}
-.storeList{display:grid;gap:8px;margin-top:10px}
-.storeItem{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:11px 12px}
-.storeItemTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.storeName{font-size:14px;line-height:1.15;font-weight:900;letter-spacing:-.01em}
-.storeDistance{margin-top:4px;font-size:11px;line-height:1.3;color:var(--muted);font-weight:800}
-.storeRole{flex:0 0 auto;border-radius:999px;padding:4px 7px;background:#fff1cb;color:var(--warn);font-size:8px;font-weight:950;letter-spacing:.06em}
-.storeEmpty{padding:14px 2px;color:var(--muted);font-size:12px;font-weight:800}
-
 
 .menuSection{padding-top:6px;scroll-margin-top:10px}
 .menuBridge{display:flex;align-items:end;justify-content:space-between;gap:12px;padding:4px 2px 10px}
@@ -597,6 +589,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
             <h1>Trouver un magasin</h1>
 
       <div class="block">
+        <div class="blockLabel"><b>Autonomie</b><span>jusqu’au prochain magasin</span></div>
+        <div class="days" id="days">
+          <button class="day" data-d="1">1 j</button>
+          <button class="day active" data-d="2">2 j</button>
+          <button class="day" data-d="3">3 j</button>
+          <button class="day" data-d="4">4 j</button>
+        </div>
+      </div>
+
+      <div class="block">
         <button class="gpsBtn" id="gpsBtn">⌖ Utiliser ma position GPS</button>
         <div id="status"></div>
         <details class="fieldOptions">
@@ -626,7 +628,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
         <button class="continueBtn" id="continueBtn">Préparer le ravitaillement →</button>
         <div class="ignored-wrap">
           <details class="ignored" id="ignoredDetails">
-            <summary id="ignoredSummary">Autres magasins à venir</summary>
+            <summary id="ignoredSummary">Magasins ignorés (0)</summary>
             <div class="ignored-list" id="ignoredList"></div>
           </details>
         </div>
@@ -970,41 +972,72 @@ function stageFromKm(km){
   return 90;
 }
 
-function selectStoreSuggestion(km,stage){
-  const usable=DATA.stores
-    .filter(store=>store.km>km&&(store.role==="NORMAL"||store.role==="SECOURS"))
-    .sort((a,b)=>a.km-b.km);
-  const normal=usable.find(store=>store.role==="NORMAL");
-  const secours=usable.find(store=>store.role==="SECOURS");
-  const store=normal||secours||null;
-  if(!store)return {verdict:"FIN",role:"FIN",store:null,requiredDays:0};
-  return {
-    verdict:store.role==="SECOURS"?"SECOURS":"SUGGÉRÉ",
-    role:store.role,
-    store,
-    requiredDays:Math.max(1,store.stage-stage+1)
-  };
+function select(km,stage){
+  const endStage=Math.min(90,stage+autonomy-1);
+  const windowEnd=DATA.stageEndsKm[endStage-1];
+  const usable=DATA.stores.filter(s=>s.role!=="EXCLU" && s.role!=="A_QUALIFIER");
+  const inWindow=s=>s.km>km && s.km<=windowEnd;
+
+  const normal=usable.filter(s=>s.role==="NORMAL"&&inWindow(s)).sort((a,b)=>b.km-a.km)[0];
+  if(normal) return {verdict:"OK",role:"NORMAL",store:normal,windowEnd,endStage};
+
+  const secours=usable.filter(s=>s.role==="SECOURS"&&inWindow(s)).sort((a,b)=>b.km-a.km)[0];
+  if(secours) return {verdict:"SECOURS",role:"SECOURS",store:secours,windowEnd,endStage};
+
+  const next=usable.filter(s=>s.role==="NORMAL"&&s.km>km).sort((a,b)=>a.km-b.km)[0];
+  if(!next) return {verdict:"FIN",role:"FIN",store:null,windowEnd,endStage};
+
+  const required=Math.max(1,next.stage-stage+1);
+  return {verdict:required>4?">4 JOURS":"HORS FENÊTRE",role:"PROCHAIN NORMAL",store:next,requiredDays:required,windowEnd,endStage};
 }
-function renderOtherStores(km,suggestion){
-  const rows=DATA.stores
-    .filter(store=>store.km>km)
-    .filter(store=>!suggestion.store||store.name!==suggestion.store.name||Math.abs(store.km-suggestion.store.km)>.001)
+
+
+function ignoredStores(km,r){
+  const chosen = r.store;
+  const chosenKm = chosen ? chosen.km : null;
+  const nextStageEnd = DATA.stageEndsKm[Math.min(89, r.endStage)];
+  const displayUntil = Math.max(r.windowEnd, chosenKm || 0, nextStageEnd || 0);
+
+  const rows = DATA.stores
+    .filter(s => s.km > km && s.km <= displayUntil)
+    .filter(s => !chosen || !(s.name === chosen.name && Math.abs(s.km-chosen.km) < 0.001))
     .sort((a,b)=>a.km-b.km)
-    .slice(0,8);
-  const summary=document.getElementById("ignoredSummary");
+    .map(s=>{
+      let reason="", cls="";
+
+      if(s.role==="EXCLU"){
+        reason = s.status || "Écarté";
+        cls = "bad";
+      } else if(s.role==="A_QUALIFIER"){
+        reason = "Fiabilité insuffisante / à qualifier";
+        cls = "warn";
+      } else if(s.km > r.windowEnd){
+        reason = "Après la cible · +" + (s.km-r.windowEnd).toFixed(1) + " km";
+      } else if(chosenKm!=null && s.km < chosenKm){
+        const diff=(chosenKm-s.km).toFixed(1);
+        if(s.role==="SECOURS" && r.role==="NORMAL"){
+          reason = "Avant la cible · " + diff + " km avant le magasin choisi";
+        }else{
+          reason = "Avant la cible · " + diff + " km avant le magasin choisi";
+        }
+      } else if(s.role==="SECOURS"){
+        reason = "Avant la cible";
+      } else {
+        reason = "Moins pertinent pour cette fenêtre";
+      }
+      return {store:s,reason,cls};
+    });
+
+  document.getElementById("ignoredSummary").textContent="Magasins ignorés ("+rows.length+")";
   const list=document.getElementById("ignoredList");
-  if(summary)summary.textContent="Autres magasins à venir ("+rows.length+")";
-  if(!list)return;
-  list.innerHTML=rows.length?rows.map(store=>{
-    let reason="Dans "+Math.max(0,store.km-km).toFixed(1).replace(".",",")+" km";
-    let cls="";
-    if(store.role==="SECOURS"){reason+=" · secours";cls="warn"}
-    else if(store.role==="EXCLU"){reason+=" · "+(store.status||"écarté");cls="bad"}
-    else if(store.role==="A_QUALIFIER"){reason+=" · à vérifier";cls="warn"}
-    return '<div class="ignored-item"><div class="ignored-name">'+escapeHtml(store.name)+'</div><div class="ignored-reason '+cls+'">'+escapeHtml(reason)+' · km '+store.km.toFixed(1)+'</div></div>';
-  }).join(""):'<div class="small">Aucun autre magasin avant l’arrivée.</div>';
-  const details=document.getElementById("ignoredDetails");
-  if(details)details.open=false;
+  list.innerHTML = rows.length ? rows.map(x=>`
+    <div class="ignored-item">
+      <div class="ignored-name">${escapeHtml(x.store.name)}</div>
+      <div class="ignored-reason ${x.cls}">${escapeHtml(x.reason)} · km ${x.store.km.toFixed(1)}</div>
+    </div>`).join("") : '<div class="small">Aucun magasin ignoré dans cette zone.</div>';
+
+  // Toujours replié après chaque nouveau calcul.
+  document.getElementById("ignoredDetails").open=false;
 }
 
 function escapeHtml(v){
@@ -1047,44 +1080,47 @@ async function enrichStoreMeta(store,km,baseText,meta){
 }
 function show(km,stage,offRoute=null){
   lastShown={km,stage,offRoute};
-  const r=selectStoreSuggestion(km,stage);
+  let r=select(km,stage),autoAdjusted=false;
+  if(r.verdict==="HORS FENÊTRE"&&r.requiredDays>=1&&r.requiredDays<=4){
+    autonomy=r.requiredDays;
+    document.querySelectorAll(".day").forEach(x=>x.classList.toggle("active",Number(x.dataset.d)===autonomy));
+    const daysLabel=document.getElementById("menuDaysLabel");
+    if(daysLabel)daysLabel.textContent=autonomy+" jour"+(autonomy>1?"s":"");
+    window.postMessage({type:"set-menu-days",days:autonomy},"*");
+    r=select(km,stage);autoAdjusted=true;
+  }
   const box=document.getElementById("result");
   const badge=document.getElementById("badge");
-  const store=document.getElementById("store");
+  box.classList.add("show");
+  badge.className="badge "+(r.verdict==="OK"?"ok":r.verdict==="SECOURS"?"warn":r.verdict==="FIN"?"ok":"bad");
+  badge.textContent=r.verdict;
+  document.getElementById("store").textContent=r.store?r.store.name:"Arrivée";
   const mini=document.getElementById("resultMini");
   const meta=document.getElementById("storeMeta");
+  if(mini) mini.textContent="E"+stage+" · km "+km.toFixed(1);
+  if(meta){
+    if(r.store){
+      const delta=Math.max(0,r.store.km-km);
+      const base=storeWalkLabel(delta)+(autoAdjusted?" · autonomie ajustée à "+autonomy+" jours":"")+(r.requiredDays?" · "+r.requiredDays+" jours nécessaires":"");
+      meta.textContent=base;
+      enrichStoreMeta(r.store,km,base,meta);
+    }else meta.textContent="Fin de la Traversée";
+  }
+  ignoredStores(km,r);
   const continueBtn=document.getElementById("continueBtn");
-  box.classList.add("show");
-  if(mini)mini.textContent="E"+stage+" · km "+km.toFixed(1);
-  if(!r.store){
-    if(badge){badge.className="badge ok";badge.textContent="FIN"}
-    if(store)store.textContent="Arrivée";
-    if(meta)meta.textContent="Aucun autre magasin avant l’arrivée.";
-    if(continueBtn)continueBtn.disabled=true;
-    renderOtherStores(km,r);
-    return;
-  }
-  if(badge){
-    badge.className="badge "+(r.role==="SECOURS"?"warn":"ok");
-    badge.textContent=r.verdict;
-  }
-  if(store)store.textContent=r.store.name;
-  const delta=Math.max(0,r.store.km-km);
-  const base=storeWalkLabel(delta)+" · "+r.requiredDays+" jour"+(r.requiredDays>1?"s":"")+" de marche max";
-  if(meta){meta.textContent=base;enrichStoreMeta(r.store,km,base,meta)}
-  if(continueBtn){
-    continueBtn.disabled=false;
-    continueBtn.dataset.days=String(Math.max(1,Math.min(4,r.requiredDays)));
-  }
-  renderOtherStores(km,r);
+  if(continueBtn)continueBtn.disabled=r.verdict==="FIN"||r.verdict===">4 JOURS";
 }
 
 function setAutonomyUI(days,notifyMenu=true){
   autonomy=Math.max(1,Math.min(4,Number(days)||2));
+  document.querySelectorAll(".day").forEach(x=>x.classList.toggle("active",Number(x.dataset.d)===autonomy));
   const daysLabel=document.getElementById("menuDaysLabel");
-  if(daysLabel)daysLabel.textContent=autonomy+" jour"+(autonomy>1?"s":"");
+  if(daysLabel) daysLabel.textContent=autonomy+" jour"+(autonomy>1?"s":"");
   if(notifyMenu)window.postMessage({type:"set-menu-days",days:autonomy},"*");
+  if(lastShown)show(lastShown.km,lastShown.stage,lastShown.offRoute);
 }
+document.querySelectorAll(".day").forEach(b=>b.addEventListener("click",()=>setAutonomyUI(Number(b.dataset.d),true)));
+
 
 document.getElementById("calcBtn").addEventListener("click",()=>{
   const lat=Number(document.getElementById("lat").value), lon=Number(document.getElementById("lon").value);
@@ -1157,13 +1193,9 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 
 document.getElementById("continueBtn")?.addEventListener("click",()=>{
-  const btn=document.getElementById("continueBtn");
-  const days=Math.max(1,Math.min(4,Number(btn?.dataset.days)||autonomy||2));
-  autonomy=days;
   openAppView("menu");
-  window.postMessage({type:"start-new-ravito",days,nextState:savedRavito?.nextState||null},"*");
+  window.postMessage({type:"start-new-ravito",days:autonomy,nextState:savedRavito?.nextState||null},"*");
 });
-
 </script>
 
 <script id="water-search">
