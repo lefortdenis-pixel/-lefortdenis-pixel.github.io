@@ -770,7 +770,7 @@ function updateHistoryButton(){
 function updateHomeMenuButton(){
   const label=document.getElementById('openMenuLabel');
   const status=document.getElementById('openMenuStatus');
-  if(label)label.textContent='Trouver un menu';
+  if(label)label.textContent=savedDraft?'Reprendre le ravito':(savedRavito?'Voir le ravito':'Trouver un menu');
   if(status)status.textContent=savedDraft?'Reprendre le ravito en cours':(savedRavito?'Voir les menus du ravito':'Préparer repas et courses');
 }
 function saveDraftRavito(data){
