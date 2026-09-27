@@ -1665,7 +1665,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 .allDaysMode .navgrid button{min-height:45px!important}
 .allDaysMode.saved-mode #menus{padding-top:82px!important}
 .allDaysMode.saved-mode .savedChip{position:absolute;top:55px;left:7px;right:7px;margin:0!important;padding:6px 9px!important;font-size:9px!important}
-.topWeight{display:none}.allDaysMode .topWeight{position:fixed;left:12px;top:14px;z-index:40;height:36px;padding:0 12px;border-radius:999px;background:#12130f;color:#fff;box-shadow:0 7px 20px rgba(0,0,0,.10);font-size:13px;font-weight:950;display:flex;align-items:center;justify-content:center;white-space:nowrap}
+.weightBox{display:none!important}.topWeight{display:none}.allDaysMode .topWeight{position:fixed;left:12px;top:14px;z-index:40;height:36px;padding:0 12px;border-radius:999px;background:#12130f;color:#fff;box-shadow:0 7px 20px rgba(0,0,0,.10);font-size:13px;font-weight:950;display:flex;align-items:center;justify-content:center;white-space:nowrap}
 .bad{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:40px!important;margin-top:8px!important;border:1px solid #efb6a8!important;background:#fff1ed!important;color:#b83f27!important;padding:8px 12px!important;border-radius:11px!important;font-size:12px!important;font-weight:900!important}
 .ua-actions button{min-height:44px}.ua-cycle{background:#eeeaff!important;color:#5144d9!important;border:1px solid #d7d0ff!important}
 
@@ -1921,7 +1921,7 @@ function allDaysSummaryHtml(sim,withChange){
   const snacks=sim.snackIds.map(id=>PRODUCTS[id].name).join(' · ');
   return '<div class="allDaysSummary">'
     +'<div class="allDaysSnacks"><span>🍫</span><div><small>ENCAS</small><b>'+snacks+'</b></div></div>'
-    +'<div class="allDaysSnacks"><span>🎒</span><div><small>AU DÉPART</small><b>'+formatWeight(sim.startWeight)+' · achats '+formatWeight(sim.buyWeight)+'</b></div></div>'
+    
     +'</div>';
 }
 function renderSavedMenusOnly(){
@@ -1929,7 +1929,7 @@ function renderSavedMenusOnly(){
   menuApp.classList.add('allDaysMode');
   $('innerReset').classList.remove('hide');
   const sim=simulate(plan);
-  $('topWeight').textContent='Dans le sac '+formatWeight(sim.startWeight);
+  $('topWeight').textContent='Poids total '+formatWeight(sim.startWeight);
   $('allDaysChangeBtn').textContent=plan.length===1?'↻ Changer la journée':'↻ Changer les '+plan.length+' jours';
   currentDayIndex=Math.max(0,Math.min(currentDayIndex,plan.length-1));
   $('planSummary').innerHTML=formatWeight(sim.startWeight);
@@ -1945,7 +1945,7 @@ function renderSavedMenusOnly(){
       +'<div class="meal"><div class="mealIcon dinner">🍜</div><div><div class="mealHead"><small>DÎNER</small>'+mealBadge(i,'d')+sameDayMealBadge(x,'d')+'</div><b>'+x.d.title+'</b>'+(x.d.detail?'<span>'+x.d.detail+'</span>':'')+'</div></div>'
       +'</div>'
       +'<div class="snackMini">🍫 <div><small>SNACKS</small><b>'+sim.snackIds.map(id=>PRODUCTS[id].name).join(' · ')+'</b></div></div>'
-      +'<div class="weightBox"><span>NOURRITURE DE LA JOURNÉE</span><b>'+formatWeight(dayFoodWeight(x))+'</b></div>'
+      
       +'<div class="cardActions"><button class="changeDayBtn">↻ Changer J'+(i+1)+'</button><button class="newProposalBtn">'+(plan.length===1?'↻ Changer la journée':'↻ Changer les '+plan.length+' jours')+'</button></div>'
       +'</article>'
   }).join('')+allDaysSummaryHtml(sim,false);
@@ -2244,7 +2244,7 @@ function refreshChecklistOnly(){
   $('validationHint').textContent=left?left+' article'+(left>1?'s':'')+' non coché'+(left>1?'s':'')+'.':'Liste terminée.';
   $('validationHint').className='validation-hint'+(left?'':' done');
   $('validateBtn').textContent=left?'Valider quand même':'Valider le ravito';
-  if($('shopBottomStatus')){const remainingWeight=Object.values(sim.purchases).filter(x=>!checkedShop[x.id]).reduce((sum,x)=>sum+x.grams,0);$('shopBottomStatus').textContent=left?'Reste '+left+' · '+formatWeight(remainingWeight):'Terminé'}
+  if($('shopBottomStatus')) $('shopBottomStatus').textContent=left?'Reste '+left:'Terminé';
 }
 function updateShopRow(id){
   const row=menuRoot.querySelector('.shop[data-shop-id="'+id+'"]');
@@ -2261,14 +2261,14 @@ function renderShoppingOnly(){if(!plan)return;renderShop(simulate(plan))}
 function render(){
   const sim=simulate(plan);
   menuApp.classList.toggle('allDaysMode',currentView==='menus');
-  $('topWeight').textContent='Dans le sac '+formatWeight(sim.startWeight);
+  $('topWeight').textContent='Poids total '+formatWeight(sim.startWeight);
   $('allDaysChangeBtn').textContent=plan.length===1?'↻ Changer la journée':'↻ Changer les '+plan.length+' jours';
   currentDayIndex=Math.max(0,Math.min(currentDayIndex,plan.length-1));
   $('planSummary').innerHTML=formatWeight(sim.startWeight);$('summaryWrap').classList.remove('hide');
   $('menus').classList.remove('hide');$('validation').classList.remove('hide');
   if($('ravitoLabel')) $('ravitoLabel').textContent='RAVITO / '+(ravitoCount+1);
   if($('deckCounter')) $('deckCounter').textContent='Jour '+(currentDayIndex+1)+' / '+d;
-  if($('blockMeta')) $('blockMeta').textContent=d+' jour'+(d>1?'s':'')+' · '+formatWeight(sim.startWeight)+' au départ';
+  if($('blockMeta')) $('blockMeta').textContent=d+' jour'+(d>1?'s':'');
   $('ml').dataset.days=String(plan.length);
   $('ml').innerHTML=plan.map((x,i)=>{
     const cls=i===currentDayIndex?'front':(i>currentDayIndex?'back1':'back2');
@@ -2282,7 +2282,7 @@ function render(){
       +'<div class="meal"><div class="mealIcon dinner">🍜</div><div><div class="mealHead"><small>DÎNER</small>'+mealBadge(i,'d')+sameDayMealBadge(x,'d')+'</div><b>'+x.d.title+'</b>'+(x.d.detail?'<span>'+x.d.detail+'</span>':'')+'</div></div>'
       +'</div>'
       +'<div class="snackMini">🍫 <div><small>SNACKS</small><b>'+sim.snackIds.map(id=>PRODUCTS[id].name).join(' · ')+'</b></div></div>'
-      +'<div class="weightBox"><span>NOURRITURE DE LA JOURNÉE</span><b>'+formatWeight(dayFoodWeight(x))+'</b></div>'
+      
       +'<div class="cardActions"><button class="changeDayBtn" onclick="changeDay('+i+')">↻ Changer J'+(i+1)+'</button><button class="newProposalBtn" onclick="alternateProposal()">'+(plan.length===1?'↻ Changer la journée':'↻ Changer les '+plan.length+' jours')+'</button></div>'
       +'</article>'
   }).join('')+allDaysSummaryHtml(sim,true);
@@ -2308,7 +2308,7 @@ function renderShop(sim){
   $('validationHint').textContent=left?left+' article'+(left>1?'s':'')+' non coché'+(left>1?'s':'')+'.':'Liste terminée.';
   $('validationHint').className='validation-hint'+(left?'':' done');
   $('validateBtn').textContent=left?'Valider quand même':'Valider le ravito';
-  if($('shopBottomStatus')){const remainingWeight=regular.filter(x=>!checkedShop[x.id]).reduce((sum,x)=>sum+x.grams,0);$('shopBottomStatus').textContent=left?'Reste '+left+' · '+formatWeight(remainingWeight):'Terminé';}
+  if($('shopBottomStatus')) $('shopBottomStatus').textContent=left?'Reste '+left:'Terminé';
 }
 function clearPreparedResults(){
   closeUnavailable();plan=null;settingsOpen=false;currentDayIndex=0;currentView='prep';
