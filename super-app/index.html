@@ -1672,6 +1672,60 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 .allDaysMode .allDaysSummary{gap:10px!important}
 .allDaysMode .allDaysSummary .allDaysSnacks{width:auto!important;flex:1 1 0!important;min-width:0!important}
 .allDaysMode .allDaysSummary .allDaysSnacks+ .allDaysSnacks{border-left:1px solid rgba(152,99,29,.18);padding-left:10px}
+
+/* v1.164 — liste de courses compacte, cibles tactiles conservées */
+#buy{padding-left:8px!important;padding-right:8px!important}
+.shopHeader{margin:2px 0 6px!important}
+.progress{margin:0 0 5px!important}
+.shop{
+  grid-template-columns:42px minmax(0,1fr)!important;
+  gap:8px!important;
+  min-height:58px!important;
+  padding:6px 4px!important;
+  border-radius:12px!important;
+}
+.checkWrap,.checkWrap span{width:40px!important;height:40px!important}
+.checkWrap span{border-radius:10px!important}
+.shopText{
+  min-width:0;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto;
+  grid-template-rows:auto auto;
+  column-gap:8px;
+  align-items:center;
+}
+.shopTap{display:contents!important}
+.shopText b{
+  grid-column:1;
+  grid-row:1;
+  min-width:0;
+  font-size:14.5px!important;
+  line-height:1.1!important;
+  overflow-wrap:anywhere;
+}
+.shopText small{
+  grid-column:1;
+  grid-row:2;
+  min-width:0;
+  margin-top:1px!important;
+  font-size:10.5px!important;
+  line-height:1.1!important;
+}
+.bad{
+  grid-column:2;
+  grid-row:1 / 3;
+  align-self:center;
+  min-height:40px!important;
+  margin:0!important;
+  padding:6px 9px!important;
+  border-radius:10px!important;
+  font-size:10.5px!important;
+  line-height:1!important;
+  white-space:nowrap;
+}
+.inlineUnavailable{margin:5px 0 2px!important}
+.validationBox{margin-top:9px!important}
+
 </style><div id="menuApp" class="menu-body"><div id="topWeight" class="topWeight"></div><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button>
 <div id="prepCard">
       <h1 id="prepTitle" class="prepTitle">Trouver un menu</h1>
