@@ -1924,7 +1924,7 @@ for(const b of BREAKFAST_CATALOG){
 }
 const SNACK_PACKS=[['cho','pfruit'],['pea','bars'],['almond','sab'],['carrot','cho'],['pfruit','pea'],['bars','almond'],['sab','carrot']];
 const SNACK_TARGET_PER_DAY=165;
-let d=2,plan=null,rotationCursor=0,proposalStart=0,proposalSerial=0,ravitoCount=0,settingsOpen=false,checkedShop={},resolvedEquivalent={},replacementMeals={},replacementProducts={},singleSnackToggle=Array(SNACK_PACKS.length).fill(0),snackOverride=null,pendingUnavailable=null,currentDayIndex=0,currentView='prep',shopScrollTop=0,savedMode=false,archivedMode=false,savedNextState=null,loadedSavedId=null;
+let d=2,plan=null,rotationCursor=0,proposalStart=0,proposalSerial=0,ravitoCount=0,validatedMealMemory=[],settingsOpen=false,checkedShop={},resolvedEquivalent={},replacementMeals={},replacementProducts={},singleSnackToggle=Array(SNACK_PACKS.length).fill(0),snackOverride=null,pendingUnavailable=null,currentDayIndex=0,currentView='prep',shopScrollTop=0,savedMode=false,archivedMode=false,savedNextState=null,loadedSavedId=null;
 let unavailableOptions=[],unavailableOptionIndex=0,unavailableProductId=null,unavailableBox=null;
 const menuRoot=document.getElementById('menuHost').shadowRoot;
 const menuApp=menuRoot.getElementById('menuApp');
@@ -1940,7 +1940,7 @@ function clone(o){try{return typeof structuredClone==='function'?structuredClone
 let draftTimer=0;
 function makeDraftSnapshot(){
   if(savedMode||archivedMode||!plan||!plan.length)return null;
-  return {version:12,updatedAt:Date.now(),savedMode:false,d,plan:clone(plan),rotationCursor,proposalStart,proposalSerial,ravitoCount,checkedShop:clone(checkedShop),resolvedEquivalent:clone(resolvedEquivalent),replacementMeals:clone(replacementMeals),replacementProducts:clone(replacementProducts),singleSnackToggle:clone(singleSnackToggle),snackOverride,currentDayIndex,currentView:currentView==='shop'?'shop':'menus',shopScrollTop:Math.max(0,shopScrollTop||0)};
+  return {version:13,updatedAt:Date.now(),savedMode:false,d,plan:clone(plan),rotationCursor,proposalStart,proposalSerial,ravitoCount,validatedMealMemory:clone(validatedMealMemory),checkedShop:clone(checkedShop),resolvedEquivalent:clone(resolvedEquivalent),replacementMeals:clone(replacementMeals),replacementProducts:clone(replacementProducts),singleSnackToggle:clone(singleSnackToggle),snackOverride,currentDayIndex,currentView:currentView==='shop'?'shop':'menus',shopScrollTop:Math.max(0,shopScrollTop||0)};
 }
 function scheduleDraftSave(immediate=false){
   if(savedMode||archivedMode||!plan||!plan.length)return;
@@ -1954,7 +1954,7 @@ function restoreDraft(data){
   if(!planUsesKnownProducts(data.plan)){clearDraftAutosave();toast('Le brouillon était incompatible et a été écarté.');return}
   clearTimeout(draftTimer);
   setSavedMode(false);archivedMode=false;savedNextState=null;loadedSavedId=null;
-  d=Math.max(1,Math.min(4,Number(data.d)||data.plan.length));plan=clone(data.plan);rotationCursor=Number(data.rotationCursor)||0;proposalStart=Number(data.proposalStart)||rotationCursor;proposalSerial=Number(data.proposalSerial)||0;ravitoCount=Number(data.ravitoCount)||0;
+  d=Math.max(1,Math.min(4,Number(data.d)||data.plan.length));plan=clone(data.plan);rotationCursor=Number(data.rotationCursor)||0;proposalStart=Number(data.proposalStart)||rotationCursor;proposalSerial=Number(data.proposalSerial)||0;ravitoCount=Number(data.ravitoCount)||0;validatedMealMemory=normalizeMealMemory(data.validatedMealMemory);
   checkedShop=clone(data.checkedShop||{});resolvedEquivalent=clone(data.resolvedEquivalent||{});replacementMeals=clone(data.replacementMeals||{});replacementProducts=clone(data.replacementProducts||{});
   singleSnackToggle=clone(data.singleSnackToggle||Array(SNACK_PACKS.length).fill(0));snackOverride=data.snackOverride==null?null:data.snackOverride;currentDayIndex=Math.max(0,Math.min(plan.length-1,Number(data.currentDayIndex)||0));currentView=data.currentView==='shop'?'shop':'menus';shopScrollTop=Math.max(0,Number(data.shopScrollTop)||0);settingsOpen=false;pendingUnavailable=null;
   render();if(currentView==='shop')showShopView(true);else showMenuView();
@@ -1986,7 +1986,7 @@ function startNewRavitoFromSaved(){
 }
 function makeSavedSnapshot(displayRavitoCount,displaySingleSnackToggle){
   return {
-    version:6,
+    version:7,
     id:'ravito-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
     plan:clone(plan),d,
     snackOverride,
@@ -1994,7 +1994,7 @@ function makeSavedSnapshot(displayRavitoCount,displaySingleSnackToggle){
     replacementProducts:clone(replacementProducts),
     displayRavitoCount,
     displaySingleSnackToggle:clone(displaySingleSnackToggle),
-    nextState:{ravitoCount,rotationCursor,proposalStart,singleSnackToggle:clone(singleSnackToggle)}
+    nextState:{ravitoCount,rotationCursor,proposalStart,singleSnackToggle:clone(singleSnackToggle),validatedMealMemory:clone(validatedMealMemory)}
   }
 }
 function allDaysSummaryHtml(sim,withChange){
@@ -2072,8 +2072,10 @@ function startNewRavito(days,state=null){
     rotationCursor=Number(next.rotationCursor)||0;
     proposalStart=Number(next.proposalStart)||rotationCursor;
     singleSnackToggle=clone(next.singleSnackToggle||Array(SNACK_PACKS.length).fill(0));
+    validatedMealMemory=normalizeMealMemory(next.validatedMealMemory);
   }
   clearDraftAutosave();
+  if(!next)validatedMealMemory=[];
   setSavedMode(false);savedNextState=null;loadedSavedId=null;plan=null;proposalSerial=0;snackOverride=null;replacementMeals={};replacementProducts={};checkedShop={};resolvedEquivalent={};pendingUnavailable=null;currentDayIndex=0;settingsOpen=false;currentView='prep';
   d=Math.max(1,Math.min(4,Number(days)||2));
   clearPreparedResults();renderPrepState();window.postMessage({type:'ravito-menu-ready'},'*');scrollTopAll();
@@ -2162,20 +2164,72 @@ function mealPlanSignature(days){
 const MENU_DAY_STEP=347;      // coprime avec 2380 : parcourt tout le catalogue
 const MENU_PROPOSAL_STEP=997; // idem : chaque nouvelle proposition saute réellement ailleurs
 
+function normalizeMealMemory(value){
+  if(!Array.isArray(value))return [];
+  return value.slice(0,2).map(entry=>({
+    b:Array.isArray(entry?.b)?entry.b.filter(x=>typeof x==='string'):[],
+    l:Array.isArray(entry?.l)?entry.l.filter(x=>typeof x==='string'):[],
+    d:Array.isArray(entry?.d)?entry.d.filter(x=>typeof x==='string'):[]
+  }))
+}
+function memoryEntryFromPlan(days){
+  return {
+    b:[...new Set((days||[]).map(x=>x?.b?.title).filter(Boolean))],
+    l:[...new Set((days||[]).map(x=>x?.l?.title).filter(Boolean))],
+    d:[...new Set((days||[]).map(x=>x?.d?.title).filter(Boolean))]
+  }
+}
+function rememberValidatedPlan(days){
+  validatedMealMemory=[memoryEntryFromPlan(days),...validatedMealMemory].slice(0,2)
+}
+function mealRepeatedInLastTwo(slot,title){
+  return validatedMealMemory.length>=2
+    &&validatedMealMemory[0]?.[slot]?.includes(title)
+    &&validatedMealMemory[1]?.[slot]?.includes(title)
+}
+function dayRepeatsValidatedStreak(day){
+  return ['b','l','d'].some(slot=>mealRepeatedInLastTwo(slot,day?.[slot]?.title))
+}
+function planMealOverlap(a,b){
+  if(!a?.length||!b?.length)return 0;
+  let overlap=0;
+  for(const slot of ['b','l','d']){
+    const counts=new Map();
+    for(const day of b){
+      const title=day?.[slot]?.title||'';
+      counts.set(title,(counts.get(title)||0)+1)
+    }
+    for(const day of a){
+      const title=day?.[slot]?.title||'',n=counts.get(title)||0;
+      if(n){overlap++;counts.set(title,n-1)}
+    }
+  }
+  return overlap
+}
+function planBagSignature(days){
+  return (days||[])
+    .map(day=>[day.b.title,day.l.title,day.d.title].join('¦'))
+    .sort()
+    .join('§')
+}
+
 function pickRotatedDay(position,start,excludedIds=new Set(),avoidSignature=''){
   const total=DAY_OPTIONS.length;
   const base=((Number(start)||0)+position*MENU_DAY_STEP)%total;
-  for(let n=0;n<total;n++){
-    const idx=(base+n*MENU_DAY_STEP)%total;
-    const cand=DAY_OPTIONS[idx];
-    if(!dayAllowed(cand,position))continue;
-    if(excludedIds.size){
-      const needs=dayNeed(cand);
-      if([...excludedIds].some(id=>needs[id]))continue;
+  for(let pass=0;pass<2;pass++){
+    for(let n=0;n<total;n++){
+      const idx=(base+n*MENU_DAY_STEP)%total;
+      const cand=DAY_OPTIONS[idx];
+      if(!dayAllowed(cand,position))continue;
+      if(pass===0&&dayRepeatsValidatedStreak(cand))continue;
+      if(excludedIds.size){
+        const needs=dayNeed(cand);
+        if([...excludedIds].some(id=>needs[id]))continue;
+      }
+      const sig=[cand.b.title,cand.l.title,cand.d.title].join('¦');
+      if(avoidSignature&&sig===avoidSignature)continue;
+      return clone(cand)
     }
-    const sig=[cand.b.title,cand.l.title,cand.d.title].join('¦');
-    if(avoidSignature&&sig===avoidSignature)continue;
-    return clone(cand)
   }
   return null
 }
@@ -2189,6 +2243,23 @@ function composePlan(start,previous=null){
     out.push(day)
   }
   return out
+}
+function findDifferentPlan(previous,start){
+  const totalMeals=Math.max(1,(previous?.length||d)*3);
+  const targetOverlap=Math.floor(totalMeals/2);
+  const oldBag=planBagSignature(previous);
+  let best=null,bestOverlap=Infinity,bestStart=start;
+  for(let attempt=0;attempt<24;attempt++){
+    const candidateStart=(start+attempt*MENU_PROPOSAL_STEP)%DAY_OPTIONS.length;
+    const candidate=composePlan(candidateStart,null);
+    if(!candidate.length||planBagSignature(candidate)===oldBag)continue;
+    const overlap=planMealOverlap(candidate,previous);
+    if(overlap<bestOverlap){
+      best=candidate;bestOverlap=overlap;bestStart=candidateStart
+    }
+    if(overlap<=targetOverlap)break
+  }
+  return {plan:best||composePlan(start,null),start:bestStart}
 }
 function buildPlan(start=rotationCursor,previous=null){
   proposalStart=((Number(start)||0)%DAY_OPTIONS.length+DAY_OPTIONS.length)%DAY_OPTIONS.length;
@@ -2212,9 +2283,10 @@ function alternateProposal(){
   clearShoppingState();proposalSerial++;
   const currentSnack=snackOverride==null?ravitoCount%SNACK_PACKS.length:Number(snackOverride);
   snackOverride=(currentSnack+1)%SNACK_PACKS.length;
-  proposalStart=(proposalStart+MENU_PROPOSAL_STEP)%DAY_OPTIONS.length;
-  buildPlan(proposalStart,previous);
-  toast('')
+  const found=findDifferentPlan(previous,(proposalStart+MENU_PROPOSAL_STEP)%DAY_OPTIONS.length);
+  proposalStart=found.start;
+  plan=found.plan;
+  render();scheduleDraftSave();toast('')
 }
 function lunchFamily(l){const t=(l&&l.title||'').toLowerCase();if(t.includes('salade'))return 'salade';if(t.includes('pâté')||t.includes('terrine'))return 'pate';if(t.includes('knacki'))return 'knacki';if(t.includes('crackers')||t.includes('chips'))return 'classique';if(t.includes('saucisson')||t.includes('charcuterie'))return 'charcuterie';return t}
 function nextDayCandidate(currentIdx,excludedIds=new Set(),currentLunchFamily='',position=0){
@@ -2351,6 +2423,7 @@ function validate(){
   const displaySingleSnackToggle=clone(singleSnackToggle);
   if(d===1){const idx=snackOverride==null?ravitoCount%SNACK_PACKS.length:snackOverride;singleSnackToggle[idx]=((Number(singleSnackToggle[idx])||0)+1)%2}
   rotationCursor=nextRotationStart(plan);ravitoCount++;
+  rememberValidatedPlan(plan);
   const saved=makeSavedSnapshot(displayRavitoCount,displaySingleSnackToggle);
   loadedSavedId=saved.id;
   savedNextState=clone(saved.nextState||{});
@@ -2361,7 +2434,7 @@ function validate(){
 function resetAll(){
   if(!confirm('Réinitialiser les menus, les courses et l’historique des ravitos ?'))return;
   clearDraftAutosave();
-  d=2;plan=null;rotationCursor=0;proposalStart=0;proposalSerial=0;ravitoCount=0;settingsOpen=false;checkedShop={};resolvedEquivalent={};replacementMeals={};replacementProducts={};singleSnackToggle=Array(SNACK_PACKS.length).fill(0);snackOverride=null;currentDayIndex=0;currentView='prep';savedNextState=null;loadedSavedId=null;setSavedMode(false);clearPreparedResults();window.postMessage({type:'ravito-menu-days-change',days:d},'*');window.postMessage({type:'ravito-menu-clear-saved'},'*');renderPrepState();toast('Reset effectué.','ok');scrollTopAll()
+  d=2;plan=null;rotationCursor=0;proposalStart=0;proposalSerial=0;ravitoCount=0;validatedMealMemory=[];settingsOpen=false;checkedShop={};resolvedEquivalent={};replacementMeals={};replacementProducts={};singleSnackToggle=Array(SNACK_PACKS.length).fill(0);snackOverride=null;currentDayIndex=0;currentView='prep';savedNextState=null;loadedSavedId=null;setSavedMode(false);clearPreparedResults();window.postMessage({type:'ravito-menu-days-change',days:d},'*');window.postMessage({type:'ravito-menu-clear-saved'},'*');renderPrepState();toast('Reset effectué.','ok');scrollTopAll()
 }
 
 function renderDeckClasses(){
