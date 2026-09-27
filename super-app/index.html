@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.163 hors ligne</title>
+<title>Traversée 2027 · v1.162 hors ligne</title>
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -1668,7 +1668,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 .topWeight{display:none}.allDaysMode .topWeight{position:fixed;left:12px;top:14px;z-index:40;height:36px;padding:0 12px;border-radius:999px;background:#12130f;color:#fff;box-shadow:0 7px 20px rgba(0,0,0,.10);font-size:13px;font-weight:950;display:flex;align-items:center;justify-content:center;white-space:nowrap}
 .bad{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:40px!important;margin-top:8px!important;border:1px solid #efb6a8!important;background:#fff1ed!important;color:#b83f27!important;padding:8px 12px!important;border-radius:11px!important;font-size:12px!important;font-weight:900!important}
 .ua-actions button{min-height:44px}.ua-cycle{background:#eeeaff!important;color:#5144d9!important;border:1px solid #d7d0ff!important}
-.dayActionBackdrop{position:fixed;inset:0;z-index:90;background:rgba(18,19,15,.34);display:flex;align-items:flex-end;justify-content:center;padding:10px}.dayActionBackdrop.hide{display:none}.dayActionSheet{position:relative;width:min(500px,100%);max-height:72dvh;overflow-y:auto;background:#fff;border-radius:24px;padding:19px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 18px 45px rgba(0,0,0,.22)}.dayActionClose{position:absolute;right:12px;top:12px;width:34px;height:34px;border:0;border-radius:999px;background:#efefe9;font-size:20px;font-weight:900}.dayActionSheet h3{margin:1px 42px 5px 0;font-size:22px;letter-spacing:-.03em}.dayActionSheet p{margin:0 38px 15px 0;color:var(--muted);font-size:12px;line-height:1.35}.dayActionButtons{display:grid;gap:8px}.dayActionButtons button,.leftoverAccept,.leftoverNext,.leftoverBack{min-height:46px;border:0;border-radius:14px;padding:11px;font-weight:900;font-size:13px}.dayActionPrimary,.leftoverAccept{background:var(--orange);color:#fff}.dayActionSecondary,.leftoverNext{background:#eeeaff;color:#5144d9}.leftoverBack{background:#efefe9;color:var(--ink)}.leftoverGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.leftoverChip{min-height:43px;border:1px solid var(--line);border-radius:13px;background:#fafaf7;padding:8px 7px;font-size:11px;line-height:1.15;font-weight:900;color:var(--ink)}.leftoverChip.selected{border:2px solid #5e50ed;background:#eeeaff;color:#4437cc;box-shadow:0 4px 12px rgba(94,80,237,.13)}.leftoverProposal{margin:12px 0;padding:13px;border-radius:16px;background:#f4f1ff}.leftoverProposal small{display:block;color:#6e68a3;font-size:10px;font-weight:900;letter-spacing:.07em;margin-bottom:5px}.leftoverProposal b{display:block;font-size:15px;line-height:1.2}.leftoverProposal .old{margin-top:8px;color:#92928a;font-size:11px;text-decoration:line-through}.leftoverProposal .arrow{margin:3px 0;color:#8279df;font-weight:900}.bagUses{display:grid;gap:6px}.bagUse{padding:10px 11px;border-radius:13px;background:#eef8e8}.bagUse b{font-size:13px}.bagUse small{display:block;margin-top:2px;color:#52634e;font-size:10px;font-weight:800}
+
 .allDaysMode .allDaysSummary{gap:10px!important}
 .allDaysMode .allDaysSummary .allDaysSnacks{width:auto!important;flex:1 1 0!important;min-width:0!important}
 .allDaysMode .allDaysSummary .allDaysSnacks+ .allDaysSnacks{border-left:1px solid rgba(152,99,29,.18);padding-left:10px}
@@ -1692,7 +1692,6 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
   </div>
 </div>
 <div id="msg"></div>
-<div id="dayActionBackdrop" class="dayActionBackdrop hide"><div class="dayActionSheet"><button class="dayActionClose" onclick="closeDayAction()" aria-label="Fermer">×</button><div id="dayActionContent"></div></div></div>
 
 <section id="menus" class="screen hide">
     <div id="savedChip" class="savedChip">✓ Ravito enregistré</div>
@@ -1767,10 +1766,7 @@ const PRODUCTS={
   ,couscousCan:{name:'Couscous en conserve',pack:800,unit:'boîte',format:'800 g'}
   ,petitSaleCan:{name:'Petit salé aux lentilles en conserve',pack:800,unit:'boîte',format:'800 g'}
 };
-// Les produits humides / très périssables ne reportent pas un fond de paquet ouvert au ravito suivant.
-// Un conditionnement entier non ouvert peut en revanche rester dans le stock.
 const SAME_DAY_CAN_IDS=new Set(['ravioliCan','cassouletCan','lentSausCan','chiliCan','couscousCan','petitSaleCan']);
-const NO_PARTIAL_CARRY=new Set(['lent','chick','redbean','corn','knacki','riceReady','quinoaReady','baguette','carrot',...SAME_DAY_CAN_IDS]);
 const B=(title,parts)=>({title,parts});
 const L=(title,parts,detail='')=>({title,parts,detail});
 const D=(title,parts,detail='')=>({title,parts,detail});
@@ -1848,9 +1844,8 @@ const CANNED_DAYS=[
 CANNED_DAYS.forEach((day,i)=>DAYS.splice(3+i*5,0,day));
 const SNACK_PACKS=[['cho','pfruit'],['pea','bars'],['almond','sab'],['carrot','cho'],['pfruit','pea'],['bars','almond'],['sab','carrot']];
 const SNACK_TARGET_PER_DAY=165;
-let d=2,plan=null,rotationCursor=0,proposalStart=0,proposalSerial=0,ravitoCount=0,settingsOpen=false,checkedShop={},resolvedEquivalent={},replacementMeals={},replacementProducts={},leftoverMeals={},bagStock={},singleSnackToggle=Array(SNACK_PACKS.length).fill(0),snackOverride=null,pendingUnavailable=null,currentDayIndex=0,currentView='prep',shopScrollTop=0,savedMode=false,archivedMode=false,savedNextState=null,loadedSavedId=null;
+let d=2,plan=null,rotationCursor=0,proposalStart=0,proposalSerial=0,ravitoCount=0,settingsOpen=false,checkedShop={},resolvedEquivalent={},replacementMeals={},replacementProducts={},singleSnackToggle=Array(SNACK_PACKS.length).fill(0),snackOverride=null,pendingUnavailable=null,currentDayIndex=0,currentView='prep',shopScrollTop=0,savedMode=false,archivedMode=false,savedNextState=null,loadedSavedId=null;
 let unavailableOptions=[],unavailableOptionIndex=0,unavailableProductId=null,unavailableBox=null;
-let dayActionIndex=0,leftoverOptions=[],leftoverOptionIndex=0,leftoverProductId=null,suggestedLeftovers=[],selectedLeftoverIds=[],leftoverQueue=[],leftoverPickerShowAll=false;
 const menuRoot=document.getElementById('menuHost').shadowRoot;
 const menuApp=menuRoot.getElementById('menuApp');
 const $=id=>menuRoot.getElementById(id);
@@ -1865,7 +1860,7 @@ function clone(o){try{return typeof structuredClone==='function'?structuredClone
 let draftTimer=0;
 function makeDraftSnapshot(){
   if(savedMode||archivedMode||!plan||!plan.length)return null;
-  return {version:8,updatedAt:Date.now(),savedMode:false,d,plan:clone(plan),rotationCursor,proposalStart,proposalSerial,ravitoCount,checkedShop:clone(checkedShop),resolvedEquivalent:clone(resolvedEquivalent),replacementMeals:clone(replacementMeals),replacementProducts:clone(replacementProducts),leftoverMeals:clone(leftoverMeals),bagStock:clone(bagStock),suggestedLeftovers:clone(suggestedLeftovers),singleSnackToggle:clone(singleSnackToggle),snackOverride,currentDayIndex,currentView:currentView==='shop'?'shop':'menus',shopScrollTop:Math.max(0,shopScrollTop||0)};
+  return {version:9,updatedAt:Date.now(),savedMode:false,d,plan:clone(plan),rotationCursor,proposalStart,proposalSerial,ravitoCount,checkedShop:clone(checkedShop),resolvedEquivalent:clone(resolvedEquivalent),replacementMeals:clone(replacementMeals),replacementProducts:clone(replacementProducts),singleSnackToggle:clone(singleSnackToggle),snackOverride,currentDayIndex,currentView:currentView==='shop'?'shop':'menus',shopScrollTop:Math.max(0,shopScrollTop||0)};
 }
 function scheduleDraftSave(immediate=false){
   if(savedMode||archivedMode||!plan||!plan.length)return;
@@ -1880,7 +1875,7 @@ function restoreDraft(data){
   clearTimeout(draftTimer);
   setSavedMode(false);archivedMode=false;savedNextState=null;loadedSavedId=null;
   d=Math.max(1,Math.min(4,Number(data.d)||data.plan.length));plan=clone(data.plan);rotationCursor=Number(data.rotationCursor)||0;proposalStart=Number(data.proposalStart)||rotationCursor;proposalSerial=Number(data.proposalSerial)||0;ravitoCount=Number(data.ravitoCount)||0;
-  checkedShop=clone(data.checkedShop||{});resolvedEquivalent=clone(data.resolvedEquivalent||{});replacementMeals=clone(data.replacementMeals||{});replacementProducts=clone(data.replacementProducts||{});leftoverMeals=clone(data.leftoverMeals||{});bagStock=clone(data.bagStock||{});suggestedLeftovers=clone(data.suggestedLeftovers||[]);
+  checkedShop=clone(data.checkedShop||{});resolvedEquivalent=clone(data.resolvedEquivalent||{});replacementMeals=clone(data.replacementMeals||{});replacementProducts=clone(data.replacementProducts||{});
   singleSnackToggle=clone(data.singleSnackToggle||Array(SNACK_PACKS.length).fill(0));snackOverride=data.snackOverride==null?null:data.snackOverride;currentDayIndex=Math.max(0,Math.min(plan.length-1,Number(data.currentDayIndex)||0));currentView=data.currentView==='shop'?'shop':'menus';shopScrollTop=Math.max(0,Number(data.shopScrollTop)||0);settingsOpen=false;pendingUnavailable=null;
   render();if(currentView==='shop')showShopView(true);else showMenuView();
 }
@@ -1909,20 +1904,17 @@ function startNewRavitoFromSaved(){
   if(!savedMode)return;
   startNewRavito(d,savedNextState);
 }
-function makeSavedSnapshot(displayRavitoCount,displaySingleSnackToggle,finalSim=simulate(plan)){
-  const nextSuggestions=Object.entries(finalSim.leftovers).filter(([id,g])=>PRODUCTS[id]&&g>=Math.max(20,PRODUCTS[id].pack*.15)).map(([id])=>id);
+function makeSavedSnapshot(displayRavitoCount,displaySingleSnackToggle){
   return {
-    version:5,
+    version:6,
     id:'ravito-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
     plan:clone(plan),d,
     snackOverride,
     replacementMeals:clone(replacementMeals),
     replacementProducts:clone(replacementProducts),
-    leftoverMeals:clone(leftoverMeals),
-    startStock:clone(bagStock),
     displayRavitoCount,
     displaySingleSnackToggle:clone(displaySingleSnackToggle),
-    nextState:{ravitoCount,rotationCursor,proposalStart,singleSnackToggle:clone(singleSnackToggle),suggestedLeftovers:nextSuggestions,carryStock:clone(finalSim.leftovers)}
+    nextState:{ravitoCount,rotationCursor,proposalStart,singleSnackToggle:clone(singleSnackToggle)}
   }
 }
 function allDaysSummaryHtml(sim,withChange){
@@ -1986,8 +1978,6 @@ function openSavedRavito(data,archived=false){
   snackOverride=data.snackOverride==null?null:data.snackOverride;
   replacementMeals=clone(data.replacementMeals||{});
   replacementProducts=clone(data.replacementProducts||{});
-  leftoverMeals=clone(data.leftoverMeals||{});
-  bagStock=clone(data.startStock||{});
   ravitoCount=Number(data.displayRavitoCount)||0;
   singleSnackToggle=clone(data.displaySingleSnackToggle||Array(SNACK_PACKS.length).fill(0));
   checkedShop={};resolvedEquivalent={};pendingUnavailable=null;currentDayIndex=0;settingsOpen=false;currentView='menus';
@@ -2002,11 +1992,9 @@ function startNewRavito(days,state=null){
     rotationCursor=Number(next.rotationCursor)||0;
     proposalStart=Number(next.proposalStart)||rotationCursor;
     singleSnackToggle=clone(next.singleSnackToggle||Array(SNACK_PACKS.length).fill(0));
-    suggestedLeftovers=clone(next.suggestedLeftovers||[]);
-    bagStock=clone(next.carryStock||{});
-  }else{suggestedLeftovers=[];bagStock={}}
+  }
   clearDraftAutosave();
-  setSavedMode(false);savedNextState=null;loadedSavedId=null;plan=null;proposalSerial=0;snackOverride=null;replacementMeals={};replacementProducts={};leftoverMeals={};checkedShop={};resolvedEquivalent={};pendingUnavailable=null;currentDayIndex=0;settingsOpen=false;currentView='prep';
+  setSavedMode(false);savedNextState=null;loadedSavedId=null;plan=null;proposalSerial=0;snackOverride=null;replacementMeals={};replacementProducts={};checkedShop={};resolvedEquivalent={};pendingUnavailable=null;currentDayIndex=0;settingsOpen=false;currentView='prep';
   d=Math.max(1,Math.min(4,Number(days)||2));
   clearPreparedResults();renderPrepState();window.postMessage({type:'ravito-menu-ready'},'*');scrollTopAll();
 }
@@ -2015,19 +2003,15 @@ function addParts(n,parts){for(const [id,g] of Object.entries(parts))n[id]=(n[id
 function dayNeed(day){const n={};addParts(n,day.b.parts);n.coffee=(n.coffee||0)+2;addParts(n,day.l.parts);addParts(n,day.d.parts);return n}
 function mergeNeeds(days){const n={};days.forEach(day=>{const x=dayNeed(day);for(const id in x)n[id]=(n[id]||0)+x[id]});return n}
 function snackIdsForOverride(override){const idx=override==null?ravitoCount%SNACK_PACKS.length:override;const pair=SNACK_PACKS[idx];if(d===1){if(pair.includes('carrot'))return pair.slice();const t=Number(singleSnackToggle[idx])||0;return [pair[t%2]]}return pair.slice()}
-function leftoverIdsAt(key){const value=leftoverMeals[key],ids=Array.isArray(value)?value:[value];return [...new Set(ids.filter(id=>PRODUCTS[id]))]}
-function leftoverCreditsFor(days){const credits={};for(const key of Object.keys(leftoverMeals)){const match=key.match(/^(\d+)-([bld])$/);if(!match)continue;const meal=days?.[Number(match[1])]?.[match[2]];for(const id of leftoverIdsAt(key)){const amount=Number(meal?.parts?.[id])||0;if(amount>0)credits[id]=(credits[id]||0)+amount}}return credits}
-function sanitizeLeftoverMeals(){for(const key of Object.keys(leftoverMeals)){const match=key.match(/^(\d+)-([bld])$/),meal=match?plan?.[Number(match[1])]?.[match[2]]:null,ids=leftoverIdsAt(key).filter(id=>meal?.parts?.[id]);if(ids.length)leftoverMeals[key]=ids;else delete leftoverMeals[key]}}
 function simulate(days,overrideSnack=snackOverride){
   const mealNeed=mergeNeeds(days),snackNeed={},totalNeed={...mealNeed},rotationIds=snackIdsForOverride(overrideSnack),snackTarget=SNACK_TARGET_PER_DAY*d;
-  const rotatingTarget=snackTarget;
   if(rotationIds.length){
     const hasCarrot=rotationIds.includes('carrot'),denseIds=rotationIds.filter(id=>id!=='carrot');
-    let denseTarget=rotatingTarget;
+    let denseTarget=snackTarget;
     if(hasCarrot){
-      const carrotNeed=Math.min(rotatingTarget,d===1?50:100);
-      snackNeed.carrot=(snackNeed.carrot||0)+carrotNeed;
-      denseTarget=Math.max(0,rotatingTarget-carrotNeed);
+      const carrotNeed=Math.min(snackTarget,d===1?50:100);
+      snackNeed.carrot=carrotNeed;
+      denseTarget=Math.max(0,snackTarget-carrotNeed);
     }
     const targets=denseIds.length?denseIds:(hasCarrot?[]:rotationIds);
     if(targets.length){
@@ -2040,47 +2024,23 @@ function simulate(days,overrideSnack=snackOverride){
   }
   for(const [id,g] of Object.entries(snackNeed))totalNeed[id]=(totalNeed[id]||0)+g;
 
-  const manualCredits=leftoverCreditsFor(days),inventory={...bagStock};
-  for(const [id,g] of Object.entries(manualCredits))inventory[id]=Math.max(Number(inventory[id])||0,g);
-  const existingWeight=Object.values(inventory).reduce((a,g)=>a+(Number(g)||0),0);
   const purchases={};
   for(const [id,need] of Object.entries(totalNeed)){
     if(need<=0)continue;
-    const p=PRODUCTS[id],available=Math.max(0,Number(inventory[id])||0);
-    const missing=Math.max(0,need-available);
-    if(missing>.001){
-      const count=Math.ceil(missing/p.pack-1e-9),grams=count*p.pack;
-      inventory[id]=available+grams;
-      purchases[id]={id,count,grams,reasons:new Set(),need,availableBefore:available};
-      if(mealNeed[id])purchases[id].reasons.add('repas');
-      if(snackNeed[id])purchases[id].reasons.add('grignotage');
-    }
+    const p=PRODUCTS[id],count=Math.ceil(need/p.pack-1e-9),grams=count*p.pack;
+    purchases[id]={id,count,grams,reasons:new Set(),need};
+    if(mealNeed[id])purchases[id].reasons.add('repas');
+    if(snackNeed[id])purchases[id].reasons.add('grignotage');
   }
   const buyWeight=Object.values(purchases).reduce((a,x)=>a+x.grams,0);
-  const startWeight=Object.values(inventory).reduce((a,g)=>a+(Number(g)||0),0);
   const consumedWeight=Object.values(totalNeed).reduce((a,g)=>a+(Number(g)||0),0);
-  const leftovers={...inventory};
-  for(const [id,need] of Object.entries(totalNeed))leftovers[id]=Math.max(0,(leftovers[id]||0)-need);
-  let nonCarriedRemainder=0;
-  for(const id of Object.keys(leftovers)){
-    const p=PRODUCTS[id];
-    let g=Math.max(0,leftovers[id]||0);
-    if(NO_PARTIAL_CARRY.has(id)&&g>0){
-      const keep=Math.floor(g/p.pack+1e-9)*p.pack;
-      nonCarriedRemainder+=g-keep;
-      g=keep;
-    }
-    if(g<.5)delete leftovers[id];else leftovers[id]=g;
-  }
-  for(const x of Object.values(purchases))x.remaining=Math.max(0,leftovers[x.id]||0);
-  const carryWeight=Object.values(leftovers).reduce((a,g)=>a+(Number(g)||0),0);
   const snackIds=[...new Set([...Object.keys(snackNeed).filter(id=>snackNeed[id]>.1),...rotationIds])];
-  return {mealNeed,snackNeed,totalNeed,purchases,existingWeight,startWeight,buyWeight,consumedWeight,carryWeight,leftovers,manualCredits,snackTarget,snackIds,snackPurchasedIds:rotationIds.slice(),nonCarriedRemainder}
+  return {mealNeed,snackNeed,totalNeed,purchases,startWeight:buyWeight,buyWeight,consumedWeight,snackTarget,snackIds,snackPurchasedIds:rotationIds.slice()}
 }
 function pluralUnit(unit,count){if(count===1)return unit;if(unit==='saucisson')return 'saucissons';return unit+'s'}
 function formatBuy(x){const p=PRODUCTS[x.id];return x.count+' '+pluralUnit(p.unit,x.count)+' · '+p.format+(x.count>1?' par unité':'')}
 function formatWeight(g){if(g>=1000)return '≈ '+(g/1000).toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1})+' kg';return '≈ '+Math.round(g)+' g'}
-function mealBadge(i,slot){const key=i+'-'+slot;if(leftoverMeals[key])return '<em class="replaceBadge">RESTE UTILISÉ</em>';if(replacementMeals[key])return '<em class="replaceBadge">REPAS MODIFIÉ</em>';return ''}
+function mealBadge(i,slot){const key=i+'-'+slot;if(replacementMeals[key])return '<em class="replaceBadge">REPAS MODIFIÉ</em>';return ''}
 function sameDayMealBadge(day,slot){return slot==='d'&&isSameDayCan(day)?'<em class="sameDayTag">SOIR MÊME</em>':''}
 function scrollTopAll(){const s=document.scrollingElement||document.documentElement;s.scrollTop=0;const section=document.getElementById('menuSection');if(section)section.scrollTop=0;if(host)host.scrollTop=0;if(menuApp)menuApp.scrollTop=0}
 let menuNeedsRender=false;
@@ -2117,10 +2077,7 @@ function dayFoodWeight(day){return Object.values(dayNeed(day)).reduce((a,g)=>a+(
 function planAllowed(days){return Array.isArray(days)&&days.length===d&&uniqueMealTitles(days)&&days.every((day,i)=>dayAllowed(day,i))}
 function planScore(days,start){
   const sim=simulate(days);
-  /* Ce moteur n'évalue plus la nutrition. Il privilégie simplement ce que
-     l'on porte réellement, puis les restes et les conditionnements inutiles. */
-  let score=sim.startWeight+sim.carryWeight*.70+sim.nonCarriedRemainder*1.8;
-  score+=Math.max(0,sim.startWeight-sim.consumedWeight)*.30;
+  let score=sim.startWeight;
   score+=days.reduce((sum,x,i)=>sum+cyclicDistance(start,x.idx)*(5+i),0);
   return score
 }
@@ -2247,7 +2204,7 @@ function prepareRavito(){
   const b=$('prepBtn');clearShoppingState();b.disabled=true;b.textContent='Génération…';
   setTimeout(()=>{proposalSerial=0;snackOverride=null;currentDayIndex=0;settingsOpen=false;buildPlan(rotationCursor);b.disabled=false;b.textContent='Générer les menus';showMenuView();scrollTopAll();toast('')},20)
 }
-function alternateProposal(){if(savedMode)return;if(!plan||!confirmRebuild('Créer une nouvelle proposition'))return;const previous=clone(plan);leftoverMeals={};closeDayAction();clearShoppingState();proposalSerial++;const currentSnack=snackOverride==null?ravitoCount%SNACK_PACKS.length:Number(snackOverride);snackOverride=(currentSnack+1)%SNACK_PACKS.length;proposalStart=(proposalStart+Math.max(1,d))%DAYS.length;buildPlan(proposalStart,previous);toast('')}
+function alternateProposal(){if(savedMode)return;if(!plan||!confirmRebuild('Créer une nouvelle proposition'))return;const previous=clone(plan);clearShoppingState();proposalSerial++;const currentSnack=snackOverride==null?ravitoCount%SNACK_PACKS.length:Number(snackOverride);snackOverride=(currentSnack+1)%SNACK_PACKS.length;proposalStart=(proposalStart+Math.max(1,d))%DAYS.length;buildPlan(proposalStart,previous);toast('')}
 function lunchFamily(l){const t=(l&&l.title||'').toLowerCase();if(t.includes('salade'))return 'salade';if(t.includes('pâté')||t.includes('terrine'))return 'pate';if(t.includes('knacki'))return 'knacki';if(t.includes('crackers')||t.includes('chips'))return 'classique';if(t.includes('saucisson')||t.includes('charcuterie'))return 'charcuterie';return t}
 function nextDayCandidate(currentIdx,excludedIds=new Set(),currentLunchFamily='',position=0){
   for(let off=1;off<=DAYS.length;off++){
@@ -2261,22 +2218,7 @@ function nextDayCandidate(currentIdx,excludedIds=new Set(),currentLunchFamily=''
   }
   return null
 }
-function changeDay(i,excluded=[]){if(savedMode)return;if(!plan||!confirmRebuild('Changer cette journée'))return;closeUnavailable();const currentFamily=lunchFamily(plan[i].l);const cand=nextDayCandidate(plan[i].idx,new Set(excluded),currentFamily,i);if(!cand){toast('Aucune autre journée compatible disponible.');return}for(const key of Object.keys(leftoverMeals)){if(key.startsWith(i+'-'))delete leftoverMeals[key]}plan[i]=cand;clearShoppingState();render();scheduleDraftSave();toast('')}
-function closeDayAction(){$('dayActionBackdrop').classList.add('hide');$('dayActionContent').innerHTML='';leftoverOptions=[];leftoverOptionIndex=0;leftoverProductId=null;selectedLeftoverIds=[];leftoverQueue=[];leftoverPickerShowAll=false}
-function openDayAction(i){changeDay(i)}
-function changeDayFromAction(){const i=dayActionIndex;closeDayAction();changeDay(i)}
-function leftoverMealCandidates(dayIndex,id){if(!plan?.[dayIndex]||!PRODUCTS[id])return[];const out=[],seen=new Set();for(const slot of ['b','l','d']){const current=plan[dayIndex][slot],existing=leftoverIdsAt(dayIndex+'-'+slot),keepsExisting=meal=>existing.every(oldId=>meal.parts?.[oldId]),occupiedPenalty=existing.length?1500:0;if(current.parts?.[id]&&keepsExisting(current)){const key=slot+'|'+current.title;seen.add(key);out.push({dayIndex,slot,meal:clone(current),plan:clone(plan),before:current.title,same:true,score:-10000+occupiedPenalty})}for(let off=0;off<DAYS.length;off++){const meal=DAYS[(proposalStart+off)%DAYS.length][slot],key=slot+'|'+meal.title;if(seen.has(key)||!meal.parts?.[id]||meal.title===current.title||!keepsExisting(meal))continue;const trial=clone(plan);trial[dayIndex][slot]=clone(meal);if(!planAllowed(trial))continue;seen.add(key);out.push({dayIndex,slot,meal:clone(meal),plan:trial,before:current.title,same:false,score:planScore(trial,proposalStart)+off+occupiedPenalty})}}out.sort((a,b)=>a.score-b.score);return out.slice(0,12)}
-function leftoverRavitoCandidates(id){if(!plan||!PRODUCTS[id])return[];return plan.flatMap((_,i)=>leftoverMealCandidates(i,id)).sort((a,b)=>(Number(b.same)-Number(a.same))||(a.dayIndex-b.dayIndex)||(a.score-b.score)).slice(0,18)}
-function openGlobalLeftovers(){if(savedMode||!plan?.length)return;dayActionIndex=-1;selectedLeftoverIds=[];leftoverQueue=[];leftoverOptions=[];leftoverOptionIndex=0;leftoverProductId=null;leftoverPickerShowAll=false;$('dayActionBackdrop').classList.remove('hide');openLeftoverPicker()}
-function openLeftoverPicker(showAll=false){leftoverPickerShowAll=!!showAll;const alreadyUsed=new Set(Object.keys(leftoverMeals).flatMap(leftoverIdsAt)),compatible=id=>PRODUCTS[id]&&!PRODUCTS[id].staple&&!alreadyUsed.has(id)&&leftoverRavitoCandidates(id).length,all=Object.keys(PRODUCTS).filter(compatible).sort((a,b)=>PRODUCTS[a].name.localeCompare(PRODUCTS[b].name)),suggested=suggestedLeftovers.filter(compatible),ids=showAll||!suggested.length?all:suggested,count=selectedLeftoverIds.length;$('dayActionBackdrop').classList.remove('hide');$('dayActionContent').innerHTML='<h3>Quels restes veux-tu utiliser ?</h3><p>Sélectionne les produits dont tu as assez pour un repas. L’app les répartira sur tout le ravito.</p><div class="leftoverGrid">'+ids.map(id=>'<button class="leftoverChip '+(selectedLeftoverIds.includes(id)?'selected':'')+'" aria-pressed="'+selectedLeftoverIds.includes(id)+'" onclick="toggleLeftoverSelection(\''+id+'\')">'+(selectedLeftoverIds.includes(id)?'✓ ':'')+PRODUCTS[id].name+'</button>').join('')+'</div><div class="dayActionButtons" style="margin-top:10px">'+(count?'<button class="dayActionPrimary" onclick="startSelectedLeftovers()">Répartir '+count+' reste'+(count>1?'s':'')+'</button>':'')+(!showAll&&suggested.length?'<button class="dayActionSecondary" onclick="openLeftoverPicker(true)">Voir les autres produits</button>':'')+'<button class="leftoverBack" onclick="closeDayAction()">Annuler</button></div>'}
-function toggleLeftoverSelection(id){if(!PRODUCTS[id])return;selectedLeftoverIds=selectedLeftoverIds.includes(id)?selectedLeftoverIds.filter(x=>x!==id):[...selectedLeftoverIds,id];openLeftoverPicker(leftoverPickerShowAll)}
-function startSelectedLeftovers(){if(!selectedLeftoverIds.length)return;if(!confirmRebuild('Adapter ces repas'))return;checkedShop={};resolvedEquivalent={};replacementProducts={};closeUnavailable();leftoverQueue=[...selectedLeftoverIds];selectedLeftoverIds=[];startNextQueuedLeftover()}
-function startNextQueuedLeftover(){const id=leftoverQueue.shift();if(!id){closeDayAction();render();scheduleDraftSave();toast('Restes répartis dans les menus.','ok');return}leftoverProductId=id;leftoverOptions=leftoverRavitoCandidates(id);leftoverOptionIndex=0;if(!leftoverOptions.length){$('dayActionContent').innerHTML='<h3>'+PRODUCTS[id].name+'</h3><p>Impossible de l’intégrer sans retirer un reste déjà choisi ou casser le menu.</p><div class="dayActionButtons"><button class="leftoverNext" onclick="skipQueuedLeftover()">Ignorer ce reste et continuer</button><button class="leftoverBack" onclick="closeDayAction()">Terminer ici</button></div>';return}renderLeftoverOption()}
-function skipQueuedLeftover(){startNextQueuedLeftover()}
-function slotLabel(slot){return slot==='b'?'Petit-déjeuner':slot==='l'?'Déjeuner':'Dîner'}
-function renderLeftoverOption(){const option=leftoverOptions[leftoverOptionIndex],p=PRODUCTS[leftoverProductId];if(!option||!p){startNextQueuedLeftover();return}const change=option.same?'<b>'+option.meal.title+'</b><div class="arrow">Déjà prévu : utilise simplement ton reste.</div>':'<div class="old">'+option.before+'</div><div class="arrow">↓</div><b>'+option.meal.title+'</b>',remaining=leftoverQueue.length;$('dayActionContent').innerHTML='<h3>'+p.name+'</h3><p>Proposition '+(leftoverOptionIndex+1)+' / '+leftoverOptions.length+(remaining?' · encore '+remaining+' reste'+(remaining>1?'s':'')+' ensuite':'')+'</p><div class="leftoverProposal"><small>JOUR '+(option.dayIndex+1)+' · '+slotLabel(option.slot).toUpperCase()+'</small>'+change+'</div><div class="dayActionButtons"><button class="leftoverAccept" onclick="acceptLeftoverOption()">Utiliser ce reste</button>'+(leftoverOptions.length>1?'<button class="leftoverNext" onclick="cycleLeftoverOption()">↻ Voir une autre proposition</button>':'')+'<button class="leftoverBack" onclick="closeDayAction()">Terminer ici</button></div>'}
-function cycleLeftoverOption(){if(leftoverOptions.length<2)return;leftoverOptionIndex=(leftoverOptionIndex+1)%leftoverOptions.length;renderLeftoverOption()}
-function acceptLeftoverOption(){const option=leftoverOptions[leftoverOptionIndex],id=leftoverProductId;if(!option||!id)return;plan=clone(option.plan);const key=option.dayIndex+'-'+option.slot;leftoverMeals[key]=[...new Set([...leftoverIdsAt(key),id])];if(!option.same)replacementMeals[key]=true;render();scheduleDraftSave(true);startNextQueuedLeftover()}
+function changeDay(i,excluded=[]){if(savedMode)return;if(!plan||!confirmRebuild('Changer cette journée'))return;closeUnavailable();const currentFamily=lunchFamily(plan[i].l);const cand=nextDayCandidate(plan[i].idx,new Set(excluded),currentFamily,i);if(!cand){toast('Aucune autre journée compatible disponible.');return}plan[i]=cand;clearShoppingState();render();scheduleDraftSave();toast('')}
 function mealWithout(slot,id,currentTitle,dayIndex,nextPlan,variant=0){const used=new Set(nextPlan.map((x,i)=>i===dayIndex?'':x[slot]?.title).filter(Boolean));const choices=[];for(let off=1;off<=DAYS.length;off++){const source=DAYS[(proposalStart+off)%DAYS.length],meal=source[slot];if(meal.title===currentTitle||meal.parts[id]||used.has(meal.title))continue;const candidate=clone(nextPlan[dayIndex]);candidate[slot]=clone(meal);if(!dayAllowed(candidate,dayIndex))continue;choices.push({meal,score:off*3})}choices.sort((a,b)=>a.score-b.score);if(!choices.length)return null;return clone(choices[Math.abs(Number(variant)||0)%choices.length].meal)}
 function simulateWithSnackOverride(days,override){return simulate(days,override)}
 function buildUnavailablePreview(id,variant=0){if(!plan)return null;const next=clone(plan),changes=[];let nextSnack=snackOverride;for(let i=0;i<next.length;i++){const day=next[i];if(day.b.parts[id]){const alt=mealWithout('b',id,day.b.title,i,next,variant+i);if(!alt)return null;changes.push('Jour '+(i+1)+' · petit-déj : '+day.b.title+' → '+alt.title);day.b=alt}if(day.l.parts[id]){const alt=mealWithout('l',id,day.l.title,i,next,variant+i);if(!alt)return null;changes.push('Jour '+(i+1)+' · midi : '+day.l.title+' → '+alt.title);day.l=alt}if(day.d.parts[id]){const alt=mealWithout('d',id,day.d.title,i,next,variant+i);if(!alt)return null;changes.push('Jour '+(i+1)+' · dîner : '+day.d.title+' → '+alt.title);day.d=alt}}
@@ -2360,8 +2302,7 @@ function renderShop(sim){
   $('bl').innerHTML=regular.length?regular.map(x=>{const p=PRODUCTS[x.id],checked=!!checkedShop[x.id],eq=!!resolvedEquivalent[x.id],repl=!!replacementProducts[x.id];return '<div class="shop '+(checked?'checked':'')+'" data-shop-id="'+x.id+'" role="checkbox" tabindex="0" aria-checked="'+checked+'" onclick="if(event.target.closest(\'.bad,.inlineUnavailable\'))return;toggleShopRow(\''+x.id+'\')" onkeydown="if((event.key===\'Enter\'||event.key===\' \')&&event.target===this){event.preventDefault();toggleShopRow(\''+x.id+'\')}"><div class="checkWrap"><span>✓</span></div><div class="shopText"><div class="shopTap"><b>'+p.name+(repl?'<em class="replacementTag">AJOUTÉ APRÈS MODIFICATION</em>':'')+(eq?'<em>ÉQUIVALENT</em>':'')+'</b><small>'+formatBuy(x)+'</small></div><button class="bad" onclick="openUnavailable(\''+x.id+'\')">Introuvable</button></div><div class="unavailable inlineUnavailable hide" data-unavailable-id="'+x.id+'"></div></div>'}).join(''):'<div class="empty-shop">Aucun achat principal supplémentaire.</div>';
   $('bl').querySelectorAll('.inlineUnavailable').forEach(box=>{box.onclick=event=>event.stopPropagation();box.onkeydown=event=>event.stopPropagation()});
   regular.filter(x=>SAME_DAY_CAN_IDS.has(x.id)).forEach(x=>{const title=$('bl').querySelector('[data-shop-id="'+x.id+'"] .shopText b');if(title)title.insertAdjacentHTML('beforeend','<em class="sameDayShopTag">SOIR MÊME</em>')});
-  const bagUses=Object.entries(bagStock).filter(([id,g])=>PRODUCTS[id]&&g>0&&sim.totalNeed[id]>0).map(([id,g])=>'<div class="bagUse"><b>'+PRODUCTS[id].name+'</b><small>Déjà dans le sac · '+formatWeight(g)+'</small></div>').join('');
-  $('verifyBox').innerHTML=bagUses?'<div class="section-title">DÉJÀ DANS LE SAC</div><div class="bagUses">'+bagUses+'</div>':'';
+  $('verifyBox').innerHTML='';
   const checkable=regular.map(x=>x.id),done=checkable.filter(id=>checkedShop[id]).length,left=checkable.length-done,pct=checkable.length?Math.round(done/checkable.length*100):100;
   $('shopProgress').innerHTML='<div class="progress-track"><div class="progress-fill" style="width:'+pct+'%"></div></div>';
   $('validationHint').textContent=left?left+' article'+(left>1?'s':'')+' non coché'+(left>1?'s':'')+'.':'Liste terminée.';
@@ -2370,7 +2311,7 @@ function renderShop(sim){
   if($('shopBottomStatus')){const remainingWeight=regular.filter(x=>!checkedShop[x.id]).reduce((sum,x)=>sum+x.grams,0);$('shopBottomStatus').textContent=left?'Reste '+left+' · '+formatWeight(remainingWeight):'Terminé';}
 }
 function clearPreparedResults(){
-  closeUnavailable();closeDayAction();plan=null;leftoverMeals={};settingsOpen=false;currentDayIndex=0;currentView='prep';
+  closeUnavailable();plan=null;settingsOpen=false;currentDayIndex=0;currentView='prep';
   menuApp.classList.remove('allDaysMode');
   $('menus').classList.add('hide');$('buy').classList.add('hide');$('validation').classList.add('hide');$('bottomNav').classList.add('hide');$('prepCard').classList.remove('hide');
   $('planSummary').innerHTML='';$('summaryWrap').classList.add('hide');$('ml').innerHTML='';$('bl').innerHTML='';$('verifyBox').innerHTML='';$('shopProgress').innerHTML='';$('validationHint').textContent='';renderPrepState();scrollTopAll()
@@ -2381,10 +2322,9 @@ function validate(){
   clearDraftAutosave();
   const displayRavitoCount=ravitoCount;
   const displaySingleSnackToggle=clone(singleSnackToggle);
-  const finalSim=simulate(plan);
   if(d===1){const idx=snackOverride==null?ravitoCount%SNACK_PACKS.length:snackOverride;singleSnackToggle[idx]=((Number(singleSnackToggle[idx])||0)+1)%2}
   rotationCursor=nextRotationStart(plan);ravitoCount++;
-  const saved=makeSavedSnapshot(displayRavitoCount,displaySingleSnackToggle,finalSim);
+  const saved=makeSavedSnapshot(displayRavitoCount,displaySingleSnackToggle);
   loadedSavedId=saved.id;
   savedNextState=clone(saved.nextState||{});
   setSavedMode(true);
@@ -2394,7 +2334,7 @@ function validate(){
 function resetAll(){
   if(!confirm('Réinitialiser les menus, les courses et l’historique des ravitos ?'))return;
   clearDraftAutosave();
-  d=2;plan=null;rotationCursor=0;proposalStart=0;proposalSerial=0;ravitoCount=0;settingsOpen=false;checkedShop={};resolvedEquivalent={};replacementMeals={};replacementProducts={};leftoverMeals={};bagStock={};suggestedLeftovers=[];singleSnackToggle=Array(SNACK_PACKS.length).fill(0);snackOverride=null;currentDayIndex=0;currentView='prep';savedNextState=null;loadedSavedId=null;setSavedMode(false);clearPreparedResults();window.postMessage({type:'ravito-menu-days-change',days:d},'*');window.postMessage({type:'ravito-menu-clear-saved'},'*');renderPrepState();toast('Reset effectué.','ok');scrollTopAll()
+  d=2;plan=null;rotationCursor=0;proposalStart=0;proposalSerial=0;ravitoCount=0;settingsOpen=false;checkedShop={};resolvedEquivalent={};replacementMeals={};replacementProducts={};singleSnackToggle=Array(SNACK_PACKS.length).fill(0);snackOverride=null;currentDayIndex=0;currentView='prep';savedNextState=null;loadedSavedId=null;setSavedMode(false);clearPreparedResults();window.postMessage({type:'ravito-menu-days-change',days:d},'*');window.postMessage({type:'ravito-menu-clear-saved'},'*');renderPrepState();toast('Reset effectué.','ok');scrollTopAll()
 }
 
 function renderDeckClasses(){
@@ -2431,16 +2371,6 @@ Object.assign(window,{
   showShopView,
   validate,
   changeDay,
-  openDayAction,
-  closeDayAction,
-  changeDayFromAction,
-  openGlobalLeftovers,
-  openLeftoverPicker,
-  toggleLeftoverSelection,
-  startSelectedLeftovers,
-  skipQueuedLeftover,
-  cycleLeftoverOption,
-  acceptLeftoverOption,
   toggleShopRow,
   openUnavailable,
   cycleUnavailable,
