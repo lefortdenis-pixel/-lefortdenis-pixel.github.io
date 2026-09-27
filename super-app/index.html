@@ -1896,7 +1896,11 @@ DAYS.splice(6,0,
 DAYS.splice(7,0,
   {b:B('Muesli + lait en poudre + fruits secs',{mue:125,milk:25,dryfruit:40}),
    l:L('Semoule + épices',{semoule:125,spices:5}),
-   d:D('Semoule épicée + raisins secs',{semoule:125,spices:5,raisins:40})}
+   d:D('Semoule épicée + raisins secs',{semoule:125,spices:5,raisins:40})},
+  {b:B('Madeleines',{mad:125}),l:LUNCHES.pateTort,d:D('Semoule + concentré de tomate',{semoule:125,tom:20})},
+  {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.chickChe,d:D('Semoule + pois chiches + épices',{semoule:125,chick:180,spices:5})},
+  {b:B('Pains au lait + chocolat en tablette',{painl:175,cho:20}),l:LUNCHES.classicCra,d:D('Semoule + soupe déshydratée',{semoule:125,soup:30},'Préparer la semoule directement dans la soupe reconstituée')},
+  {b:B('Marbré',{marb:125}),l:LUNCHES.knackTort,d:D('Semoule + Knacki',{semoule:125,knacki:105})}
 );
 /* Les conserves apportent volontairement de la variété malgré leur poids.
    Elles ne peuvent être proposées que le premier soir : achat au ravito,
@@ -1934,7 +1938,7 @@ const MEAL_CATALOGS={b:BREAKFAST_CATALOG,l:LUNCH_CATALOG,d:DINNER_CATALOG};
 function weightedMenuCatalog(catalog,slot){
   const out=[];
   for(const meal of catalog){
-    const weight=meal?.parts?.semoule?(slot==='d'?3:slot==='l'?2:1):1;
+    const weight=meal?.parts?.semoule&&slot==='l'?2:1;
     for(let i=0;i<weight;i++)out.push(meal)
   }
   return out
