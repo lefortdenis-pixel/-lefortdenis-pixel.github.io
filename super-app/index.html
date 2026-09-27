@@ -1935,21 +1935,10 @@ const MEAL_CATALOGS={b:BREAKFAST_CATALOG,l:LUNCH_CATALOG,d:DINNER_CATALOG};
 /* La semoule est une vraie base de repas, pas une curiosité rare.
    On la pondère dans les propositions comme les autres bases chaudes qui ont
    plusieurs variantes (nouilles, purée, pâtes), sans dupliquer les repas affichés. */
-function weightedMenuCatalog(catalog,slot){
-  const out=[];
-  for(const meal of catalog){
-    const weight=meal?.parts?.semoule&&slot==='l'?2:1;
-    for(let i=0;i<weight;i++)out.push(meal)
-  }
-  return out
-}
-const BREAKFAST_OPTIONS=weightedMenuCatalog(BREAKFAST_CATALOG,'b');
-const LUNCH_OPTIONS=weightedMenuCatalog(LUNCH_CATALOG,'l');
-const DINNER_OPTIONS=weightedMenuCatalog(DINNER_CATALOG,'d');
 const DAY_OPTIONS=[];
-for(const b of BREAKFAST_OPTIONS){
-  for(const l of LUNCH_OPTIONS){
-    for(const dinner of DINNER_OPTIONS){
+for(const b of BREAKFAST_CATALOG){
+  for(const l of LUNCH_CATALOG){
+    for(const dinner of DINNER_CATALOG){
       DAY_OPTIONS.push({idx:DAY_OPTIONS.length,b,l,d:dinner})
     }
   }
