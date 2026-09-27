@@ -1895,8 +1895,8 @@ DAYS.splice(6,0,
    petit-déjeuner / déjeuner / dîner utilisés par le générateur. */
 DAYS.splice(7,0,
   {b:B('Muesli + lait en poudre + fruits secs',{mue:125,milk:25,dryfruit:40}),
-   l:L('Couscous + épices',{semoule:125,spices:5}),
-   d:D('Couscous épicé + raisins secs',{semoule:125,spices:5,raisins:40})}
+   l:L('Semoule + épices',{semoule:125,spices:5}),
+   d:D('Semoule épicée + raisins secs',{semoule:125,spices:5,raisins:40})}
 );
 /* Les conserves apportent volontairement de la variété malgré leur poids.
    Elles ne peuvent être proposées que le premier soir : achat au ravito,
@@ -1928,10 +1928,24 @@ const BREAKFAST_CATALOG=uniqueMealCatalog('b');
 const LUNCH_CATALOG=uniqueMealCatalog('l');
 const DINNER_CATALOG=uniqueMealCatalog('d');
 const MEAL_CATALOGS={b:BREAKFAST_CATALOG,l:LUNCH_CATALOG,d:DINNER_CATALOG};
+/* La semoule est une vraie base de repas, pas une curiosité rare.
+   On la pondère dans les propositions comme les autres bases chaudes qui ont
+   plusieurs variantes (nouilles, purée, pâtes), sans dupliquer les repas affichés. */
+function weightedMenuCatalog(catalog,slot){
+  const out=[];
+  for(const meal of catalog){
+    const weight=meal?.parts?.semoule?(slot==='d'?3:slot==='l'?2:1):1;
+    for(let i=0;i<weight;i++)out.push(meal)
+  }
+  return out
+}
+const BREAKFAST_OPTIONS=weightedMenuCatalog(BREAKFAST_CATALOG,'b');
+const LUNCH_OPTIONS=weightedMenuCatalog(LUNCH_CATALOG,'l');
+const DINNER_OPTIONS=weightedMenuCatalog(DINNER_CATALOG,'d');
 const DAY_OPTIONS=[];
-for(const b of BREAKFAST_CATALOG){
-  for(const l of LUNCH_CATALOG){
-    for(const dinner of DINNER_CATALOG){
+for(const b of BREAKFAST_OPTIONS){
+  for(const l of LUNCH_OPTIONS){
+    for(const dinner of DINNER_OPTIONS){
       DAY_OPTIONS.push({idx:DAY_OPTIONS.length,b,l,d:dinner})
     }
   }
@@ -2175,8 +2189,8 @@ function planAllowed(days){return Array.isArray(days)&&days.length===d&&planAllo
 function mealPlanSignature(days){
   return days.map(day=>[day.b.title,day.l.title,day.d.title].join('¦')).join('§')
 }
-const MENU_DAY_STEP=347;      // coprime avec 2380 : parcourt tout le catalogue
-const MENU_PROPOSAL_STEP=997; // idem : chaque nouvelle proposition saute réellement ailleurs
+const MENU_DAY_STEP=347;      // parcourt le catalogue en sautant réellement entre les combinaisons
+const MENU_PROPOSAL_STEP=997; // chaque nouvelle proposition part d'une autre zone du catalogue
 
 function normalizeMealMemory(value){
   if(!Array.isArray(value))return [];
