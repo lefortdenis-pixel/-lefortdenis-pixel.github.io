@@ -2173,7 +2173,9 @@ function planScore(days,start){
     score-=rl*10;     // un midi peut se répéter si cela simplifie les achats
     score+=rd*28;     // légère préférence pour varier le dîner, jamais une obligation
   }else{
-    score+=rb*85+rl*105+rd*120;
+    /* Si l'utilisateur désactive la réutilisation, la variété devient un vrai
+       choix : on accepte un peu plus de poids/références pour éviter les doublons. */
+    score+=rb*180+rl*220+rd*260;
   }
   score+=days.reduce((sum,x,i)=>sum+cyclicDistance(start,x.idx)*(1.5+i*.5),0);
   return score
