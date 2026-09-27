@@ -2132,7 +2132,7 @@ function changedMealCount(days,base){
 function optimizeReuseFromBase(basePlan,baseSnack){
   const base=clone(basePlan),baseSim=simulate(base,baseSnack),baseIds=new Set(Object.keys(baseSim.purchases));
   const slotCost={b:65,l:90,d:135};
-  const maxChanges=Math.min(base.length>=3?3:2,base.length*3);
+  const maxChanges=Math.min(2,base.length*3);
   let best={plan:base,utility:0,weight:baseSim.startWeight,refs:baseIds.size,changes:0};
   let beam=[best];
   const seen=new Set([planSignature(base)]);
