@@ -2166,7 +2166,7 @@ function planScore(days,start){
   /* Le ravitaillement est évalué comme un ensemble : moins de références et
      meilleure utilisation des paquets comptent avant la variété artificielle. */
   score+=stats.refs*(reuseProducts?34:8);
-  score+=stats.mealWaste*(reuseProducts?.10:.02);
+  score+=stats.mealWaste*(reuseProducts ? 0.10 : 0.02);
   const rb=duplicateMealCount(days,'b'),rl=duplicateMealCount(days,'l'),rd=duplicateMealCount(days,'d');
   if(reuseProducts){
     score-=rb*42;     // répéter un petit-déjeuner est souvent pratique
@@ -2279,16 +2279,18 @@ function prepareRavito(){
 function alternateProposal(){if(savedMode)return;if(!plan||!confirmRebuild('Créer une nouvelle proposition'))return;const previous=clone(plan);clearShoppingState();proposalSerial++;const currentSnack=snackOverride==null?ravitoCount%SNACK_PACKS.length:Number(snackOverride);snackOverride=(currentSnack+1)%SNACK_PACKS.length;proposalStart=(proposalStart+Math.max(1,d))%DAYS.length;buildPlan(proposalStart,previous);toast('')}
 function lunchFamily(l){const t=(l&&l.title||'').toLowerCase();if(t.includes('salade'))return 'salade';if(t.includes('pâté')||t.includes('terrine'))return 'pate';if(t.includes('knacki'))return 'knacki';if(t.includes('crackers')||t.includes('chips'))return 'classique';if(t.includes('saucisson')||t.includes('charcuterie'))return 'charcuterie';return t}
 function nextDayCandidate(currentIdx,excludedIds=new Set(),currentLunchFamily='',position=0){
+  const choices=[];
   for(let off=1;off<=DAYS.length;off++){
     const idx=(currentIdx+off)%DAYS.length;
-    if(plan.some(x=>x.idx===idx))continue;
+    if(plan.some((x,j)=>j!==position&&x.idx===idx))continue;
     const cand={idx,...clone(DAYS[idx])},n=dayNeed(cand);
     if([...excludedIds].some(id=>n[id])||!dayAllowed(cand,position))continue;
     const trial=plan.map((x,j)=>j===position?cand:x);
     if(!planAllowedForLength(trial))continue;
-    return cand
+    choices.push({cand,score:planScore(trial,proposalStart)+off*.25})
   }
-  return null
+  choices.sort((a,b)=>a.score-b.score);
+  return choices[0]?.cand||null
 }
 function changeDay(i,excluded=[]){if(savedMode)return;if(!plan||!confirmRebuild('Changer cette journée'))return;closeUnavailable();const currentFamily=lunchFamily(plan[i].l);const cand=nextDayCandidate(plan[i].idx,new Set(excluded),currentFamily,i);if(!cand){toast('Aucune autre journée compatible disponible.');return}plan[i]=cand;clearShoppingState();render();scheduleDraftSave();toast('')}
 function mealWithout(slot,id,currentTitle,dayIndex,nextPlan,variant=0){const used=new Set(nextPlan.map((x,i)=>i===dayIndex?'':x[slot]?.title).filter(Boolean));const choices=[];for(let off=1;off<=DAYS.length;off++){const source=DAYS[(proposalStart+off)%DAYS.length],meal=source[slot];if(meal.title===currentTitle||meal.parts[id]||(!reuseProducts&&used.has(meal.title)))continue;const candidate=clone(nextPlan[dayIndex]);candidate[slot]=clone(meal);if(!dayAllowed(candidate,dayIndex))continue;choices.push({meal,score:off*3})}choices.sort((a,b)=>a.score-b.score);if(!choices.length)return null;return clone(choices[Math.abs(Number(variant)||0)%choices.length].meal)}
