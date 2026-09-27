@@ -2248,7 +2248,8 @@ function pickReuseDay(position,start,baseDays,excludedIds=new Set(),avoidSignatu
   const total=DAY_OPTIONS.length;
   const base=((Number(start)||0)+position*MENU_DAY_STEP)%total;
   const currentWeight=mealPackageWeight(baseDays);
-  let best=null,bestAdded=Infinity,bestNew=Infinity,bestOrder=Infinity;
+  const REUSE_BONUS_PER_PRODUCT=150;
+  let best=null,bestScore=Infinity,bestAdded=Infinity,bestNew=Infinity,bestOrder=Infinity;
   for(let n=0;n<total;n++){
     const idx=(base+n*MENU_DAY_STEP)%total,cand=DAY_OPTIONS[idx];
     if(!dayAllowed(cand,position))continue;
@@ -2260,8 +2261,9 @@ function pickReuseDay(position,start,baseDays,excludedIds=new Set(),avoidSignatu
     if(avoidSignature&&sig===avoidSignature)continue;
     const added=mealPackageWeight([...baseDays,cand])-currentWeight;
     const newCount=newProductCount(baseDays,cand);
-    if(newCount<bestNew||(newCount===bestNew&&added<bestAdded)||(newCount===bestNew&&added===bestAdded&&n<bestOrder)){
-      best=cand;bestAdded=added;bestNew=newCount;bestOrder=n
+    const score=added+newCount*REUSE_BONUS_PER_PRODUCT;
+    if(score<bestScore||(score===bestScore&&added<bestAdded)||(score===bestScore&&added===bestAdded&&newCount<bestNew)||(score===bestScore&&added===bestAdded&&newCount===bestNew&&n<bestOrder)){
+      best=cand;bestScore=score;bestAdded=added;bestNew=newCount;bestOrder=n
     }
   }
   return best?clone(best):null
