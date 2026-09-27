@@ -620,8 +620,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
       </div>
 
       <div class="result" id="result">
-        <div class="resultMini" id="resultMini"></div>
-        <div class="storeList" id="storeList"></div>
+        <div class="resultTop"><div class="badge" id="badge"></div><div class="resultMini" id="resultMini"></div></div>
+        <div class="store" id="store"></div>
+        <div class="storeMeta" id="storeMeta"></div>
+        <button class="continueBtn" id="continueBtn">Préparer le ravitaillement →</button>
+        <div class="ignored-wrap">
+          <details class="ignored" id="ignoredDetails">
+            <summary id="ignoredSummary">Autres magasins à venir</summary>
+            <div class="ignored-list" id="ignoredList"></div>
+          </details>
+        </div>
       </div>
     </div>
     </section>
@@ -962,11 +970,41 @@ function stageFromKm(km){
   return 90;
 }
 
-function upcomingStores(km,limit=8){
-  return DATA.stores
+function selectStoreSuggestion(km,stage){
+  const usable=DATA.stores
     .filter(store=>store.km>km&&(store.role==="NORMAL"||store.role==="SECOURS"))
+    .sort((a,b)=>a.km-b.km);
+  const normal=usable.find(store=>store.role==="NORMAL");
+  const secours=usable.find(store=>store.role==="SECOURS");
+  const store=normal||secours||null;
+  if(!store)return {verdict:"FIN",role:"FIN",store:null,requiredDays:0};
+  return {
+    verdict:store.role==="SECOURS"?"SECOURS":"SUGGÉRÉ",
+    role:store.role,
+    store,
+    requiredDays:Math.max(1,store.stage-stage+1)
+  };
+}
+function renderOtherStores(km,suggestion){
+  const rows=DATA.stores
+    .filter(store=>store.km>km)
+    .filter(store=>!suggestion.store||store.name!==suggestion.store.name||Math.abs(store.km-suggestion.store.km)>.001)
     .sort((a,b)=>a.km-b.km)
-    .slice(0,limit);
+    .slice(0,8);
+  const summary=document.getElementById("ignoredSummary");
+  const list=document.getElementById("ignoredList");
+  if(summary)summary.textContent="Autres magasins à venir ("+rows.length+")";
+  if(!list)return;
+  list.innerHTML=rows.length?rows.map(store=>{
+    let reason="Dans "+Math.max(0,store.km-km).toFixed(1).replace(".",",")+" km";
+    let cls="";
+    if(store.role==="SECOURS"){reason+=" · secours";cls="warn"}
+    else if(store.role==="EXCLU"){reason+=" · "+(store.status||"écarté");cls="bad"}
+    else if(store.role==="A_QUALIFIER"){reason+=" · à vérifier";cls="warn"}
+    return '<div class="ignored-item"><div class="ignored-name">'+escapeHtml(store.name)+'</div><div class="ignored-reason '+cls+'">'+escapeHtml(reason)+' · km '+store.km.toFixed(1)+'</div></div>';
+  }).join(""):'<div class="small">Aucun autre magasin avant l’arrivée.</div>';
+  const details=document.getElementById("ignoredDetails");
+  if(details)details.open=false;
 }
 
 function escapeHtml(v){
@@ -1007,40 +1045,38 @@ async function enrichStoreMeta(store,km,baseText,meta){
   const detourText=Number.isFinite(detour)?(detour<=40?' · sur la trace':' · +'+(detour>=1000?(detour/1000).toFixed(1).replace('.',',')+' km':Math.round(detour)+' m')+' hors trace'):'';
   meta.textContent=baseText+detourText;
 }
-function formatStoreRoute(store,km,detour=null){
-  const delta=Math.max(0,store.km-km);
-  const along='Dans '+delta.toFixed(1).replace('.',',')+' km';
-  const off=Number.isFinite(detour)
-    ?(detour<=40?'sur la trace':(detour>=1000?(detour/1000).toFixed(1).replace('.',',')+' km':Math.round(detour)+' m')+' hors trace')
-    :'écart à la trace non disponible';
-  return along+' · '+off;
-}
-async function enrichUpcomingStores(rows,km){
-  for(let i=0;i<rows.length;i++){
-    const el=document.querySelector('[data-store-row="'+i+'"] .storeDistance');
-    if(!el)return;
-    const detour=await resolveStoreDetour(rows[i]);
-    if(!document.body.contains(el))return;
-    el.textContent=formatStoreRoute(rows[i],km,detour);
-  }
-}
 function show(km,stage,offRoute=null){
   lastShown={km,stage,offRoute};
+  const r=selectStoreSuggestion(km,stage);
   const box=document.getElementById("result");
+  const badge=document.getElementById("badge");
+  const store=document.getElementById("store");
   const mini=document.getElementById("resultMini");
-  const list=document.getElementById("storeList");
-  const rows=upcomingStores(km);
+  const meta=document.getElementById("storeMeta");
+  const continueBtn=document.getElementById("continueBtn");
   box.classList.add("show");
-  if(mini)mini.textContent='Position : E'+stage+' · km '+km.toFixed(1);
-  if(!rows.length){
-    list.innerHTML='<div class="storeEmpty">Aucun autre magasin avant l’arrivée.</div>';
+  if(mini)mini.textContent="E"+stage+" · km "+km.toFixed(1);
+  if(!r.store){
+    if(badge){badge.className="badge ok";badge.textContent="FIN"}
+    if(store)store.textContent="Arrivée";
+    if(meta)meta.textContent="Aucun autre magasin avant l’arrivée.";
+    if(continueBtn)continueBtn.disabled=true;
+    renderOtherStores(km,r);
     return;
   }
-  list.innerHTML=rows.map((store,i)=>{
-    const role=store.role==="SECOURS"?'<span class="storeRole">SECOURS</span>':'';
-    return '<article class="storeItem" data-store-row="'+i+'"><div class="storeItemTop"><div><div class="storeName">'+escapeHtml(store.name)+'</div><div class="storeDistance">'+escapeHtml(formatStoreRoute(store,km,null))+'</div></div>'+role+'</div></article>';
-  }).join('');
-  enrichUpcomingStores(rows,km);
+  if(badge){
+    badge.className="badge "+(r.role==="SECOURS"?"warn":"ok");
+    badge.textContent=r.verdict;
+  }
+  if(store)store.textContent=r.store.name;
+  const delta=Math.max(0,r.store.km-km);
+  const base=storeWalkLabel(delta)+" · "+r.requiredDays+" jour"+(r.requiredDays>1?"s":"")+" de marche max";
+  if(meta){meta.textContent=base;enrichStoreMeta(r.store,km,base,meta)}
+  if(continueBtn){
+    continueBtn.disabled=false;
+    continueBtn.dataset.days=String(Math.max(1,Math.min(4,r.requiredDays)));
+  }
+  renderOtherStores(km,r);
 }
 
 function setAutonomyUI(days,notifyMenu=true){
@@ -1119,6 +1155,14 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 });
 
 
+
+document.getElementById("continueBtn")?.addEventListener("click",()=>{
+  const btn=document.getElementById("continueBtn");
+  const days=Math.max(1,Math.min(4,Number(btn?.dataset.days)||autonomy||2));
+  autonomy=days;
+  openAppView("menu");
+  window.postMessage({type:"start-new-ravito",days,nextState:savedRavito?.nextState||null},"*");
+});
 
 </script>
 
