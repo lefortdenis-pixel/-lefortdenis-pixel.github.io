@@ -2143,15 +2143,6 @@ function ravitoStats(days){
   }
   return {sim,refs,mealWaste:Math.max(0,mealPacked-mealConsumed)};
 }
-function planScore(days,start){
-  const stats=ravitoStats(days);
-  /* Premier niveau : coût réel du ravito. Le poids domine ; une référence
-     supplémentaire et du paquet inutilisé ont un petit coût de simplicité. */
-  return stats.sim.startWeight
-    +stats.refs*45
-    +stats.mealWaste*.06
-    +days.reduce((sum,x,i)=>sum+cyclicDistance(start,x.idx)*.15,0)
-}
 function duplicatePairs(days,slot){
   const counts=new Map();
   for(const day of days){
@@ -2163,29 +2154,33 @@ function duplicatePairs(days,slot){
   return pairs
 }
 function varietyPenalty(days){
-  /* Aucun doublon n'est interdit. Cette valeur ne sert qu'à départager
-     des ravitos dont le coût réel est déjà presque identique. */
+  /* La répétition n'est jamais interdite. Trois fois le même repas coûte
+     simplement plus que deux fois le même, de façon progressive. */
   return duplicatePairs(days,'b')
     +duplicatePairs(days,'l')*1.35
     +duplicatePairs(days,'d')*1.55
+}
+function planScore(days,start){
+  const stats=ravitoStats(days);
+  /* Le poids réel domine largement. Une référence supplémentaire ne pèse
+     presque rien dans l'arbitrage ; la variété n'est qu'une petite préférence
+     qui disparaît dès qu'elle coûte réellement du poids. */
+  return stats.sim.startWeight
+    +stats.refs*10
+    +varietyPenalty(days)*20
+    +days.reduce((sum,x)=>sum+cyclicDistance(start,x.idx)*.15,0)
 }
 function mealPlanSignature(days){
   return days.map(day=>[day.b.title,day.l.title,day.d.title].join('¦')).join('§')
 }
 function chooseRavitoCandidate(candidates,start,previous=null){
-  const ranked=candidates.map(days=>({days,efficiency:planScore(days,start),variety:varietyPenalty(days)}));
-  const bestEfficiency=Math.min(...ranked.map(x=>x.efficiency));
-  /* La variété est "gratuite" uniquement dans une petite zone autour du meilleur
-     ravito. Au-delà, on garde le ravito plus efficace au lieu de forcer la variété. */
-  const window=Math.max(60,Math.min(120,Math.round(bestEfficiency*.04)));
-  let pool=ranked.filter(x=>x.efficiency<=bestEfficiency+window);
-  if(previous?.length&&pool.length>1){
+  let pool=candidates;
+  if(previous?.length&&candidates.length>1){
     const oldSig=mealPlanSignature(previous);
-    const alternatives=pool.filter(x=>mealPlanSignature(x.days)!==oldSig);
+    const alternatives=candidates.filter(days=>mealPlanSignature(days)!==oldSig);
     if(alternatives.length)pool=alternatives
   }
-  pool.sort((a,b)=>a.variety-b.variety||a.efficiency-b.efficiency);
-  return pool[0]?.days||candidates[0]
+  return pool.slice().sort((a,b)=>planScore(a,start)-planScore(b,start))[0]||candidates[0]
 }
 function pruneCandidateBeam(entries){
   entries.sort((a,b)=>a.quick-b.quick);
