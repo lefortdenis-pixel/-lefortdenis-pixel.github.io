@@ -1080,15 +1080,7 @@ async function enrichStoreMeta(store,km,baseText,meta){
 }
 function show(km,stage,offRoute=null){
   lastShown={km,stage,offRoute};
-  let r=select(km,stage),autoAdjusted=false;
-  if(r.verdict==="HORS FENÊTRE"&&r.requiredDays>=1&&r.requiredDays<=4){
-    autonomy=r.requiredDays;
-    document.querySelectorAll(".day").forEach(x=>x.classList.toggle("active",Number(x.dataset.d)===autonomy));
-    const daysLabel=document.getElementById("menuDaysLabel");
-    if(daysLabel)daysLabel.textContent=autonomy+" jour"+(autonomy>1?"s":"");
-    window.postMessage({type:"set-menu-days",days:autonomy},"*");
-    r=select(km,stage);autoAdjusted=true;
-  }
+  const r=select(km,stage);
   const box=document.getElementById("result");
   const badge=document.getElementById("badge");
   box.classList.add("show");
@@ -1101,14 +1093,14 @@ function show(km,stage,offRoute=null){
   if(meta){
     if(r.store){
       const delta=Math.max(0,r.store.km-km);
-      const base=storeWalkLabel(delta)+(autoAdjusted?" · autonomie ajustée à "+autonomy+" jours":"")+(r.requiredDays?" · "+r.requiredDays+" jours nécessaires":"");
+      const base=storeWalkLabel(delta)+(r.requiredDays?" · "+r.requiredDays+" jours nécessaires":"");
       meta.textContent=base;
       enrichStoreMeta(r.store,km,base,meta);
     }else meta.textContent="Fin de la Traversée";
   }
   ignoredStores(km,r);
   const continueBtn=document.getElementById("continueBtn");
-  if(continueBtn)continueBtn.disabled=r.verdict==="FIN"||r.verdict===">4 JOURS";
+  if(continueBtn)continueBtn.disabled=r.verdict==="FIN"||r.verdict===">4 JOURS"||r.verdict==="HORS FENÊTRE";
 }
 
 function setAutonomyUI(days,notifyMenu=true){
