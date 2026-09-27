@@ -1835,7 +1835,6 @@ const LUNCHES={
   lentKn:L('Salade de lentilles + Knacki',{lent:200,knacki:105}),
   lentCheCorn:L('Salade de lentilles + fromage en dés + maïs',{lent:180,cheese:70,corn:100}),
   chickKnCorn:L('Salade de pois chiches + Knacki + maïs',{chick:180,knacki:105,corn:100}),
-  chickChe:L('Salade de pois chiches + fromage en dés',{chick:220,cheese:80}),
   redKnCorn:L('Salade de haricots rouges + Knacki + maïs',{redbean:180,knacki:105,corn:100}),
   redCheCorn:L('Salade de haricots rouges + fromage en dés + maïs',{redbean:180,cheese:70,corn:100}),
   chickKnChe:L('Salade de pois chiches + Knacki + fromage',{chick:180,knacki:90,cheese:60}),
@@ -1856,7 +1855,7 @@ const DAYS=[
   {b:B('Madeleines',{mad:125}),l:LUNCHES.pateTort,d:D('Purée + saucisson',{pur:65,sauc:50})},
   {b:B('Madeleines',{mad:125}),l:LUNCHES.charTort,d:D('Nouilles instantanées + fromage',{noui:85,cheese:50})},
   {b:B('Muesli + lait en poudre',{mue:125,milk:25}),l:LUNCHES.chickKnCorn,d:D('Pâtes + concentré de tomate + saucisson',{pas:125,tom:20,sauc:50})},
-  {b:B('Muesli + lait en poudre',{mue:125,milk:25}),l:LUNCHES.chickChe,d:D('Ramen bomb',{noui:85,pur:65},'1 sachet de nouilles instantanées + une portion de purée en flocons, mélangées ensemble')},
+  {b:B('Muesli + lait en poudre',{mue:125,milk:25}),l:LUNCHES.pateTort,d:D('Ramen bomb',{noui:85,pur:65},'1 sachet de nouilles instantanées + une portion de purée en flocons, mélangées ensemble')},
   {b:B('Muesli + lait en poudre',{mue:125,milk:25}),l:LUNCHES.patePain,d:D('Nouilles instantanées + saucisson',{noui:85,sauc:50})},
   {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.knackPain,d:D('Purée + fromage',{pur:65,cheese:50})},
   {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.redKnCorn,d:D("Pâtes + concentré de tomate + fromage",{pas:125,tom:20,cheese:50})},
@@ -1876,7 +1875,7 @@ const DAYS=[
   {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.pateBag,d:D('Purée + fromage',{pur:65,cheese:50})},
   {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.charBag,d:D("Pâtes + concentré de tomate + fromage",{pas:125,tom:20,cheese:50})},
   {b:B('Pains au lait + chocolat en tablette',{painl:175,cho:20}),l:LUNCHES.lentKn,d:D('Riz basmati précuit + saucisson',{riceReady:250,sauc:50},'Sachet de riz déjà cuit : à manger froid ou simplement réchauffer')},
-  {b:B('Madeleines',{mad:125}),l:LUNCHES.chickChe,d:D('Riz précuit + fromage',{riceReady:250,cheese:50},'Sachet de riz déjà cuit : à manger froid ou simplement réchauffer')},
+  {b:B('Madeleines',{mad:125}),l:LUNCHES.pateTort,d:D('Riz précuit + fromage',{riceReady:250,cheese:50},'Sachet de riz déjà cuit : à manger froid ou simplement réchauffer')},
   {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.knackTort,d:D('Riz précuit + Knacki',{riceReady:250,knacki:105},'Sachet de riz déjà cuit : à manger froid ou simplement réchauffer')},
   {b:B('Brioche + chocolat en tablette',{brio:250,cho:20}),l:LUNCHES.classicCra,d:D('Quinoa aux légumes précuit + saucisson',{quinoaReady:250,sauc:50},'Sachet déjà cuit : à manger froid ou simplement réchauffer')}
 ];
@@ -1898,7 +1897,7 @@ DAYS.splice(7,0,
    l:L('Semoule + épices',{semoule:125,spices:5}),
    d:D('Semoule épicée + raisins secs',{semoule:125,spices:5,raisins:40})},
   {b:B('Madeleines',{mad:125}),l:LUNCHES.pateTort,d:D('Semoule + concentré de tomate',{semoule:125,tom:20})},
-  {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.chickChe,d:D('Semoule + pois chiches + épices',{semoule:125,chick:180,spices:5})},
+  {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.pateTort,d:D('Semoule + pois chiches + épices',{semoule:125,chick:180,spices:5})},
   {b:B('Pains au lait + chocolat en tablette',{painl:175,cho:20}),l:LUNCHES.classicCra,d:D('Semoule + soupe déshydratée',{semoule:125,soup:30},'Préparer la semoule directement dans la soupe reconstituée')},
   {b:B('Marbré',{marb:125}),l:LUNCHES.knackTort,d:D('Semoule + Knacki',{semoule:125,knacki:105})}
 );
