@@ -1805,6 +1805,14 @@ const PRODUCTS={
   pas:{name:'Pâtes cuisson rapide',pack:250,unit:'paquet',format:'250 g'},
   soup:{name:'Soupe déshydratée',pack:60,unit:'sachet',format:'≈ 60 g'},
   tom:{name:'Concentré de tomate en tube',pack:130,unit:'tube',format:'130 g',staple:true},
+  couscous:{name:'Couscous / semoule',pack:500,unit:'paquet',format:'500 g'},
+  spices:{name:'Épices',pack:50,unit:'pot',format:'≈ 50 g',staple:true},
+  dryfruit:{name:'Fruits secs',pack:200,unit:'sachet',format:'200 g',snackable:true},
+  raisins:{name:'Raisins secs',pack:200,unit:'sachet',format:'200 g',snackable:true},
+  trailmix:{name:'Mélange noix + fruits secs',pack:200,unit:'sachet',format:'200 g',snackable:true},
+  snickers:{name:'Barres chocolatées type Snickers',pack:250,unit:'paquet',format:'≈ 250 g',snackable:true},
+  mms:{name:"M&M’s",pack:200,unit:'sachet',format:'200 g',snackable:true},
+  pb:{name:'Beurre de cacahuète',pack:100,unit:'petit pot',format:'100 g',snackable:true},
   pfruit:{name:'Pâte de fruits',pack:150,unit:'paquet',format:'150 g',snackable:true},
   pea:{name:'Cacahuètes',pack:150,unit:'paquet',format:'150 g',snackable:true},
   bars:{name:'Barres céréalières',pack:125,unit:'boîte',format:'125 g',snackable:true},
@@ -1883,6 +1891,13 @@ const BALANCED_DAY_ORDER=[10, 13, 14, 25, 5, 16, 22, 21, 6, 8, 7, 23, 0, 15, 18,
 DAYS.splice(6,0,
   {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.pateTort,d:D('Pâtes + soupe déshydratée',{pas:125,soup:30},'Cuire les pâtes directement dans la soupe pour obtenir un bouillon épais')}
 );
+/* Repas ajoutés à la base : ils alimentent les catalogues indépendants
+   petit-déjeuner / déjeuner / dîner utilisés par le générateur. */
+DAYS.splice(7,0,
+  {b:B('Muesli + lait en poudre + fruits secs',{mue:125,milk:25,dryfruit:40}),
+   l:L('Couscous + épices',{couscous:125,spices:5}),
+   d:D('Couscous épicé + raisins secs',{couscous:125,spices:5,raisins:40})}
+);
 /* Les conserves apportent volontairement de la variété malgré leur poids.
    Elles ne peuvent être proposées que le premier soir : achat au ravito,
    portage pendant la journée, puis boîte entièrement consommée. */
@@ -1921,7 +1936,7 @@ for(const b of BREAKFAST_CATALOG){
     }
   }
 }
-const SNACK_PACKS=[['cho','pfruit'],['pea','bars'],['almond','sab'],['carrot','cho'],['pfruit','pea'],['bars','almond'],['sab','carrot']];
+const SNACK_PACKS=[['cho','pfruit'],['pea','bars'],['almond','sab'],['carrot','cho'],['pfruit','pea'],['bars','almond'],['sab','carrot'],['dryfruit','snickers'],['trailmix','mms'],['pb','dryfruit']];
 const SNACK_TARGET_PER_DAY=165;
 let d=2,plan=null,rotationCursor=0,proposalStart=0,proposalSerial=0,ravitoCount=0,validatedMealMemory=[],settingsOpen=false,checkedShop={},resolvedEquivalent={},replacementMeals={},replacementProducts={},singleSnackToggle=Array(SNACK_PACKS.length).fill(0),snackOverride=null,pendingUnavailable=null,currentDayIndex=0,currentView='prep',shopScrollTop=0,savedMode=false,archivedMode=false,savedNextState=null,loadedSavedId=null;
 let unavailableOptions=[],unavailableOptionIndex=0,unavailableProductId=null,unavailableBox=null;
