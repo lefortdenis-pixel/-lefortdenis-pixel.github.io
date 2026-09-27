@@ -1103,13 +1103,29 @@ function show(km,stage,offRoute=null){
   const r=select(km,stage);
   const box=document.getElementById("result");
   const badge=document.getElementById("badge");
-  box.classList.add("show");
-  badge.className="badge "+(r.verdict==="OK"||r.verdict==="PLUS PROCHE"?"ok":r.verdict==="SECOURS"?"warn":r.verdict==="FIN"?"ok":"bad");
-  badge.textContent=r.verdict;
-  document.getElementById("store").textContent=r.store?r.store.name:"Arrivée";
+  const storeEl=document.getElementById("store");
   const mini=document.getElementById("resultMini");
   const meta=document.getElementById("storeMeta");
-  if(mini) mini.textContent="E"+stage+" · km "+km.toFixed(1);
+  const outsideWindow=r.verdict==="HORS FENÊTRE"||r.verdict===">4 JOURS";
+
+  box.classList.add("show");
+  if(mini)mini.textContent="E"+stage+" · km "+km.toFixed(1);
+
+  if(outsideWindow){
+    badge.className="badge bad";
+    badge.textContent="AUCUN MAGASIN";
+    if(storeEl)storeEl.textContent="Aucun magasin dans "+autonomy+" jour"+(autonomy>1?"s":"");
+    if(meta&&r.store){
+      const delta=Math.max(0,r.store.km-km);
+      meta.textContent="Le prochain est dans "+delta.toFixed(1).replace(".",",")+" km · "+r.requiredDays+" jours nécessaires";
+    }
+    ignoredStores(km,r);
+    return;
+  }
+
+  badge.className="badge "+(r.verdict==="OK"||r.verdict==="PLUS PROCHE"?"ok":r.verdict==="SECOURS"?"warn":r.verdict==="FIN"?"ok":"bad");
+  badge.textContent=r.verdict;
+  if(storeEl)storeEl.textContent=r.store?r.store.name:"Arrivée";
   if(meta){
     if(r.store){
       const delta=Math.max(0,r.store.km-km);
@@ -1119,12 +1135,6 @@ function show(km,stage,offRoute=null){
     }else meta.textContent="Fin de la Traversée";
   }
   ignoredStores(km,r);
-  const continueBtn=document.getElementById("continueBtn");
-  if(continueBtn){
-    const menuDays=r.nearestMode?Math.max(1,Math.min(4,Number(r.requiredDays)||1)):autonomy;
-    continueBtn.dataset.menuDays=String(menuDays);
-    continueBtn.disabled=r.verdict==="FIN"||r.verdict===">4 JOURS"||r.verdict==="HORS FENÊTRE"||(r.nearestMode&&Number(r.requiredDays)>4);
-  }
 }
 
 function setAutonomyUI(days,notifyMenu=true){
