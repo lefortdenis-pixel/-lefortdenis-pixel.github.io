@@ -1,4 +1,4 @@
-const CACHE='traversee-v1-185-store-suggestions';
+const CACHE='traversee-v1-186-restore-store-system';
 const TILE_CACHE='traversee-map-tiles-v1';
 const ASSETS=['./','./index.html','./water-points.json','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./bivouac/index.html','./vendor/leaflet.css','./vendor/leaflet.js','./vendor/leaflet.sync.js'];
 
