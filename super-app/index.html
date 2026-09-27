@@ -2345,25 +2345,114 @@ function changeDay(i,excluded=[]){
   plan[i]=cand;
   clearShoppingState();render();scheduleDraftSave();toast('')
 }
-function mealWithout(slot,id,currentTitle,dayIndex,nextPlan,variant=0){
-  const catalog=MEAL_CATALOGS[slot];
-  const current=Math.max(0,catalog.findIndex(meal=>meal.title===currentTitle));
-  const shift=Math.abs(Number(variant)||0)+1;
-  for(let n=0;n<catalog.length;n++){
-    const meal=catalog[(current+shift+n)%catalog.length];
-    if(meal.title===currentTitle||meal.parts[id])continue;
-    const candidate=clone(nextPlan[dayIndex]);
-    candidate[slot]=clone(meal);
-    if(!dayAllowed(candidate,dayIndex))continue;
-    return clone(meal)
-  }
-  return null
-}
 function simulateWithSnackOverride(days,override){return simulate(days,override)}
-function buildUnavailablePreview(id,variant=0){if(!plan)return null;const next=clone(plan),changes=[];let nextSnack=snackOverride;for(let i=0;i<next.length;i++){const day=next[i];if(day.b.parts[id]){const alt=mealWithout('b',id,day.b.title,i,next,variant+i);if(!alt)return null;changes.push('Jour '+(i+1)+' · petit-déj : '+day.b.title+' → '+alt.title);day.b=alt}if(day.l.parts[id]){const alt=mealWithout('l',id,day.l.title,i,next,variant+i);if(!alt)return null;changes.push('Jour '+(i+1)+' · midi : '+day.l.title+' → '+alt.title);day.l=alt}if(day.d.parts[id]){const alt=mealWithout('d',id,day.d.title,i,next,variant+i);if(!alt)return null;changes.push('Jour '+(i+1)+' · dîner : '+day.d.title+' → '+alt.title);day.d=alt}}
-  const curSnack=snackIdsForOverride(nextSnack);if(curSnack.includes(id)){const choices=[],start=nextSnack==null?ravitoCount%SNACK_PACKS.length:nextSnack;for(let off=1;off<=SNACK_PACKS.length;off++){const idx=(start+off)%SNACK_PACKS.length,ids=snackIdsForOverride(idx);if(!ids.includes(id))choices.push(idx)}if(!choices.length)return null;const found=choices[Math.abs(Number(variant)||0)%choices.length],before=curSnack.map(x=>PRODUCTS[x].name).join(' + '),after=snackIdsForOverride(found).map(x=>PRODUCTS[x].name).join(' + ');changes.push('Grignotage : '+before+' → '+after);nextSnack=found}
-  const remainingNeed=mergeNeeds(next);if(remainingNeed[id])return null;if(snackIdsForOverride(nextSnack).includes(id)||!planAllowed(next))return null;return {id,plan:next,snackOverride:nextSnack,changes}}
-function buildUnavailableAlternatives(id){const out=[],seen=new Set(),limit=Math.max(BREAKFAST_CATALOG.length,LUNCH_CATALOG.length,DINNER_CATALOG.length,SNACK_PACKS.length);for(let variant=0;variant<limit;variant++){const preview=buildUnavailablePreview(id,variant);if(!preview)continue;const key=JSON.stringify(preview.changes);if(seen.has(key))continue;seen.add(key);preview.nextSim=simulateWithSnackOverride(preview.plan,preview.snackOverride);out.push(preview);if(out.length>=8)break}return out}
+function unavailableGroups(id){
+  if(!plan)return [];
+  const groups=[],byKey=new Map();
+  for(let i=0;i<plan.length;i++){
+    for(const slot of ['b','l','d']){
+      const meal=plan[i]?.[slot];
+      if(!meal?.parts?.[id])continue;
+      const key=slot+'|'+mealKey(meal);
+      let group=byKey.get(key);
+      if(!group){
+        group={slot,title:meal.title,days:[]};
+        byKey.set(key,group);
+        groups.push(group);
+      }
+      group.days.push(i);
+    }
+  }
+  return groups
+}
+function unavailableCandidateMeals(group,id,days){
+  const out=[];
+  for(const meal of MEAL_CATALOGS[group.slot]){
+    if(meal.title===group.title||meal.parts?.[id])continue;
+    let ok=true;
+    for(const dayIndex of group.days){
+      const candidate=clone(days[dayIndex]);
+      candidate[group.slot]=clone(meal);
+      if(!dayAllowed(candidate,dayIndex)){ok=false;break}
+    }
+    if(ok)out.push(meal)
+  }
+  return out
+}
+function unavailableNewProductCount(days,id){
+  const before=new Set(Object.keys(mergeNeeds(plan||[])).filter(x=>x!==id));
+  return Object.keys(mergeNeeds(days||[])).reduce((n,x)=>n+(x!==id&&!before.has(x)?1:0),0)
+}
+function unavailableHistoryOverlap(days){
+  return (days||[]).reduce((sum,day)=>sum+lastValidatedOverlap(day),0)
+}
+function unavailableScore(days,nextSnack,id){
+  const sim=simulateWithSnackOverride(days,nextSnack);
+  return sim.startWeight
+    +unavailableNewProductCount(days,id)*150
+    +unavailableHistoryOverlap(days)*80
+}
+function snackAlternativesWithout(id){
+  const current=snackOverride==null?ravitoCount%SNACK_PACKS.length:Number(snackOverride);
+  const currentIds=snackIdsForOverride(current);
+  if(!currentIds.includes(id))return [snackOverride];
+  const out=[],seen=new Set();
+  for(let off=1;off<=SNACK_PACKS.length;off++){
+    const idx=(current+off)%SNACK_PACKS.length,ids=snackIdsForOverride(idx);
+    if(ids.includes(id))continue;
+    const key=ids.slice().sort().join('|');
+    if(seen.has(key))continue;
+    seen.add(key);out.push(idx)
+  }
+  return out
+}
+function buildUnavailableAlternatives(id){
+  if(!plan)return [];
+  const groups=unavailableGroups(id);
+  let states=[{plan:clone(plan),changes:[]}];
+  const BEAM=28;
+  for(const group of groups){
+    const expanded=[];
+    for(const state of states){
+      const candidates=unavailableCandidateMeals(group,id,state.plan);
+      for(const meal of candidates){
+        const next=clone(state.plan),changes=state.changes.slice();
+        for(const dayIndex of group.days){
+          const before=next[dayIndex][group.slot];
+          next[dayIndex][group.slot]=clone(meal);
+          const label=group.slot==='b'?'petit-déj':group.slot==='l'?'midi':'dîner';
+          changes.push('Jour '+(dayIndex+1)+' · '+label+' : '+before.title+' → '+meal.title);
+        }
+        expanded.push({plan:next,changes,score:mealPackageWeight(next)+unavailableNewProductCount(next,id)*150+unavailableHistoryOverlap(next)*80})
+      }
+    }
+    expanded.sort((a,b)=>a.score-b.score);
+    states=expanded.slice(0,BEAM);
+    if(!states.length)return []
+  }
+  const snackChoices=snackAlternativesWithout(id);
+  if(!snackChoices.length)return [];
+  const previews=[],seen=new Set();
+  for(const state of states){
+    for(const nextSnack of snackChoices){
+      const next=state.plan;
+      if(mergeNeeds(next)[id]||snackIdsForOverride(nextSnack).includes(id)||!planAllowed(next))continue;
+      const changes=state.changes.slice();
+      const beforeSnack=snackIdsForOverride(snackOverride);
+      const afterSnack=snackIdsForOverride(nextSnack);
+      if(beforeSnack.join('|')!==afterSnack.join('|')){
+        changes.push('Grignotage : '+beforeSnack.map(x=>PRODUCTS[x].name).join(' + ')+' → '+afterSnack.map(x=>PRODUCTS[x].name).join(' + '));
+      }
+      const key=mealPlanSignature(next)+'§'+afterSnack.slice().sort().join('|');
+      if(seen.has(key))continue;
+      seen.add(key);
+      const nextSim=simulateWithSnackOverride(next,nextSnack);
+      previews.push({id,plan:clone(next),snackOverride:nextSnack,changes,nextSim,score:unavailableScore(next,nextSnack,id)})
+    }
+  }
+  previews.sort((a,b)=>a.score-b.score);
+  return previews.slice(0,8)
+}
 function purchaseDiff(currentSim,nextSim){const added=[],removed=[],ids=new Set([...Object.keys(currentSim.purchases),...Object.keys(nextSim.purchases)]);for(const id of ids){const a=currentSim.purchases[id]?.count||0,b=nextSim.purchases[id]?.count||0;if(b>a)added.push((b-a)+' × '+PRODUCTS[id].name);if(a>b)removed.push((a-b)+' × '+PRODUCTS[id].name)}return {added,removed}}
 function closeUnavailable(){pendingUnavailable=null;unavailableOptions=[];unavailableOptionIndex=0;unavailableProductId=null;unavailableBox=null;menuRoot.querySelectorAll('.inlineUnavailable').forEach(box=>{box.classList.add('hide');box.innerHTML='' });const box=$('unavailablePanel');if(box){box.classList.add('hide');box.innerHTML=''}}
 function formatUnavailableChanges(changes){return changes.map(x=>{const sep=x.indexOf(' : '),arrow=x.indexOf(' → ');if(sep<0||arrow<0)return '<div class="ua-new">'+x+'</div>';const label=x.slice(0,sep),before=x.slice(sep+3,arrow),after=x.slice(arrow+3);return '<div class="ua-proposal"><small>'+label+'</small><div class="ua-old">'+before+'</div><div class="ua-arrow">↓</div><div class="ua-new">'+after+'</div></div>'}).join('')}
