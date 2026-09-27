@@ -2260,7 +2260,7 @@ function pickReuseDay(position,start,baseDays,excludedIds=new Set(),avoidSignatu
     if(avoidSignature&&sig===avoidSignature)continue;
     const added=mealPackageWeight([...baseDays,cand])-currentWeight;
     const newCount=newProductCount(baseDays,cand);
-    if(added<bestAdded||(added===bestAdded&&newCount<bestNew)||(added===bestAdded&&newCount===bestNew&&n<bestOrder)){
+    if(newCount<bestNew||(newCount===bestNew&&added<bestAdded)||(newCount===bestNew&&added===bestAdded&&n<bestOrder)){
       best=cand;bestAdded=added;bestNew=newCount;bestOrder=n
     }
   }
