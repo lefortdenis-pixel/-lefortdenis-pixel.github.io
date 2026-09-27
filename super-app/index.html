@@ -2199,14 +2199,37 @@ function planScore(days,start){
 function mealPlanSignature(days){
   return days.map(day=>[day.b.title,day.l.title,day.d.title].join('¦')).join('§')
 }
-function chooseRavitoCandidate(candidates,start,previous=null){
-  let pool=candidates;
-  if(previous?.length&&candidates.length>1){
-    const oldSig=mealPlanSignature(previous);
-    const alternatives=candidates.filter(days=>mealPlanSignature(days)!==oldSig);
-    if(alternatives.length)pool=alternatives
+function planMealOverlap(a,b){
+  if(!a?.length||!b?.length)return 0;
+  let overlap=0;
+  for(const slot of ['b','l','d']){
+    const counts=new Map();
+    for(const day of b){
+      const title=day?.[slot]?.title||'';
+      counts.set(title,(counts.get(title)||0)+1)
+    }
+    for(const day of a){
+      const title=day?.[slot]?.title||'',n=counts.get(title)||0;
+      if(n){overlap++;counts.set(title,n-1)}
+    }
   }
-  return pool.slice().sort((a,b)=>planScore(a,start)-planScore(b,start))[0]||candidates[0]
+  return overlap
+}
+function chooseRavitoCandidate(candidates,start,previous=null){
+  const ranked=candidates.map(days=>({days,score:planScore(days,start)}))
+    .sort((a,b)=>a.score-b.score);
+  if(!previous?.length)return ranked[0]?.days||candidates[0];
+
+  /* "Changer les jours" doit réellement proposer autre chose, mais sans
+     sacrifier fortement le ravito : on cherche la proposition la moins
+     similaire parmi celles qui restent à moins de 60 points du meilleur score. */
+  const best=ranked[0]?.score??Infinity;
+  const near=ranked.filter(x=>x.score<=best+60);
+  near.sort((a,b)=>
+    planMealOverlap(a.days,previous)-planMealOverlap(b.days,previous)
+    ||a.score-b.score
+  );
+  return near[0]?.days||ranked[0]?.days||candidates[0]
 }
 function dayOptionLeanScore(day){
   const ids=new Set([
@@ -2226,7 +2249,7 @@ function candidateDayPool(position,start){
   /* Une base assez large pour les solutions légères, complétée par le meilleur
      représentant de chaque repas afin qu'aucun petit-déj/midi/dîner ne
      disparaisse uniquement à cause du préfiltrage. */
-  const chosen=allowed.slice(0,320),seen=new Set(chosen.map(x=>x.idx));
+  const chosen=allowed.slice(0,160),seen=new Set(chosen.map(x=>x.idx));
   for(const slot of ['b','l','d']){
     const titles=new Set(MEAL_CATALOGS[slot].map(x=>x.title));
     for(const title of titles){
@@ -2243,7 +2266,7 @@ function pruneCandidateBeam(entries){
     const sig=mealPlanSignature(entry.days);
     if(seen.has(sig))continue;
     seen.add(sig);kept.push(entry.days);
-    if(kept.length>=220)break
+    if(kept.length>=70)break
   }
   return kept
 }
