@@ -1659,7 +1659,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 .allDaysMode .allDaysSnacks{min-width:0;display:flex;align-items:center;gap:6px}.allDaysMode .allDaysSnacks>span{font-size:17px}.allDaysMode .allDaysSnacks small{display:block;font-size:8px;line-height:1;color:#b9bbb4;font-weight:900;letter-spacing:.08em;margin-bottom:3px}.allDaysMode .allDaysSnacks b{display:block;font-size:11.5px;line-height:1.08;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .allDaysMode .allDaysSnacks{width:100%}.allDaysMode .allDaysSnacks small{color:#98631d!important}
 .allDaysMode .deck[data-days="3"] .daycard h1,.allDaysMode .deck[data-days="4"] .daycard h1{font-size:20px!important;margin-bottom:4px!important}.allDaysMode .deck[data-days="3"] .meal b,.allDaysMode .deck[data-days="4"] .meal b{font-size:12px!important}
-.allDaysMode #menuNav{grid-template-columns:1fr 1.28fr!important}.allDaysMode #prevDayBtn,.allDaysMode #nextDayBtn{display:none!important}
+.allDaysMode #menuNav{grid-template-columns:.92fr 1fr 1.18fr!important}.allDaysMode #prevDayBtn,.allDaysMode #nextDayBtn{display:none!important}.allDaysMode #reuseCompareBtn{display:block!important;background:#dff36a!important;color:#25300e!important}.allDaysMode #reuseCompareBtn.off{background:#ececf2!important;color:#4f5060!important}.allDaysMode.saved-mode #reuseCompareBtn{display:none!important}
 .allDaysMode #allDaysChangeBtn{display:block!important;background:#fff0d2!important;color:#a64c0c!important}.allDaysMode.saved-mode #allDaysChangeBtn{display:none!important}.allDaysMode.saved-mode #menuNav{grid-template-columns:1fr!important}
 .allDaysMode .bottomNav{position:fixed!important;left:0!important;right:0!important;bottom:0!important;transform:none!important;width:100%!important;max-width:none!important;margin:0!important;padding:6px 7px calc(6px + env(safe-area-inset-bottom))!important;border-radius:18px 18px 0 0!important}
 .allDaysMode .navgrid button{min-height:45px!important}
@@ -1737,10 +1737,6 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
       <button class="daybtn" data-days="3" onclick="selectDays(3)">3</button>
       <button class="daybtn" data-days="4" onclick="selectDays(4)">4</button>
     </div>
-    <button id="reuseBtn" class="reuseBtn active" type="button" onclick="toggleReuseProducts()">
-      <span><b>Réutiliser les mêmes produits</b><small>Moins de références à acheter</small></span>
-      <strong id="reuseState">Oui</strong>
-    </button>
   </div>
   <div class="summaryWeight hide" id="summaryWrap"><span>POIDS DE NOURRITURE</span><div id="planSummary"></div></div>
   <div class="prepActions">
@@ -1769,6 +1765,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 <div id="bottomNav" class="bottomNav hide">
   <div id="menuNav" class="navgrid">
     <button id="prevDayBtn" onclick="setDeckIndex(-1)">Jour 1</button>
+    <button id="reuseCompareBtn" class="reuseCompare" onclick="toggleReuseProducts()">Réutiliser : Oui</button>
     <button id="allDaysChangeBtn" class="hide" onclick="alternateProposal()">↻ Changer les 2 jours</button>
     <button id="shopViewBtn" class="main" onclick="showShopView()">🛒 Voir les courses</button>
     <button id="nextDayBtn" onclick="setDeckIndex(1)">Jour 2 →</button>
@@ -1986,6 +1983,8 @@ function allDaysSummaryHtml(sim,withChange){
 function renderSavedMenusOnly(){
   if(!plan||!plan.length)return;
   menuApp.classList.add('allDaysMode');
+  const compareBtn=$('reuseCompareBtn');
+  if(compareBtn){compareBtn.textContent=reuseProducts?'Réutiliser : Oui':'Réutiliser : Non';compareBtn.classList.toggle('off',!reuseProducts)}
   $('innerReset').classList.remove('hide');
   const sim=simulate(plan);
   $('topWeight').textContent='Poids total '+formatWeight(sim.startWeight);
@@ -2114,11 +2113,14 @@ function clearShoppingState(){checkedShop={};resolvedEquivalent={};clearReplacem
 function selectDays(n,fromParent=false){const next=Math.max(1,Math.min(4,Number(n)||2));if(next===d){renderPrepState();return}if(plan&&!confirmRebuild('Modifier la durée')){renderPrepState();return}d=next;if(plan){clearShoppingState();clearDraftAutosave();clearPreparedResults();toast('Durée modifiée. Génère à nouveau les menus.')}if(!fromParent)window.postMessage({type:'ravito-menu-days-change',days:d},'*');renderPrepState()}
 function toggleSettings(){settingsOpen=false;$('prepCard').classList.add('hide');renderPrepState();if(plan)showMenuView()}
 function toggleReuseProducts(){
-  if(savedMode)return;
-  if(plan&&!confirmRebuild('Modifier la logique du ravitaillement'))return;
+  if(savedMode||!plan)return;
+  if(!confirmRebuild('Comparer avec l’autre logique'))return;
   reuseProducts=!reuseProducts;
-  if(plan){clearShoppingState();clearDraftAutosave();clearPreparedResults();toast('Préférence modifiée. Génère à nouveau les menus.')}
-  renderPrepState();
+  clearShoppingState();
+  currentView='menus';
+  buildPlan(proposalStart,null);
+  showMenuView();
+  toast(reuseProducts?'Réutilisation activée':'Plus de variété');
 }
 function renderPrepState(){
   const has=!!plan,num=ravitoCount+1;
@@ -2126,9 +2128,11 @@ function renderPrepState(){
   if($('prepSubtitle')) $('prepSubtitle').textContent='Combien de jours d’autonomie ?';
   if($('stateChip')) $('stateChip').textContent=d+' jour'+(d>1?'s':'');
   menuRoot.querySelectorAll('.daybtn').forEach(b=>b.classList.toggle('active',Number(b.dataset.days)===d));
-  const reuseBtn=$('reuseBtn'),reuseState=$('reuseState');
-  if(reuseBtn)reuseBtn.classList.toggle('active',reuseProducts);
-  if(reuseState)reuseState.textContent=reuseProducts?'Oui':'Non';
+  const compareBtn=$('reuseCompareBtn');
+  if(compareBtn){
+    compareBtn.textContent=reuseProducts?'Réutiliser : Oui':'Réutiliser : Non';
+    compareBtn.classList.toggle('off',!reuseProducts);
+  }
   $('settingsPanel').classList.toggle('hide',has&&!settingsOpen);
   $('prepBtn').classList.toggle('hide',has);
   $('settingsBtn').classList.toggle('hide',!has);
