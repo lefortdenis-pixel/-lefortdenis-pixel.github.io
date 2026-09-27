@@ -1765,7 +1765,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 <div id="bottomNav" class="bottomNav hide">
   <div id="menuNav" class="navgrid">
     <button id="prevDayBtn" onclick="setDeckIndex(-1)">Jour 1</button>
-    <button id="reuseCompareBtn" class="reuseCompare" onclick="toggleReuseProducts()">Réutiliser : Oui</button>
+    <button id="reuseCompareBtn" class="reuseCompare off" onclick="toggleReuseProducts()">Réutiliser : Non</button>
     <button id="allDaysChangeBtn" class="hide" onclick="alternateProposal()">↻ Changer les 2 jours</button>
     <button id="shopViewBtn" class="main" onclick="showShopView()">🛒 Voir les courses</button>
     <button id="nextDayBtn" onclick="setDeckIndex(1)">Jour 2 →</button>
@@ -1899,7 +1899,7 @@ const CANNED_DAYS=[
 CANNED_DAYS.forEach((day,i)=>DAYS.splice(3+i*5,0,day));
 const SNACK_PACKS=[['cho','pfruit'],['pea','bars'],['almond','sab'],['carrot','cho'],['pfruit','pea'],['bars','almond'],['sab','carrot']];
 const SNACK_TARGET_PER_DAY=165;
-let d=2,plan=null,rotationCursor=0,proposalStart=0,proposalSerial=0,ravitoCount=0,reuseProducts=true,settingsOpen=false,checkedShop={},resolvedEquivalent={},replacementMeals={},replacementProducts={},singleSnackToggle=Array(SNACK_PACKS.length).fill(0),snackOverride=null,pendingUnavailable=null,currentDayIndex=0,currentView='prep',shopScrollTop=0,savedMode=false,archivedMode=false,savedNextState=null,loadedSavedId=null;
+let d=2,plan=null,rotationCursor=0,proposalStart=0,proposalSerial=0,ravitoCount=0,reuseProducts=false,comparisonBasePlan=null,comparisonBaseSnackOverride=null,settingsOpen=false,checkedShop={},resolvedEquivalent={},replacementMeals={},replacementProducts={},singleSnackToggle=Array(SNACK_PACKS.length).fill(0),snackOverride=null,pendingUnavailable=null,currentDayIndex=0,currentView='prep',shopScrollTop=0,savedMode=false,archivedMode=false,savedNextState=null,loadedSavedId=null;
 let unavailableOptions=[],unavailableOptionIndex=0,unavailableProductId=null,unavailableBox=null;
 const menuRoot=document.getElementById('menuHost').shadowRoot;
 const menuApp=menuRoot.getElementById('menuApp');
@@ -1915,7 +1915,7 @@ function clone(o){try{return typeof structuredClone==='function'?structuredClone
 let draftTimer=0;
 function makeDraftSnapshot(){
   if(savedMode||archivedMode||!plan||!plan.length)return null;
-  return {version:10,updatedAt:Date.now(),savedMode:false,d,plan:clone(plan),rotationCursor,proposalStart,proposalSerial,ravitoCount,reuseProducts,checkedShop:clone(checkedShop),resolvedEquivalent:clone(resolvedEquivalent),replacementMeals:clone(replacementMeals),replacementProducts:clone(replacementProducts),singleSnackToggle:clone(singleSnackToggle),snackOverride,currentDayIndex,currentView:currentView==='shop'?'shop':'menus',shopScrollTop:Math.max(0,shopScrollTop||0)};
+  return {version:11,updatedAt:Date.now(),savedMode:false,d,plan:clone(plan),comparisonBasePlan:clone(comparisonBasePlan),comparisonBaseSnackOverride,reuseProducts,rotationCursor,proposalStart,proposalSerial,ravitoCount,checkedShop:clone(checkedShop),resolvedEquivalent:clone(resolvedEquivalent),replacementMeals:clone(replacementMeals),replacementProducts:clone(replacementProducts),singleSnackToggle:clone(singleSnackToggle),snackOverride,currentDayIndex,currentView:currentView==='shop'?'shop':'menus',shopScrollTop:Math.max(0,shopScrollTop||0)};
 }
 function scheduleDraftSave(immediate=false){
   if(savedMode||archivedMode||!plan||!plan.length)return;
@@ -1929,7 +1929,7 @@ function restoreDraft(data){
   if(!planUsesKnownProducts(data.plan)){clearDraftAutosave();toast('Le brouillon était incompatible et a été écarté.');return}
   clearTimeout(draftTimer);
   setSavedMode(false);archivedMode=false;savedNextState=null;loadedSavedId=null;
-  d=Math.max(1,Math.min(4,Number(data.d)||data.plan.length));plan=clone(data.plan);rotationCursor=Number(data.rotationCursor)||0;proposalStart=Number(data.proposalStart)||rotationCursor;proposalSerial=Number(data.proposalSerial)||0;ravitoCount=Number(data.ravitoCount)||0;reuseProducts=data.reuseProducts!==false;
+  d=Math.max(1,Math.min(4,Number(data.d)||data.plan.length));plan=clone(data.plan);comparisonBasePlan=Array.isArray(data.comparisonBasePlan)&&data.comparisonBasePlan.length?clone(data.comparisonBasePlan):clone(data.plan);comparisonBaseSnackOverride=data.comparisonBaseSnackOverride==null?data.snackOverride:data.comparisonBaseSnackOverride;rotationCursor=Number(data.rotationCursor)||0;proposalStart=Number(data.proposalStart)||rotationCursor;proposalSerial=Number(data.proposalSerial)||0;ravitoCount=Number(data.ravitoCount)||0;reuseProducts=!!data.reuseProducts;
   checkedShop=clone(data.checkedShop||{});resolvedEquivalent=clone(data.resolvedEquivalent||{});replacementMeals=clone(data.replacementMeals||{});replacementProducts=clone(data.replacementProducts||{});
   singleSnackToggle=clone(data.singleSnackToggle||Array(SNACK_PACKS.length).fill(0));snackOverride=data.snackOverride==null?null:data.snackOverride;currentDayIndex=Math.max(0,Math.min(plan.length-1,Number(data.currentDayIndex)||0));currentView=data.currentView==='shop'?'shop':'menus';shopScrollTop=Math.max(0,Number(data.shopScrollTop)||0);settingsOpen=false;pendingUnavailable=null;
   render();if(currentView==='shop')showShopView(true);else showMenuView();
@@ -1964,6 +1964,8 @@ function makeSavedSnapshot(displayRavitoCount,displaySingleSnackToggle){
     version:6,
     id:'ravito-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
     plan:clone(plan),d,
+    comparisonBasePlan:clone(comparisonBasePlan||plan),
+    comparisonBaseSnackOverride,
     snackOverride,
     replacementMeals:clone(replacementMeals),
     replacementProducts:clone(replacementProducts),
@@ -2032,8 +2034,8 @@ function openSavedRavito(data,archived=false){
   loadedSavedId=incomingId;
   savedNextState=clone(data.nextState||{});
   d=Math.max(1,Math.min(4,Number(data.d)||data.plan.length));
-  reuseProducts=data.reuseProducts!==false;
-  plan=clone(data.plan);
+  reuseProducts=!!data.reuseProducts;
+  plan=clone(data.plan);comparisonBasePlan=clone(data.comparisonBasePlan||data.plan);comparisonBaseSnackOverride=data.comparisonBaseSnackOverride==null?data.snackOverride:data.comparisonBaseSnackOverride;
   snackOverride=data.snackOverride==null?null:data.snackOverride;
   replacementMeals=clone(data.replacementMeals||{});
   replacementProducts=clone(data.replacementProducts||{});
@@ -2051,10 +2053,9 @@ function startNewRavito(days,state=null){
     rotationCursor=Number(next.rotationCursor)||0;
     proposalStart=Number(next.proposalStart)||rotationCursor;
     singleSnackToggle=clone(next.singleSnackToggle||Array(SNACK_PACKS.length).fill(0));
-    reuseProducts=next.reuseProducts!==false;
   }
   clearDraftAutosave();
-  setSavedMode(false);savedNextState=null;loadedSavedId=null;plan=null;proposalSerial=0;snackOverride=null;replacementMeals={};replacementProducts={};checkedShop={};resolvedEquivalent={};pendingUnavailable=null;currentDayIndex=0;settingsOpen=false;currentView='prep';
+  setSavedMode(false);savedNextState=null;loadedSavedId=null;plan=null;comparisonBasePlan=null;comparisonBaseSnackOverride=null;reuseProducts=false;proposalSerial=0;snackOverride=null;replacementMeals={};replacementProducts={};checkedShop={};resolvedEquivalent={};pendingUnavailable=null;currentDayIndex=0;settingsOpen=false;currentView='prep';
   d=Math.max(1,Math.min(4,Number(days)||2));
   clearPreparedResults();renderPrepState();window.postMessage({type:'ravito-menu-ready'},'*');scrollTopAll();
 }
@@ -2112,15 +2113,84 @@ function clearReplacementMarks(){replacementMeals={};replacementProducts={}}
 function clearShoppingState(){checkedShop={};resolvedEquivalent={};clearReplacementMarks();closeUnavailable()}
 function selectDays(n,fromParent=false){const next=Math.max(1,Math.min(4,Number(n)||2));if(next===d){renderPrepState();return}if(plan&&!confirmRebuild('Modifier la durée')){renderPrepState();return}d=next;if(plan){clearShoppingState();clearDraftAutosave();clearPreparedResults();toast('Durée modifiée. Génère à nouveau les menus.')}if(!fromParent)window.postMessage({type:'ravito-menu-days-change',days:d},'*');renderPrepState()}
 function toggleSettings(){settingsOpen=false;$('prepCard').classList.add('hide');renderPrepState();if(plan)showMenuView()}
+function mealCatalog(slot){
+  const out=[],seen=new Set();
+  for(const day of DAYS){
+    const meal=day[slot],key=meal.title+'|'+JSON.stringify(meal.parts||{});
+    if(seen.has(key))continue;
+    seen.add(key);out.push(clone(meal))
+  }
+  return out
+}
+const REUSE_CATALOG={b:mealCatalog('b'),l:mealCatalog('l'),d:mealCatalog('d')};
+function planSignature(days){return days.map(day=>['b','l','d'].map(slot=>day[slot].title).join('¦')).join('§')}
+function changedMealCount(days,base){
+  let n=0;
+  for(let i=0;i<days.length;i++)for(const slot of ['b','l','d'])if(days[i]?.[slot]?.title!==base[i]?.[slot]?.title)n++;
+  return n
+}
+function optimizeReuseFromBase(basePlan,baseSnack){
+  const base=clone(basePlan),baseSim=simulate(base,baseSnack),baseIds=new Set(Object.keys(baseSim.purchases));
+  const slotCost={b:65,l:90,d:135};
+  const maxChanges=Math.min(base.length>=3?3:2,base.length*3);
+  let best={plan:base,utility:0,weight:baseSim.startWeight,refs:baseIds.size,changes:0};
+  let beam=[best];
+  const seen=new Set([planSignature(base)]);
+  for(let depth=1;depth<=maxChanges;depth++){
+    const next=[];
+    for(const entry of beam){
+      for(let dayIndex=0;dayIndex<base.length;dayIndex++){
+        for(const slot of ['b','l','d']){
+          for(const meal of REUSE_CATALOG[slot]){
+            if(meal.title===entry.plan[dayIndex][slot].title)continue;
+            /* Le mode Réutiliser n'introduit aucun nouveau produit :
+               il ne fait que mieux exploiter le ravito de référence. */
+            if(Object.keys(meal.parts||{}).some(id=>!baseIds.has(id)))continue;
+            const candidate=clone(entry.plan);
+            candidate[dayIndex][slot]=clone(meal);
+            if(!dayAllowed(candidate[dayIndex],dayIndex)||!planAllowedForLength(candidate))continue;
+            const sig=planSignature(candidate);if(seen.has(sig))continue;seen.add(sig);
+            const sim=simulate(candidate,baseSnack),ids=Object.keys(sim.purchases);
+            if(ids.some(id=>!baseIds.has(id)))continue;
+            const changes=changedMealCount(candidate,base);
+            const refSaving=baseIds.size-ids.length;
+            const weightSaving=baseSim.startWeight-sim.startWeight;
+            let changePenalty=0;
+            for(let i=0;i<candidate.length;i++)for(const s of ['b','l','d'])if(candidate[i][s].title!==base[i][s].title)changePenalty+=slotCost[s];
+            const utility=weightSaving+refSaving*150-changePenalty;
+            const node={plan:candidate,utility,weight:sim.startWeight,refs:ids.length,changes};
+            next.push(node);
+            if(utility>best.utility||(utility===best.utility&&changes<best.changes))best=node
+          }
+        }
+      }
+    }
+    next.sort((a,b)=>b.utility-a.utility||a.changes-b.changes||a.weight-b.weight);
+    beam=next.slice(0,90);
+    if(!beam.length)break
+  }
+  return best.utility>0?clone(best.plan):base
+}
 function toggleReuseProducts(){
   if(savedMode||!plan)return;
-  if(!confirmRebuild('Comparer avec l’autre logique'))return;
-  reuseProducts=!reuseProducts;
+  if(!confirmRebuild('Comparer avec la version réutilisée'))return;
   clearShoppingState();
   currentView='menus';
-  buildPlan(proposalStart,null);
-  showMenuView();
-  toast(reuseProducts?'Réutilisation activée':'Plus de variété');
+  if(!reuseProducts){
+    comparisonBasePlan=Array.isArray(comparisonBasePlan)&&comparisonBasePlan.length?clone(comparisonBasePlan):clone(plan);
+    comparisonBaseSnackOverride=comparisonBaseSnackOverride==null?snackOverride:comparisonBaseSnackOverride;
+    reuseProducts=true;
+    snackOverride=comparisonBaseSnackOverride;
+    plan=optimizeReuseFromBase(comparisonBasePlan,comparisonBaseSnackOverride);
+    render();scheduleDraftSave();showMenuView();
+    toast('Même ravito · produits mieux réutilisés')
+  }else{
+    reuseProducts=false;
+    if(comparisonBasePlan?.length)plan=clone(comparisonBasePlan);
+    snackOverride=comparisonBaseSnackOverride;
+    render();scheduleDraftSave();showMenuView();
+    toast('Proposition d’origine restaurée')
+  }
 }
 function renderPrepState(){
   const has=!!plan,num=ravitoCount+1;
@@ -2280,9 +2350,25 @@ function buildPlan(start=rotationCursor,previous=null){
 }
 function prepareRavito(){
   const b=$('prepBtn');clearShoppingState();b.disabled=true;b.textContent='Génération…';
-  setTimeout(()=>{proposalSerial=0;snackOverride=null;currentDayIndex=0;settingsOpen=false;buildPlan(rotationCursor);b.disabled=false;b.textContent='Générer les menus';showMenuView();scrollTopAll();toast('')},20)
+  setTimeout(()=>{
+    proposalSerial=0;snackOverride=null;currentDayIndex=0;settingsOpen=false;reuseProducts=false;
+    buildPlan(rotationCursor);
+    comparisonBasePlan=clone(plan);comparisonBaseSnackOverride=snackOverride;
+    render();
+    b.disabled=false;b.textContent='Générer les menus';showMenuView();scrollTopAll();toast('')
+  },20)
 }
-function alternateProposal(){if(savedMode)return;if(!plan||!confirmRebuild('Créer une nouvelle proposition'))return;const previous=clone(plan);clearShoppingState();proposalSerial++;const currentSnack=snackOverride==null?ravitoCount%SNACK_PACKS.length:Number(snackOverride);snackOverride=(currentSnack+1)%SNACK_PACKS.length;proposalStart=(proposalStart+Math.max(1,d))%DAYS.length;buildPlan(proposalStart,previous);toast('')}
+function alternateProposal(){
+  if(savedMode)return;if(!plan||!confirmRebuild('Créer une nouvelle proposition'))return;
+  const wasReuse=reuseProducts,previous=clone(comparisonBasePlan?.length?comparisonBasePlan:plan);
+  clearShoppingState();proposalSerial++;
+  const currentSnack=snackOverride==null?ravitoCount%SNACK_PACKS.length:Number(snackOverride);
+  snackOverride=(currentSnack+1)%SNACK_PACKS.length;proposalStart=(proposalStart+Math.max(1,d))%DAYS.length;
+  reuseProducts=false;buildPlan(proposalStart,previous);
+  comparisonBasePlan=clone(plan);comparisonBaseSnackOverride=snackOverride;
+  if(wasReuse){reuseProducts=true;plan=optimizeReuseFromBase(comparisonBasePlan,comparisonBaseSnackOverride);render();scheduleDraftSave()}
+  toast('')
+}
 function lunchFamily(l){const t=(l&&l.title||'').toLowerCase();if(t.includes('salade'))return 'salade';if(t.includes('pâté')||t.includes('terrine'))return 'pate';if(t.includes('knacki'))return 'knacki';if(t.includes('crackers')||t.includes('chips'))return 'classique';if(t.includes('saucisson')||t.includes('charcuterie'))return 'charcuterie';return t}
 function nextDayCandidate(currentIdx,excludedIds=new Set(),currentLunchFamily='',position=0){
   const choices=[];
@@ -2298,7 +2384,15 @@ function nextDayCandidate(currentIdx,excludedIds=new Set(),currentLunchFamily=''
   choices.sort((a,b)=>a.score-b.score);
   return choices[0]?.cand||null
 }
-function changeDay(i,excluded=[]){if(savedMode)return;if(!plan||!confirmRebuild('Changer cette journée'))return;closeUnavailable();const currentFamily=lunchFamily(plan[i].l);const cand=nextDayCandidate(plan[i].idx,new Set(excluded),currentFamily,i);if(!cand){toast('Aucune autre journée compatible disponible.');return}plan[i]=cand;clearShoppingState();render();scheduleDraftSave();toast('')}
+function changeDay(i,excluded=[]){
+  if(savedMode)return;if(!plan||!confirmRebuild('Changer cette journée'))return;
+  closeUnavailable();
+  if(reuseProducts){reuseProducts=false}
+  const currentFamily=lunchFamily(plan[i].l),cand=nextDayCandidate(plan[i].idx,new Set(excluded),currentFamily,i);
+  if(!cand){toast('Aucune autre journée compatible disponible.');render();return}
+  plan[i]=cand;comparisonBasePlan=clone(plan);comparisonBaseSnackOverride=snackOverride;
+  clearShoppingState();render();scheduleDraftSave();toast('')
+}
 function mealWithout(slot,id,currentTitle,dayIndex,nextPlan,variant=0){const used=new Set(nextPlan.map((x,i)=>i===dayIndex?'':x[slot]?.title).filter(Boolean));const choices=[];for(let off=1;off<=DAYS.length;off++){const source=DAYS[(proposalStart+off)%DAYS.length],meal=source[slot];if(meal.title===currentTitle||meal.parts[id]||(!reuseProducts&&used.has(meal.title)))continue;const candidate=clone(nextPlan[dayIndex]);candidate[slot]=clone(meal);if(!dayAllowed(candidate,dayIndex))continue;choices.push({meal,score:off*3})}choices.sort((a,b)=>a.score-b.score);if(!choices.length)return null;return clone(choices[Math.abs(Number(variant)||0)%choices.length].meal)}
 function simulateWithSnackOverride(days,override){return simulate(days,override)}
 function buildUnavailablePreview(id,variant=0){if(!plan)return null;const next=clone(plan),changes=[];let nextSnack=snackOverride;for(let i=0;i<next.length;i++){const day=next[i];if(day.b.parts[id]){const alt=mealWithout('b',id,day.b.title,i,next,variant+i);if(!alt)return null;changes.push('Jour '+(i+1)+' · petit-déj : '+day.b.title+' → '+alt.title);day.b=alt}if(day.l.parts[id]){const alt=mealWithout('l',id,day.l.title,i,next,variant+i);if(!alt)return null;changes.push('Jour '+(i+1)+' · midi : '+day.l.title+' → '+alt.title);day.l=alt}if(day.d.parts[id]){const alt=mealWithout('d',id,day.d.title,i,next,variant+i);if(!alt)return null;changes.push('Jour '+(i+1)+' · dîner : '+day.d.title+' → '+alt.title);day.d=alt}}
@@ -2311,7 +2405,7 @@ function formatUnavailableChanges(changes){return changes.map(x=>{const sep=x.in
 function renderUnavailableChoice(){if(!unavailableBox||!unavailableProductId)return;const p=PRODUCTS[unavailableProductId],preview=unavailableOptions[unavailableOptionIndex]||null,total=unavailableOptions.length;pendingUnavailable=preview;let html='<button class="ua-close" onclick="closeUnavailable()" aria-label="Fermer">×</button><h3>'+p.name+' introuvable</h3>';if(preview){html+='<div class="ua-impact"><strong>Proposition '+(unavailableOptionIndex+1)+' / '+total+'</strong>'+formatUnavailableChanges(preview.changes)+'<div class="ua-note">La liste de courses sera mise à jour automatiquement.</div></div>'}else{html+='<div class="ua-impact"><div class="ua-note">Aucune nouvelle proposition simple ne permet de retirer complètement ce produit.</div></div>'}html+='<div class="ua-actions">'+(preview?'<button class="ua-primary" onclick="applyUnavailableChange()">Accepter la nouvelle proposition</button>':'')+(total>1?'<button class="ua-cycle" onclick="cycleUnavailable()">↻ Voir une autre proposition</button>':'')+'<button class="ua-secondary" onclick="markEquivalent(\''+unavailableProductId+'\')">Ou prendre un produit similaire</button></div>';unavailableBox.innerHTML=html;unavailableBox.classList.remove('hide')}
 function openUnavailable(id){closeUnavailable();const p=PRODUCTS[id],box=menuRoot.querySelector('.inlineUnavailable[data-unavailable-id="'+id+'"]')||$('unavailablePanel');if(!p||!box)return;unavailableProductId=id;unavailableBox=box;unavailableOptions=buildUnavailableAlternatives(id);unavailableOptionIndex=0;renderUnavailableChoice()}
 function cycleUnavailable(){if(unavailableOptions.length<2)return;unavailableOptionIndex=(unavailableOptionIndex+1)%unavailableOptions.length;renderUnavailableChoice()}
-function applyUnavailableChange(){if(!pendingUnavailable)return;const beforePlan=clone(plan),beforeSnack=snackOverride,beforeSnackIds=snackIdsForOverride(beforeSnack),beforeSim=simulate(plan),nextSim=pendingUnavailable.nextSim||simulateWithSnackOverride(pendingUnavailable.plan,pendingUnavailable.snackOverride);const nextPlan=pendingUnavailable.plan,nextSnack=pendingUnavailable.snackOverride;for(let i=0;i<nextPlan.length;i++){for(const slot of ['b','l','d']){const beforeMeal=beforePlan[i]?.[slot],afterMeal=nextPlan[i]?.[slot];if(beforeMeal&&afterMeal&&beforeMeal.title!==afterMeal.title){replacementMeals[i+'-'+slot]=true;const beforeParts=beforeMeal.parts||{},afterParts=afterMeal.parts||{};for(const id of Object.keys(afterParts)){if((afterParts[id]||0)>(beforeParts[id]||0))replacementProducts[id]=true}}}}const afterSnackIds=snackIdsForOverride(nextSnack);for(const id of afterSnackIds){if(!beforeSnackIds.includes(id))replacementProducts[id]=true}plan=nextPlan;snackOverride=nextSnack;const kept={};for(const [id,on] of Object.entries(checkedShop)){const before=beforeSim.purchases[id]?.count||0,after=nextSim.purchases[id]?.count||0;if(on&&before===after&&after>0)kept[id]=true}checkedShop=kept;for(const id of Object.keys(resolvedEquivalent)){const before=beforeSim.purchases[id]?.count||0,after=nextSim.purchases[id]?.count||0;if(before!==after||!after)delete resolvedEquivalent[id]}closeUnavailable();menuNeedsRender=true;const s=document.scrollingElement||document.documentElement,keepY=s.scrollTop;renderShoppingOnly();s.scrollTop=Math.min(keepY,Math.max(0,s.scrollHeight-s.clientHeight));scheduleDraftSave();toast('')}
+function applyUnavailableChange(){if(!pendingUnavailable)return;const beforePlan=clone(plan),beforeSnack=snackOverride,beforeSnackIds=snackIdsForOverride(beforeSnack),beforeSim=simulate(plan),nextSim=pendingUnavailable.nextSim||simulateWithSnackOverride(pendingUnavailable.plan,pendingUnavailable.snackOverride);const nextPlan=pendingUnavailable.plan,nextSnack=pendingUnavailable.snackOverride;for(let i=0;i<nextPlan.length;i++){for(const slot of ['b','l','d']){const beforeMeal=beforePlan[i]?.[slot],afterMeal=nextPlan[i]?.[slot];if(beforeMeal&&afterMeal&&beforeMeal.title!==afterMeal.title){replacementMeals[i+'-'+slot]=true;const beforeParts=beforeMeal.parts||{},afterParts=afterMeal.parts||{};for(const id of Object.keys(afterParts)){if((afterParts[id]||0)>(beforeParts[id]||0))replacementProducts[id]=true}}}}const afterSnackIds=snackIdsForOverride(nextSnack);for(const id of afterSnackIds){if(!beforeSnackIds.includes(id))replacementProducts[id]=true}plan=nextPlan;snackOverride=nextSnack;reuseProducts=false;comparisonBasePlan=clone(plan);comparisonBaseSnackOverride=snackOverride;const kept={};for(const [id,on] of Object.entries(checkedShop)){const before=beforeSim.purchases[id]?.count||0,after=nextSim.purchases[id]?.count||0;if(on&&before===after&&after>0)kept[id]=true}checkedShop=kept;for(const id of Object.keys(resolvedEquivalent)){const before=beforeSim.purchases[id]?.count||0,after=nextSim.purchases[id]?.count||0;if(before!==after||!after)delete resolvedEquivalent[id]}closeUnavailable();menuNeedsRender=true;const s=document.scrollingElement||document.documentElement,keepY=s.scrollTop;renderShoppingOnly();s.scrollTop=Math.min(keepY,Math.max(0,s.scrollHeight-s.clientHeight));scheduleDraftSave();toast('')}
 function markEquivalent(id){resolvedEquivalent[id]=true;checkedShop[id]=true;closeUnavailable();renderShoppingOnly();scheduleDraftSave();toast('')}
 function refreshChecklistOnly(){
   if(!plan)return;
@@ -2414,7 +2508,7 @@ function validate(){
 function resetAll(){
   if(!confirm('Réinitialiser les menus, les courses et l’historique des ravitos ?'))return;
   clearDraftAutosave();
-  d=2;plan=null;rotationCursor=0;proposalStart=0;proposalSerial=0;ravitoCount=0;reuseProducts=true;settingsOpen=false;checkedShop={};resolvedEquivalent={};replacementMeals={};replacementProducts={};singleSnackToggle=Array(SNACK_PACKS.length).fill(0);snackOverride=null;currentDayIndex=0;currentView='prep';savedNextState=null;loadedSavedId=null;setSavedMode(false);clearPreparedResults();window.postMessage({type:'ravito-menu-days-change',days:d},'*');window.postMessage({type:'ravito-menu-clear-saved'},'*');renderPrepState();toast('Reset effectué.','ok');scrollTopAll()
+  d=2;plan=null;rotationCursor=0;proposalStart=0;proposalSerial=0;ravitoCount=0;reuseProducts=false;comparisonBasePlan=null;comparisonBaseSnackOverride=null;settingsOpen=false;checkedShop={};resolvedEquivalent={};replacementMeals={};replacementProducts={};singleSnackToggle=Array(SNACK_PACKS.length).fill(0);snackOverride=null;currentDayIndex=0;currentView='prep';savedNextState=null;loadedSavedId=null;setSavedMode(false);clearPreparedResults();window.postMessage({type:'ravito-menu-days-change',days:d},'*');window.postMessage({type:'ravito-menu-clear-saved'},'*');renderPrepState();toast('Reset effectué.','ok');scrollTopAll()
 }
 
 function renderDeckClasses(){
