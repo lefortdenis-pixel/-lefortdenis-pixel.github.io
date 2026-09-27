@@ -1805,7 +1805,7 @@ const PRODUCTS={
   pas:{name:'Pâtes cuisson rapide',pack:250,unit:'paquet',format:'250 g'},
   soup:{name:'Soupe déshydratée',pack:60,unit:'sachet',format:'≈ 60 g'},
   tom:{name:'Concentré de tomate en tube',pack:130,unit:'tube',format:'130 g',staple:true},
-  couscous:{name:'Couscous / semoule',pack:500,unit:'paquet',format:'500 g'},
+  semoule:{name:'Semoule',pack:500,unit:'paquet',format:'500 g'},
   spices:{name:'Épices',pack:50,unit:'pot',format:'≈ 50 g',staple:true},
   dryfruit:{name:'Fruits secs',pack:200,unit:'sachet',format:'200 g',snackable:true},
   raisins:{name:'Raisins secs',pack:200,unit:'sachet',format:'200 g',snackable:true},
@@ -1895,8 +1895,8 @@ DAYS.splice(6,0,
    petit-déjeuner / déjeuner / dîner utilisés par le générateur. */
 DAYS.splice(7,0,
   {b:B('Muesli + lait en poudre + fruits secs',{mue:125,milk:25,dryfruit:40}),
-   l:L('Couscous + épices',{couscous:125,spices:5}),
-   d:D('Couscous épicé + raisins secs',{couscous:125,spices:5,raisins:40})}
+   l:L('Couscous + épices',{semoule:125,spices:5}),
+   d:D('Couscous épicé + raisins secs',{semoule:125,spices:5,raisins:40})}
 );
 /* Les conserves apportent volontairement de la variété malgré leur poids.
    Elles ne peuvent être proposées que le premier soir : achat au ravito,
