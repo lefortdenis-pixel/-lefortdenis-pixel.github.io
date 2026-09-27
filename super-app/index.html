@@ -627,7 +627,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
         <div class="resultTop"><div class="badge" id="badge"></div><div class="resultMini" id="resultMini"></div></div>
         <div class="store" id="store"></div>
         <div class="storeMeta" id="storeMeta"></div>
-        <button class="continueBtn" id="continueBtn">Préparer le ravitaillement →</button>
         <div class="ignored-wrap">
           <details class="ignored" id="ignoredDetails">
             <summary id="ignoredSummary">Magasins ignorés (0)</summary>
@@ -1017,7 +1016,11 @@ function ignoredStores(km,r){
 
   const rows = DATA.stores
     .filter(s => s.km > km && s.km <= displayUntil)
-    .filter(s => !chosen || !(s.name === chosen.name && Math.abs(s.km-chosen.km) < 0.001))
+    .filter(s => {
+      const isChosen=!!chosen&&s.name===chosen.name&&Math.abs(s.km-chosen.km)<0.001;
+      const chosenIsActuallyUsable=r.verdict==="OK"||r.verdict==="SECOURS"||r.verdict==="PLUS PROCHE";
+      return !isChosen||!chosenIsActuallyUsable;
+    })
     .sort((a,b)=>a.km-b.km)
     .map(s=>{
       let reason="", cls="";
@@ -1213,12 +1216,6 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 
 
-document.getElementById("continueBtn")?.addEventListener("click",()=>{
-  const btn=document.getElementById("continueBtn");
-  const days=Math.max(1,Math.min(4,Number(btn?.dataset.menuDays)||autonomy));
-  openAppView("menu");
-  window.postMessage({type:"start-new-ravito",days,nextState:savedRavito?.nextState||null},"*");
-});
 </script>
 
 <script id="water-search">
