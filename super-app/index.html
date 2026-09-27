@@ -2167,47 +2167,45 @@ function repeatPlanPenalty(days,previous){
   let penalty=0;
   for(const day of days){
     if(ids.has(day.idx))penalty+=180;
-    for(const slot of ['b','l','d'])if(titles[slot].has(day[slot].title))penalty+=70
+    if(titles.b.has(day.b.title))penalty+=60;
+    if(titles.l.has(day.l.title))penalty+=80;
+    /* Le dîner doit réellement tourner quand on change toute la proposition. */
+    if(titles.d.has(day.d.title))penalty+=420
   }
   return penalty
 }
+function dinnerOverlap(days,previous){
+  if(!previous?.length)return 0;
+  const old=new Set(previous.map(x=>x.d.title));
+  return days.reduce((n,x)=>n+(old.has(x.d.title)?1:0),0)
+}
 function buildPlan(start=rotationCursor,previous=null){
   proposalStart=((Number(start)||0)%DAYS.length+DAYS.length)%DAYS.length;
-  let candidates=candidatePlans(proposalStart);
+  const candidates=candidatePlans(proposalStart);
   if(!candidates.length){plan=[];toast('Aucun menu compatible.');return}
-
-  if(d===2){
-    /* Sur 2 jours, changer les menus doit réellement faire tourner les dîners.
-       On privilégie d'abord les combinaisons sans dîner commun avec la
-       proposition précédente, puis on garde une seule meilleure variante
-       par paire de dîners afin que le poids ne monopolise plus le choix. */
-    if(previous?.length){
-      const previousDinners=new Set(previous.map(x=>x.d.title));
-      const fresh=candidates.filter(days=>days.every(x=>!previousDinners.has(x.d.title)));
-      if(fresh.length)candidates=fresh
-    }
-    const byDinnerPair=new Map();
-    for(const days of candidates){
-      const signature=days.map(x=>x.d.title).join('|');
-      const score=planScore(days,proposalStart)+repeatPlanPenalty(days,previous);
-      const current=byDinnerPair.get(signature);
-      if(!current||score<current.score)byDinnerPair.set(signature,{days,score})
-    }
-    const dinnerVariants=[...byDinnerPair.values()].sort((a,b)=>a.score-b.score);
-    const shortlist=dinnerVariants.slice(0,Math.min(14,dinnerVariants.length));
-    const selected=shortlist[proposalSerial%shortlist.length]?.days;
-    if(!selected){plan=[];toast('Aucun menu compatible.');return}
-    plan=selected.map(x=>({idx:x.idx,...clone(DAYS[x.idx])}));
-    render();scheduleDraftSave();return
-  }
 
   candidates.sort((a,b)=>
     (planScore(a,proposalStart)+repeatPlanPenalty(a,previous))
     -(planScore(b,proposalStart)+repeatPlanPenalty(b,previous))
   );
-  /* La variété est seulement une préférence. On prend la meilleure proposition
-     globale, plutôt que d'imposer une rotation qui ferait gonfler le sac. */
-  const selected=candidates[0];
+
+  let selected=candidates[0];
+
+  if(previous?.length){
+    const bestWeight=simulate(candidates[0]).startWeight;
+    const maxExtra=d===1?250:d===2?450:600;
+    const freshDinner=candidates
+      .filter(days=>dinnerOverlap(days,previous)===0 && simulate(days).startWeight<=bestWeight+maxExtra)
+      .sort((a,b)=>planScore(a,proposalStart)-planScore(b,proposalStart));
+    if(freshDinner.length)selected=freshDinner[0];
+    else{
+      const fewerRepeats=candidates
+        .filter(days=>dinnerOverlap(days,previous)<dinnerOverlap(selected,previous) && simulate(days).startWeight<=bestWeight+maxExtra)
+        .sort((a,b)=>dinnerOverlap(a,previous)-dinnerOverlap(b,previous)||planScore(a,proposalStart)-planScore(b,proposalStart));
+      if(fewerRepeats.length)selected=fewerRepeats[0]
+    }
+  }
+
   plan=selected.map(x=>({idx:x.idx,...clone(DAYS[x.idx])}));
   render();scheduleDraftSave()
 }
