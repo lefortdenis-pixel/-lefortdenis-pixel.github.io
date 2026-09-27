@@ -1015,9 +1015,6 @@ function select(km,stage){
   const normal=usable.filter(s=>s.role==="NORMAL"&&inWindow(s)).sort((a,b)=>b.km-a.km)[0];
   if(normal) return {verdict:"OK",role:"NORMAL",store:normal,windowEnd,endStage};
 
-  const secours=usable.filter(s=>s.role==="SECOURS"&&inWindow(s)).sort((a,b)=>b.km-a.km)[0];
-  if(secours) return {verdict:"SECOURS",role:"SECOURS",store:secours,windowEnd,endStage};
-
   const next=usable.filter(s=>s.role==="NORMAL"&&s.km>km).sort((a,b)=>a.km-b.km)[0];
   if(!next) return {verdict:"FIN",role:"FIN",store:null,windowEnd,endStage};
 
@@ -1132,7 +1129,7 @@ function show(km,stage,offRoute=null){
   if(outsideWindow){
     badge.className="badge bad";
     badge.textContent="AUCUN MAGASIN";
-    if(storeEl)storeEl.textContent="Aucun magasin dans "+autonomy+" jour"+(autonomy>1?"s":"");
+    if(storeEl)storeEl.textContent="Aucun magasin conseillé dans "+autonomy+" jour"+(autonomy>1?"s":"");
     if(meta&&r.store){
       const delta=Math.max(0,r.store.km-km);
       meta.textContent="Le prochain est dans "+delta.toFixed(1).replace(".",",")+" km · "+r.requiredDays+" jour"+(r.requiredDays>1?"s":"")+" nécessaire"+(r.requiredDays>1?"s":"");
