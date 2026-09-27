@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.162 hors ligne</title>
+<title>Traversée 2027 · v1.163 hors ligne</title>
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -2179,9 +2179,37 @@ function dinnerOverlap(days,previous){
   const old=new Set(previous.map(x=>x.d.title));
   return days.reduce((n,x)=>n+(old.has(x.d.title)?1:0),0)
 }
+function twoDayCandidatePlans(){
+  const out=[];
+  if(d!==2)return out;
+  for(let a=0;a<DAYS.length;a++){
+    const first={idx:a,...DAYS[a]};
+    if(!dayAllowed(first,0))continue;
+    for(let b=0;b<DAYS.length;b++){
+      if(a===b)continue;
+      const second={idx:b,...DAYS[b]};
+      if(!dayAllowed(second,1))continue;
+      const trial=[first,second];
+      if(!uniqueMealTitles(trial))continue;
+      out.push(trial)
+    }
+  }
+  return out
+}
+function rotatingDinnerTitle(previous){
+  const catalog=[...new Set(DAYS.map(x=>x.d.title))];
+  if(!catalog.length)return '';
+  const old=new Set((previous||[]).map(x=>x.d.title));
+  let idx=((proposalSerial+ravitoCount)%catalog.length+catalog.length)%catalog.length;
+  for(let n=0;n<catalog.length;n++){
+    const title=catalog[(idx+n)%catalog.length];
+    if(!old.has(title))return title
+  }
+  return catalog[idx]
+}
 function buildPlan(start=rotationCursor,previous=null){
   proposalStart=((Number(start)||0)%DAYS.length+DAYS.length)%DAYS.length;
-  const candidates=candidatePlans(proposalStart);
+  let candidates=d===2?twoDayCandidatePlans():candidatePlans(proposalStart);
   if(!candidates.length){plan=[];toast('Aucun menu compatible.');return}
 
   candidates.sort((a,b)=>
@@ -2191,19 +2219,25 @@ function buildPlan(start=rotationCursor,previous=null){
 
   let selected=candidates[0];
 
-  if(previous?.length){
+  if(d===2){
+    /* Deux jours : le bouton "Changer" parcourt réellement le catalogue
+       des dîners. Le poids départage ensuite les propositions possibles. */
+    const targetDinner=rotatingDinnerTitle(previous);
+    const targetPool=candidates
+      .filter(days=>days.some(x=>x.d.title===targetDinner))
+      .sort((a,b)=>
+        dinnerOverlap(a,previous)-dinnerOverlap(b,previous)
+        ||(planScore(a,proposalStart)+repeatPlanPenalty(a,previous))
+          -(planScore(b,proposalStart)+repeatPlanPenalty(b,previous))
+      );
+    if(targetPool.length)selected=targetPool[0]
+  }else if(previous?.length){
     const bestWeight=simulate(candidates[0]).startWeight;
-    const maxExtra=d===1?250:d===2?450:600;
+    const maxExtra=d===1?250:600;
     const freshDinner=candidates
       .filter(days=>dinnerOverlap(days,previous)===0 && simulate(days).startWeight<=bestWeight+maxExtra)
       .sort((a,b)=>planScore(a,proposalStart)-planScore(b,proposalStart));
-    if(freshDinner.length)selected=freshDinner[0];
-    else{
-      const fewerRepeats=candidates
-        .filter(days=>dinnerOverlap(days,previous)<dinnerOverlap(selected,previous) && simulate(days).startWeight<=bestWeight+maxExtra)
-        .sort((a,b)=>dinnerOverlap(a,previous)-dinnerOverlap(b,previous)||planScore(a,proposalStart)-planScore(b,proposalStart));
-      if(fewerRepeats.length)selected=fewerRepeats[0]
-    }
+    if(freshDinner.length)selected=freshDinner[0]
   }
 
   plan=selected.map(x=>({idx:x.idx,...clone(DAYS[x.idx])}));
