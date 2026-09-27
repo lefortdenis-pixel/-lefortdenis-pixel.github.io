@@ -2156,142 +2156,45 @@ function duplicateMealCount(days,slot){return Math.max(0,days.length-new Set(day
 function dayFoodWeight(day){return Object.values(dayNeed(day)).reduce((a,g)=>a+(Number(g)||0),0)+SNACK_TARGET_PER_DAY}
 function planAllowedForLength(days){return Array.isArray(days)&&days.every((day,i)=>dayAllowed(day,i))}
 function planAllowed(days){return Array.isArray(days)&&days.length===d&&planAllowedForLength(days)}
-function ravitoStats(days){
-  const sim=simulate(days);
-  const refs=Object.keys(sim.purchases).length;
-  const mealNeed=mergeNeeds(days);
-  let mealPacked=0,mealConsumed=0;
-  for(const [id,need] of Object.entries(mealNeed)){
-    const p=PRODUCTS[id];
-    if(!p||need<=0)continue;
-    mealConsumed+=need;
-    mealPacked+=Math.ceil(need/p.pack-1e-9)*p.pack;
-  }
-  return {sim,refs,mealWaste:Math.max(0,mealPacked-mealConsumed)};
-}
-function duplicatePairs(days,slot){
-  const counts=new Map();
-  for(const day of days){
-    const title=day?.[slot]?.title||'';
-    counts.set(title,(counts.get(title)||0)+1)
-  }
-  let pairs=0;
-  for(const n of counts.values())pairs+=n*(n-1)/2;
-  return pairs
-}
-function varietyPenalty(days){
-  /* La répétition n'est jamais interdite. Trois fois le même repas coûte
-     simplement plus que deux fois le même, de façon progressive. */
-  return duplicatePairs(days,'b')
-    +duplicatePairs(days,'l')*1.35
-    +duplicatePairs(days,'d')*1.55
-}
-function planScore(days,start){
-  const stats=ravitoStats(days);
-  /* Le poids réel domine largement. Une référence supplémentaire ne pèse
-     presque rien dans l'arbitrage ; la variété n'est qu'une petite préférence
-     qui disparaît dès qu'elle coûte réellement du poids. */
-  return stats.sim.startWeight
-    +stats.refs*10
-    +varietyPenalty(days)*20
-    +days.reduce((sum,x)=>sum+cyclicDistance(start,x.idx)*.002,0)
-}
 function mealPlanSignature(days){
   return days.map(day=>[day.b.title,day.l.title,day.d.title].join('¦')).join('§')
 }
-function planMealOverlap(a,b){
-  if(!a?.length||!b?.length)return 0;
-  let overlap=0;
-  for(const slot of ['b','l','d']){
-    const counts=new Map();
-    for(const day of b){
-      const title=day?.[slot]?.title||'';
-      counts.set(title,(counts.get(title)||0)+1)
-    }
-    for(const day of a){
-      const title=day?.[slot]?.title||'',n=counts.get(title)||0;
-      if(n){overlap++;counts.set(title,n-1)}
-    }
-  }
-  return overlap
-}
-function chooseRavitoCandidate(candidates,start,previous=null){
-  const ranked=candidates.map(days=>({days,score:planScore(days,start)}))
-    .sort((a,b)=>a.score-b.score);
-  if(!previous?.length)return ranked[0]?.days||candidates[0];
+const MENU_DAY_STEP=347;      // coprime avec 2380 : parcourt tout le catalogue
+const MENU_PROPOSAL_STEP=997; // idem : chaque nouvelle proposition saute réellement ailleurs
 
-  /* "Changer les jours" doit réellement proposer autre chose, mais sans
-     sacrifier fortement le ravito : on cherche la proposition la moins
-     similaire parmi celles qui restent à moins de 60 points du meilleur score. */
-  const best=ranked[0]?.score??Infinity;
-  const near=ranked.filter(x=>x.score<=best+60);
-  near.sort((a,b)=>
-    planMealOverlap(a.days,previous)-planMealOverlap(b.days,previous)
-    ||a.score-b.score
-  );
-  return near[0]?.days||ranked[0]?.days||candidates[0]
-}
-function dayOptionLeanScore(day){
-  const ids=new Set([
-    ...Object.keys(day.b.parts||{}),
-    ...Object.keys(day.l.parts||{}),
-    ...Object.keys(day.d.parts||{})
-  ]);
-  return dayFoodWeight(day)+ids.size*8
-}
-function candidateDayPool(position,start){
-  const allowed=DAY_OPTIONS.filter(day=>dayAllowed(day,position));
-  allowed.sort((a,b)=>
-    dayOptionLeanScore(a)-dayOptionLeanScore(b)
-    ||cyclicDistance(start,a.idx)-cyclicDistance(start,b.idx)
-  );
-
-  /* Une base assez large pour les solutions légères, complétée par le meilleur
-     représentant de chaque repas afin qu'aucun petit-déj/midi/dîner ne
-     disparaisse uniquement à cause du préfiltrage. */
-  const chosen=allowed.slice(0,160),seen=new Set(chosen.map(x=>x.idx));
-  for(const slot of ['b','l','d']){
-    const titles=new Set(MEAL_CATALOGS[slot].map(x=>x.title));
-    for(const title of titles){
-      const day=allowed.find(x=>x[slot].title===title);
-      if(day&&!seen.has(day.idx)){seen.add(day.idx);chosen.push(day)}
+function pickRotatedDay(position,start,excludedIds=new Set(),avoidSignature=''){
+  const total=DAY_OPTIONS.length;
+  const base=((Number(start)||0)+position*MENU_DAY_STEP)%total;
+  for(let n=0;n<total;n++){
+    const idx=(base+n*MENU_DAY_STEP)%total;
+    const cand=DAY_OPTIONS[idx];
+    if(!dayAllowed(cand,position))continue;
+    if(excludedIds.size){
+      const needs=dayNeed(cand);
+      if([...excludedIds].some(id=>needs[id]))continue;
     }
+    const sig=[cand.b.title,cand.l.title,cand.d.title].join('¦');
+    if(avoidSignature&&sig===avoidSignature)continue;
+    return clone(cand)
   }
-  return chosen
+  return null
 }
-function pruneCandidateBeam(entries){
-  entries.sort((a,b)=>a.quick-b.quick);
-  const kept=[],seen=new Set();
-  for(const entry of entries){
-    const sig=mealPlanSignature(entry.days);
-    if(seen.has(sig))continue;
-    seen.add(sig);kept.push(entry.days);
-    if(kept.length>=70)break
-  }
-  return kept
-}
-function candidatePlans(start){
-  let beam=[[]];
+function composePlan(start,previous=null){
+  const out=[];
   for(let position=0;position<d;position++){
-    const options=candidateDayPool(position,start);
-    const next=[];
-    for(const partial of beam){
-      for(const cand of options){
-        const trial=[...partial,cand];
-        next.push({days:trial,quick:planScore(trial,start)})
-      }
-    }
-    beam=pruneCandidateBeam(next)
+    const old=previous?.[position];
+    const avoid=old?[old.b.title,old.l.title,old.d.title].join('¦'):'';
+    const day=pickRotatedDay(position,start,new Set(),avoid);
+    if(!day)return [];
+    out.push(day)
   }
-  return beam
+  return out
 }
 function buildPlan(start=rotationCursor,previous=null){
   proposalStart=((Number(start)||0)%DAY_OPTIONS.length+DAY_OPTIONS.length)%DAY_OPTIONS.length;
-  const candidates=candidatePlans(proposalStart);
-  if(!candidates.length){plan=[];toast('Aucun menu compatible.');return}
-
-  const selected=chooseRavitoCandidate(candidates,proposalStart,previous);
-  plan=selected.map(x=>clone(x));
+  const selected=composePlan(proposalStart,previous);
+  if(!selected.length){plan=[];toast('Aucun menu compatible.');return}
+  plan=selected;
   render();scheduleDraftSave()
 }
 function prepareRavito(){
@@ -2309,23 +2212,16 @@ function alternateProposal(){
   clearShoppingState();proposalSerial++;
   const currentSnack=snackOverride==null?ravitoCount%SNACK_PACKS.length:Number(snackOverride);
   snackOverride=(currentSnack+1)%SNACK_PACKS.length;
-  proposalStart=(proposalStart+137+Math.max(1,d)*17)%DAY_OPTIONS.length;
+  proposalStart=(proposalStart+MENU_PROPOSAL_STEP)%DAY_OPTIONS.length;
   buildPlan(proposalStart,previous);
   toast('')
 }
 function lunchFamily(l){const t=(l&&l.title||'').toLowerCase();if(t.includes('salade'))return 'salade';if(t.includes('pâté')||t.includes('terrine'))return 'pate';if(t.includes('knacki'))return 'knacki';if(t.includes('crackers')||t.includes('chips'))return 'classique';if(t.includes('saucisson')||t.includes('charcuterie'))return 'charcuterie';return t}
 function nextDayCandidate(currentIdx,excludedIds=new Set(),currentLunchFamily='',position=0){
-  const choices=[];
-  for(const source of DAY_OPTIONS){
-    if(source.idx===currentIdx)continue;
-    const cand=source,n=dayNeed(cand);
-    if([...excludedIds].some(id=>n[id])||!dayAllowed(cand,position))continue;
-    const trial=plan.map((x,j)=>j===position?cand:x);
-    if(!planAllowedForLength(trial))continue;
-    choices.push({cand,score:planScore(trial,proposalStart)})
-  }
-  choices.sort((a,b)=>a.score-b.score);
-  return choices[0]?.cand?clone(choices[0].cand):null
+  const start=(Number(currentIdx)+MENU_DAY_STEP)%DAY_OPTIONS.length;
+  const current=plan[position];
+  const avoid=current?[current.b.title,current.l.title,current.d.title].join('¦'):'';
+  return pickRotatedDay(position,start,excludedIds,avoid)
 }
 function changeDay(i,excluded=[]){
   if(savedMode)return;if(!plan||!confirmRebuild('Changer cette journée'))return;
@@ -2336,23 +2232,24 @@ function changeDay(i,excluded=[]){
   clearShoppingState();render();scheduleDraftSave();toast('')
 }
 function mealWithout(slot,id,currentTitle,dayIndex,nextPlan,variant=0){
-  const choices=[];
-  for(const meal of MEAL_CATALOGS[slot]){
+  const catalog=MEAL_CATALOGS[slot];
+  const current=Math.max(0,catalog.findIndex(meal=>meal.title===currentTitle));
+  const shift=Math.abs(Number(variant)||0)+1;
+  for(let n=0;n<catalog.length;n++){
+    const meal=catalog[(current+shift+n)%catalog.length];
     if(meal.title===currentTitle||meal.parts[id])continue;
-    const candidate=clone(nextPlan[dayIndex]);candidate[slot]=clone(meal);
+    const candidate=clone(nextPlan[dayIndex]);
+    candidate[slot]=clone(meal);
     if(!dayAllowed(candidate,dayIndex))continue;
-    const trial=nextPlan.map((x,i)=>i===dayIndex?candidate:x);
-    choices.push({meal,score:planScore(trial,proposalStart)})
+    return clone(meal)
   }
-  choices.sort((a,b)=>a.score-b.score);
-  if(!choices.length)return null;
-  return clone(choices[Math.abs(Number(variant)||0)%Math.min(choices.length,8)].meal)
+  return null
 }
 function simulateWithSnackOverride(days,override){return simulate(days,override)}
 function buildUnavailablePreview(id,variant=0){if(!plan)return null;const next=clone(plan),changes=[];let nextSnack=snackOverride;for(let i=0;i<next.length;i++){const day=next[i];if(day.b.parts[id]){const alt=mealWithout('b',id,day.b.title,i,next,variant+i);if(!alt)return null;changes.push('Jour '+(i+1)+' · petit-déj : '+day.b.title+' → '+alt.title);day.b=alt}if(day.l.parts[id]){const alt=mealWithout('l',id,day.l.title,i,next,variant+i);if(!alt)return null;changes.push('Jour '+(i+1)+' · midi : '+day.l.title+' → '+alt.title);day.l=alt}if(day.d.parts[id]){const alt=mealWithout('d',id,day.d.title,i,next,variant+i);if(!alt)return null;changes.push('Jour '+(i+1)+' · dîner : '+day.d.title+' → '+alt.title);day.d=alt}}
   const curSnack=snackIdsForOverride(nextSnack);if(curSnack.includes(id)){const choices=[],start=nextSnack==null?ravitoCount%SNACK_PACKS.length:nextSnack;for(let off=1;off<=SNACK_PACKS.length;off++){const idx=(start+off)%SNACK_PACKS.length,ids=snackIdsForOverride(idx);if(!ids.includes(id))choices.push(idx)}if(!choices.length)return null;const found=choices[Math.abs(Number(variant)||0)%choices.length],before=curSnack.map(x=>PRODUCTS[x].name).join(' + '),after=snackIdsForOverride(found).map(x=>PRODUCTS[x].name).join(' + ');changes.push('Grignotage : '+before+' → '+after);nextSnack=found}
   const remainingNeed=mergeNeeds(next);if(remainingNeed[id])return null;if(snackIdsForOverride(nextSnack).includes(id)||!planAllowed(next))return null;return {id,plan:next,snackOverride:nextSnack,changes}}
-function buildUnavailableAlternatives(id){const out=[],seen=new Set(),limit=Math.max(BREAKFAST_CATALOG.length,LUNCH_CATALOG.length,DINNER_CATALOG.length,SNACK_PACKS.length);for(let variant=0;variant<limit;variant++){const preview=buildUnavailablePreview(id,variant);if(!preview)continue;const key=JSON.stringify(preview.changes);if(seen.has(key))continue;seen.add(key);preview.nextSim=simulateWithSnackOverride(preview.plan,preview.snackOverride);out.push(preview);if(out.length>=8)break}out.sort((a,b)=>planScore(a.plan,proposalStart)-planScore(b.plan,proposalStart));return out}
+function buildUnavailableAlternatives(id){const out=[],seen=new Set(),limit=Math.max(BREAKFAST_CATALOG.length,LUNCH_CATALOG.length,DINNER_CATALOG.length,SNACK_PACKS.length);for(let variant=0;variant<limit;variant++){const preview=buildUnavailablePreview(id,variant);if(!preview)continue;const key=JSON.stringify(preview.changes);if(seen.has(key))continue;seen.add(key);preview.nextSim=simulateWithSnackOverride(preview.plan,preview.snackOverride);out.push(preview);if(out.length>=8)break}return out}
 function purchaseDiff(currentSim,nextSim){const added=[],removed=[],ids=new Set([...Object.keys(currentSim.purchases),...Object.keys(nextSim.purchases)]);for(const id of ids){const a=currentSim.purchases[id]?.count||0,b=nextSim.purchases[id]?.count||0;if(b>a)added.push((b-a)+' × '+PRODUCTS[id].name);if(a>b)removed.push((a-b)+' × '+PRODUCTS[id].name)}return {added,removed}}
 function closeUnavailable(){pendingUnavailable=null;unavailableOptions=[];unavailableOptionIndex=0;unavailableProductId=null;unavailableBox=null;menuRoot.querySelectorAll('.inlineUnavailable').forEach(box=>{box.classList.add('hide');box.innerHTML='' });const box=$('unavailablePanel');if(box){box.classList.add('hide');box.innerHTML=''}}
 function formatUnavailableChanges(changes){return changes.map(x=>{const sep=x.indexOf(' : '),arrow=x.indexOf(' → ');if(sep<0||arrow<0)return '<div class="ua-new">'+x+'</div>';const label=x.slice(0,sep),before=x.slice(sep+3,arrow),after=x.slice(arrow+3);return '<div class="ua-proposal"><small>'+label+'</small><div class="ua-old">'+before+'</div><div class="ua-arrow">↓</div><div class="ua-new">'+after+'</div></div>'}).join('')}
@@ -2445,13 +2342,7 @@ function clearPreparedResults(){
   $('planSummary').innerHTML='';$('summaryWrap').classList.add('hide');$('ml').innerHTML='';$('bl').innerHTML='';$('verifyBox').innerHTML='';$('shopProgress').innerHTML='';$('validationHint').textContent='';renderPrepState();scrollTopAll()
 }
 function nextRotationStart(currentPlan){
-  const used=new Set(currentPlan.map(x=>x.idx));
-  const base=(proposalStart+193+d*29)%DAY_OPTIONS.length;
-  for(let off=0;off<DAY_OPTIONS.length;off++){
-    const start=(base+off)%DAY_OPTIONS.length;
-    if(!used.has(start))return start
-  }
-  return base
+  return (proposalStart+MENU_PROPOSAL_STEP)%DAY_OPTIONS.length
 }
 function validate(){
   if(!plan||savedMode)return;
