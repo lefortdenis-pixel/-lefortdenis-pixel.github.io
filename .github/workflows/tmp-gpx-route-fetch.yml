@@ -1,0 +1,48 @@
+name: tmp-gpx-route-fetch
+
+on:
+  push:
+    branches:
+      - tmp-gpx-isolation-20260928
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query OSM route relations and test GPX downloads
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          cat > /tmp/find.py <<'PY'
+          import requests, json, time, re, os
+          endpoint="https://overpass-api.de/api/interpreter"
+          refs=["GR 3","GR 48","GR 100","GR 4","GR 42","GR 429","GR 9"]
+          allout={}
+          for ref in refs:
+              n=ref.replace(" ","")
+              num=ref.split()[-1]
+              q=f'''[out:json][timeout:90];
+              rel["type"="route"]["route"~"hiking|foot"]["ref"~"^GR ?{num}$",i];
+              out tags center;'''
+              r=requests.post(endpoint,data={"data":q},timeout=120)
+              r.raise_for_status()
+              data=r.json().get("elements",[])
+              allout[ref]=data
+              print("\n###",ref)
+              for e in data:
+                  print(e.get("id"), e.get("center"), e.get("tags",{}))
+              time.sleep(1)
+          open("out/relations.json","w").write(json.dumps(allout,ensure_ascii=False,indent=2))
+          PY
+          python /tmp/find.py
+          for id in 10169937 10670467; do
+            echo "Trying Waymarked relation $id"
+            curl -fL --retry 2 --max-time 60 "https://hiking.waymarkedtrails.org/api/v1/details/relation/$id/geometry/gpx" -o "out/relation_$id.gpx" || true
+            ls -l "out/relation_$id.gpx" 2>/dev/null || true
+            head -c 200 "out/relation_$id.gpx" 2>/dev/null || true
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tmp-gpx-debug
+          path: out
