@@ -1018,6 +1018,14 @@ function select(km,stage){
   const secours=usable.filter(s=>s.role==="SECOURS"&&onTargetDay(s)).sort((a,b)=>b.km-a.km)[0];
   if(secours) return {verdict:"OK",role:"SECOURS",store:secours,windowEnd,endStage};
 
+  const earlier=usable
+    .filter(s=>s.role==="NORMAL"&&s.km>km&&daysNeededForStore(km,stage,s.km)<autonomy)
+    .sort((a,b)=>b.km-a.km)[0];
+  if(earlier){
+    const required=daysNeededForStore(km,stage,earlier.km);
+    return {verdict:"PLUS TÔT",role:"NORMAL",store:earlier,requiredDays:required,windowEnd,endStage};
+  }
+
   const next=usable
     .filter(s=>s.role==="NORMAL"&&s.km>km&&daysNeededForStore(km,stage,s.km)>autonomy)
     .sort((a,b)=>a.km-b.km)[0];
@@ -1038,7 +1046,7 @@ function ignoredStores(km,r){
     .filter(s => s.km > km && s.km <= displayUntil)
     .filter(s => {
       const isChosen=!!chosen&&s.name===chosen.name&&Math.abs(s.km-chosen.km)<0.001;
-      const chosenIsActuallyUsable=r.verdict==="OK"||r.verdict==="SECOURS"||r.verdict==="PLUS PROCHE";
+      const chosenIsActuallyUsable=r.verdict==="OK"||r.verdict==="SECOURS"||r.verdict==="PLUS PROCHE"||r.verdict==="PLUS TÔT";
       return !isChosen||!chosenIsActuallyUsable;
     })
     .sort((a,b)=>a.km-b.km)
@@ -1143,13 +1151,16 @@ function show(km,stage,offRoute=null){
     return;
   }
 
-  badge.className="badge "+(r.verdict==="OK"||r.verdict==="PLUS PROCHE"?"ok":r.verdict==="SECOURS"?"warn":r.verdict==="FIN"?"ok":"bad");
-  badge.textContent=r.verdict;
+  badge.className="badge "+(r.verdict==="OK"||r.verdict==="PLUS PROCHE"?"ok":r.verdict==="SECOURS"||r.verdict==="PLUS TÔT"?"warn":r.verdict==="FIN"?"ok":"bad");
+  badge.textContent=r.verdict==="PLUS TÔT"?"RAVITO PLUS TÔT":r.verdict;
   if(storeEl)storeEl.textContent=r.store?r.store.name:"Arrivée";
   if(meta){
     if(r.store){
       const delta=Math.max(0,r.store.km-km);
-      const base=storeWalkLabel(delta)+(r.nearestMode?"":(r.requiredDays?" · "+r.requiredDays+" jour"+(r.requiredDays>1?"s":"")+" nécessaire"+(r.requiredDays>1?"s":""):""));
+      const earlyBy=r.verdict==="PLUS TÔT"?autonomy-r.requiredDays:0;
+      const base=r.verdict==="PLUS TÔT"
+        ?storeWalkLabel(delta)+" · prévu en "+r.requiredDays+" jour"+(r.requiredDays>1?"s":"")+" · "+earlyBy+" jour"+(earlyBy>1?"s":"")+" avant J"+autonomy
+        :storeWalkLabel(delta)+(r.nearestMode?"":(r.requiredDays?" · "+r.requiredDays+" jour"+(r.requiredDays>1?"s":"")+" nécessaire"+(r.requiredDays>1?"s":""):""));
       meta.textContent=base;
       enrichStoreMeta(r.store,km,base,meta);
     }else meta.textContent="Fin de la Traversée";
