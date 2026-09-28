@@ -1,0 +1,26 @@
+name: Package established route data
+on:
+  push:
+    branches: [chatgpt-established-json]
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch route data
+        shell: bash
+        run: |
+          mkdir -p routes
+          set +e
+          for item in             "GR3|2704569"             "GR48|10169937"             "GR42|2410123"             "GR429|10670466"             "GR9|10670467"             "GR4|7457566"
+          do
+            n="${item%%|*}"; id="${item#*|}"
+            curl -L -A "Mozilla/5.0" --connect-timeout 8 --max-time 40 -sS               "https://hiking.waymarkedtrails.org/api/v1/details/relation/$id"               -o "routes/$n.json"
+            echo "$n $(wc -c < routes/$n.json 2>/dev/null || echo 0)"
+          done
+          curl -L -A "Mozilla/5.0" --connect-timeout 8 --max-time 40 -sS             "https://gr-infos.com/divers/kml/gr100.kml" -o routes/GR100.kml
+          echo "GR100 $(wc -c < routes/GR100.kml 2>/dev/null || echo 0)"
+          exit 0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: established-route-data
+          path: routes/
