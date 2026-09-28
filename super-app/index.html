@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.201 hors ligne</title>
+<title>Traversée 2027 · v1.202 hors ligne</title>
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -265,8 +265,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
 html,body{overflow-x:hidden;overscroll-behavior-y:none;overflow-anchor:none}
 .wrap,.appView{overflow-anchor:none}
 .waterList{overscroll-behavior-y:contain}
+/* Chaque outil occupe le viewport; seuls ses résultats peuvent défiler. */
+html,body{height:100%;overflow:hidden}
+.wrap{height:100svh;overflow:hidden}
+.homeView.active,.waterView.active{height:100%!important}
+#storeView.active{height:100%;overflow-y:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}
 @supports (height:100svh){
-  .homeView,.waterView{height:calc(100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 20px)!important}
   .storeDeck{min-height:calc(100svh - 96px)!important}
   .storeCard{min-height:calc(100svh - 110px)!important}
   .bivouacView.active{height:100svh!important}
