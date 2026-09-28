@@ -43,6 +43,11 @@ main{height:100dvh;display:grid;grid-template-rows:minmax(0,1fr) 136px}.mapwrap{
 @media(max-width:350px){.mapActions button,.mapActions #locateFab{font-size:11px}.hudHead{padding-left:12px;padding-right:12px}.mobileRemain{font-size:11px}}
 #bulkZone,#bulkPanel,#addZone,.stageNav,.deleteZone{display:none!important}.todayHint{display:block;margin-top:3px;color:#69736b;font-size:10px;font-weight:650}
 @media(max-width:760px){.remaining{position:static}}#mobileRemain{display:none!important}@media(max-width:760px){.hudHead{height:58px;grid-template-columns:minmax(0,1fr) auto auto;grid-template-rows:1fr;padding:5px 14px}.hudHead>span:first-child{grid-row:1}.toolsMenuBtn{grid-column:2;grid-row:1}.importBtn{grid-column:3;grid-row:1}.hudBody{max-height:calc(min(72dvh,680px) - 58px)}.hud.collapsed{max-height:58px}.hud.collapsed.menuOpen{max-height:210px}.mapActions{grid-template-columns:repeat(3,minmax(0,1fr))}#locateFab{display:none!important}}
+/* Même retour et mêmes surfaces que les autres écrans de la super app. */
+.superHome{top:calc(24px + env(safe-area-inset-top));right:28px;width:44px;height:44px;box-shadow:0 4px 14px rgba(18,19,15,.07);transition:filter .14s ease,transform .14s ease}
+.superHome:active{transform:scale(.985);filter:brightness(.96)}
+@media(max-width:760px){.hud{border-radius:28px;box-shadow:0 8px 24px rgba(18,19,15,.12)}.zoneCard{border-radius:16px}}
+@media(prefers-reduced-motion:reduce){.superHome{transition:none}}
 </style>
 </head>
 <body>

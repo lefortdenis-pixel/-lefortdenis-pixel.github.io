@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.203 hors ligne</title>
+<title>Traversée 2027 · v1.204 hors ligne</title>
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -19,7 +19,7 @@
 }
 *{box-sizing:border-box}
 html{background:var(--bg)}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial,sans-serif}
 button,input{font:inherit;touch-action:manipulation}
 button{cursor:pointer}
 .wrap{max-width:520px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 14px calc(34px + env(safe-area-inset-bottom))}
@@ -583,6 +583,18 @@ html,body{height:100%;overflow:hidden}
   .waterDesc{font-size:10px}
 }
 
+/* Finition commune : même en-tête, mêmes surfaces et réactions discrètes. */
+.storeCard,.waterCard{border-radius:28px;border:1px solid #e7e7e0;box-shadow:0 8px 24px rgba(18,19,15,.07)}
+.storeCard h1,.waterCard h1{font-size:39px;line-height:.98;letter-spacing:-.045em}
+.storeHomeInline{right:14px;top:14px;width:44px;height:44px;box-shadow:0 4px 14px rgba(18,19,15,.07)}
+#status,.waterSearch>#waterStatus{min-height:36px}
+#status[aria-live],#waterStatus[aria-live]{font-variant-numeric:tabular-nums}
+.waterList.is-loading{opacity:.55;pointer-events:none}
+.gpsBtn,.waterGpsBtn,.waterKmBtn,.day,.storeHomeInline,.homeChoice{transition:filter .14s ease,transform .14s ease,opacity .14s ease}
+.gpsBtn:active,.waterGpsBtn:active,.waterKmBtn:active,.day:active,.storeHomeInline:active{transform:scale(.985);filter:brightness(.96)}
+.gpsBtn:disabled,.waterGpsBtn:disabled{opacity:.7;cursor:progress}
+@media(prefers-reduced-motion:reduce){.gpsBtn,.waterGpsBtn,.waterKmBtn,.day,.storeHomeInline,.homeChoice{transition:none}}
+
 </style>
 </head>
 <body>
@@ -640,7 +652,7 @@ html,body{height:100%;overflow:hidden}
 
       <div class="block">
         <button class="gpsBtn" id="gpsBtn">⌖ Utiliser ma position GPS</button>
-        <div id="status"></div>
+      <div id="status" role="status" aria-live="polite"></div>
         <details class="fieldOptions">
           <summary>••• Autres façons de se positionner</summary>
           <div class="waterSim">
@@ -683,7 +695,7 @@ html,body{height:100%;overflow:hidden}
       <h1>Trouver de l’eau</h1>
       <div class="waterSearch">
         <button class="waterGpsBtn" id="waterGpsBtn">⌖ Utiliser ma position GPS</button>
-        <div class="waterStatus" id="waterStatus"></div>
+        <div class="waterStatus" id="waterStatus" role="status" aria-live="polite"></div>
         <details class="fieldOptions">
           <summary>••• Autre position</summary>
           <div class="waterSim">
@@ -1284,12 +1296,15 @@ function gpsErrorMessage(err){
 }
 document.getElementById("gpsBtn").addEventListener("click",()=>{
   const status=document.getElementById("status");
+  const button=document.getElementById("gpsBtn");
   if(!navigator.geolocation){
     status.textContent="GPS non disponible. Utilise le km simulé ou les coordonnées manuelles.";
     return;
   }
+  button.disabled=true;
   status.textContent="Recherche de la position…";
   navigator.geolocation.getCurrentPosition(pos=>{
+    button.disabled=false;
     const lat=pos.coords.latitude,lon=pos.coords.longitude,accuracy=Number(pos.coords.accuracy)||9999;
     document.getElementById("lat").value=lat.toFixed(6);
     document.getElementById("lon").value=lon.toFixed(6);
@@ -1310,7 +1325,7 @@ document.getElementById("gpsBtn").addEventListener("click",()=>{
       status.textContent=quality+"Position : E"+p.stage+" · km "+p.km.toFixed(2)+offset;
       show(p.km,p.stage,p.distanceMeters);
     },20);
-  },err=>{status.textContent=gpsErrorMessage(err)},{enableHighAccuracy:true,timeout:12000,maximumAge:15000});
+  },err=>{button.disabled=false;status.textContent=gpsErrorMessage(err)},{enableHighAccuracy:true,timeout:12000,maximumAge:15000});
 });
 
 function simulateStoreKm(){
@@ -1558,8 +1573,11 @@ function renderWater(points){
 }
 async function searchWater(origin,context='',originKm=null){
   waterGpsBtn.disabled=true;
+  waterKmBtn.disabled=true;
   waterStatus.textContent='Recherche dans les données hors ligne…';
-  waterList.innerHTML='<div class="waterEmpty">Recherche en cours…</div>';
+  waterList.classList.add('is-loading');
+  waterList.setAttribute('aria-busy','true');
+  if(!waterList.querySelector('.waterItem'))waterList.innerHTML='<div class="waterEmpty">Recherche en cours…</div>';
   let gpxPoints=[];
   try{
     const raw=await loadGpxWater();
@@ -1570,9 +1588,12 @@ async function searchWater(origin,context='',originKm=null){
   const nearbyGpx=gpxPoints.filter(point=>waterDistanceMeters(origin,point)<=30000);
   const offline=dedupeWater(preparePoints(nearbyGpx,origin,originKm));
   renderWater(offline);
+  waterList.classList.remove('is-loading');
+  waterList.setAttribute('aria-busy','false');
   waterStatus.textContent=context+offline.length+' point'+(offline.length>1?'s':'')+' trouvé'+(offline.length>1?'s':'')+' dans les données embarquées';
   waterGpsBtn.textContent='⌖ Actualiser ma position';
   waterGpsBtn.disabled=false;
+  waterKmBtn.disabled=false;
 }
 function locateWater(){
   if(!navigator.geolocation){
@@ -1581,6 +1602,7 @@ function locateWater(){
   }
   waterStatus.textContent='Recherche de la position…';
   waterGpsBtn.disabled=true;
+  waterKmBtn.disabled=true;
   navigator.geolocation.getCurrentPosition(position=>{
     const accuracy=Number(position.coords.accuracy)||9999;
     const context=accuracy>150?'GPS imprécis ±'+Math.round(accuracy)+' m · ':accuracy>60?'GPS ±'+Math.round(accuracy)+' m · ':'';
@@ -1588,6 +1610,7 @@ function locateWater(){
   },err=>{
     waterStatus.textContent=typeof gpsErrorMessage==='function'?gpsErrorMessage(err):'GPS indisponible. Utilise le km simulé.';
     waterGpsBtn.disabled=false;
+    waterKmBtn.disabled=false;
   },{enableHighAccuracy:true,timeout:12000,maximumAge:15000});
 }
 waterGpsBtn?.addEventListener('click',locateWater);
@@ -1883,6 +1906,24 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 }
 .inlineUnavailable{margin:5px 0 2px!important}
 .validationBox{margin-top:9px!important}
+
+/* Le menu reprend les marges et l'en-tête des autres outils. */
+.menu-body:has(#prepCard:not(.hide)){background:var(--bg)!important}
+.menu-body:not(.allDaysMode) #prepCard:not(.hide){
+  width:calc(100% - 28px);max-width:492px;
+  min-height:calc(100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 34px);
+  margin:calc(10px + env(safe-area-inset-top)) auto 0;
+  border-radius:28px;box-shadow:0 8px 24px rgba(18,19,15,.07);
+}
+.prepTitle{margin-right:58px;font-size:39px;line-height:.98;letter-spacing:-.045em}
+.innerHome{right:28px;top:calc(24px + env(safe-area-inset-top));width:44px;height:44px;box-shadow:0 4px 14px rgba(18,19,15,.07)}
+.innerReset{top:calc(28px + env(safe-area-inset-top));right:80px}
+#buy{padding-left:14px!important;padding-right:14px!important;padding-top:calc(60px + env(safe-area-inset-top))!important}
+.shopHeader h2{font-size:39px;line-height:.98;letter-spacing:-.045em}
+.menu-body button{transition:filter .14s ease,transform .14s ease,opacity .14s ease}
+.menu-body button:active{filter:brightness(.96)}
+.menu-body button:disabled{opacity:.7;cursor:progress}
+@media(prefers-reduced-motion:reduce){.menu-body button{transition:none}}
 
 </style><div id="menuApp" class="menu-body"><div id="topWeight" class="topWeight"></div><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button>
 <div id="prepCard">
