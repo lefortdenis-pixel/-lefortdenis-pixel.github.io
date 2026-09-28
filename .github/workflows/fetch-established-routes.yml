@@ -1,0 +1,45 @@
+name: Fetch established hiking routes
+on:
+  push:
+    branches: [chatgpt-official-route-files]
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download published route geometries
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import urllib.request, time, pathlib, json
+          out=pathlib.Path("official-routes"); out.mkdir()
+          urls={
+            "GR3.gpx":"https://hiking.waymarkedtrails.org/api/v1/details/relation/2704569/geometry/gpx",
+            "GR48.gpx":"https://hiking.waymarkedtrails.org/api/v1/details/relation/10169937/geometry/gpx",
+            "GR42.gpx":"https://hiking.waymarkedtrails.org/api/v1/details/relation/2410123/geometry/gpx",
+            "GR429.gpx":"https://hiking.waymarkedtrails.org/api/v1/details/relation/10670466/geometry/gpx",
+            "GR9.gpx":"https://hiking.waymarkedtrails.org/api/v1/details/relation/10670467/geometry/gpx",
+            "GR4.gpx":"https://hiking.waymarkedtrails.org/api/v1/details/relation/7457566/geometry/gpx",
+            "GR100.kml":"https://gr-infos.com/divers/kml/gr100.kml",
+          }
+          report={}
+          for fn,url in urls.items():
+            last=None
+            for i in range(4):
+              try:
+                req=urllib.request.Request(url,headers={"User-Agent":"Mozilla/5.0 ChatGPT route audit"})
+                with urllib.request.urlopen(req,timeout=120) as r:
+                  data=r.read()
+                (out/fn).write_bytes(data)
+                report[fn]={"ok":True,"bytes":len(data),"url":url}
+                break
+              except Exception as e:
+                last=str(e); time.sleep(3*(i+1))
+            else:
+              report[fn]={"ok":False,"error":last,"url":url}
+          (out/"download_report.json").write_text(json.dumps(report,indent=2),encoding="utf-8")
+          print(json.dumps(report,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: established-routes
+          path: official-routes/
