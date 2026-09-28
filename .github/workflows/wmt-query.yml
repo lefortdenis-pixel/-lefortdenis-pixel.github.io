@@ -1,0 +1,25 @@
+name: Query Waymarked official routes
+on:
+  push:
+    branches: [chatgpt-wmt-official]
+jobs:
+  query:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import urllib.request, urllib.parse, json
+          base="https://hiking.waymarkedtrails.org/api/v1/list/search"
+          for q in ["GR 100","GR 3","GR 4","GR 48","GR 42","GR 429","GR 9"]:
+              url=base+"?"+urllib.parse.urlencode({"query":q,"limit":50})
+              try:
+                  with urllib.request.urlopen(urllib.request.Request(url,headers={"User-Agent":"ChatGPT-GR-audit/1.0"}),timeout=60) as r:
+                      data=json.load(r)
+                  print("\n###",q)
+                  for x in data.get("results",[]):
+                      print(json.dumps({k:x.get(k) for k in ["id","name","ref","network","itinerary","symbol_description","length"]},ensure_ascii=False))
+              except Exception as e:
+                  print("ERR",q,e)
+          PY
