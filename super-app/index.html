@@ -516,6 +516,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
   flex-direction:column;
   align-items:stretch;
 }
+.waterGroup{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.waterGroup+.waterGroup{margin-top:8px}
+.waterGroupTitle{
+  margin:0;
+  padding:6px 3px 2px;
+  color:#656a63;
+  font-size:10px;
+  line-height:1.2;
+  font-weight:900;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
 .waterItem{
   flex:0 0 auto;
   min-height:0;
@@ -1467,12 +1483,18 @@ function renderWater(points){
     waterList.innerHTML='<div class="waterEmpty">Aucun point trouvé autour de cette position.</div>';
     return;
   }
-  waterList.innerHTML=points.map(point=>{
+  const renderItems=items=>items.map(point=>{
     const name=cleanWaterName(point.name);
     const desc=cleanWaterDescription(point.description);
     const description=desc?'<div class="waterDesc">'+waterEscape(desc)+'</div>':'';
     return '<article class="waterItem"><div class="waterItemText"><div class="waterDistance">'+waterEscape(waterRouteLabel(point))+'</div><div class="waterName">'+waterEscape(name)+'</div>'+description+'</div></article>';
   }).join('');
+  const onRoute=points.filter(point=>Number.isFinite(point.offRouteMeters)&&point.offRouteMeters<=40);
+  const offRoute=points.filter(point=>!Number.isFinite(point.offRouteMeters)||point.offRouteMeters>40);
+  const groups=[];
+  if(onRoute.length)groups.push('<section class="waterGroup"><h2 class="waterGroupTitle">Sur la trace · '+onRoute.length+'</h2>'+renderItems(onRoute)+'</section>');
+  if(offRoute.length)groups.push('<section class="waterGroup"><h2 class="waterGroupTitle">Hors trace · '+offRoute.length+'</h2>'+renderItems(offRoute)+'</section>');
+  waterList.innerHTML=groups.join('');
 }
 async function searchWater(origin,context='',originKm=null){
   waterGpsBtn.disabled=true;
