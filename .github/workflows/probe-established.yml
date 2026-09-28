@@ -1,0 +1,29 @@
+name: Probe established route downloads
+on:
+  push:
+    branches: [chatgpt-official-probe2]
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe URLs
+        shell: bash
+        run: |
+          set +e
+          urls=(
+            "GR3|https://hiking.waymarkedtrails.org/api/v1/details/relation/2704569/geometry/gpx"
+            "GR48|https://hiking.waymarkedtrails.org/api/v1/details/relation/10169937/geometry/gpx"
+            "GR42|https://hiking.waymarkedtrails.org/api/v1/details/relation/2410123/geometry/gpx"
+            "GR429|https://hiking.waymarkedtrails.org/api/v1/details/relation/10670466/geometry/gpx"
+            "GR9|https://hiking.waymarkedtrails.org/api/v1/details/relation/10670467/geometry/gpx"
+            "GR4|https://hiking.waymarkedtrails.org/api/v1/details/relation/7457566/geometry/gpx"
+            "GR100|https://gr-infos.com/divers/kml/gr100.kml"
+          )
+          for x in "${urls[@]}"; do
+            n="${x%%|*}"; u="${x#*|}"
+            code=$(curl -L -A "Mozilla/5.0" --connect-timeout 8 --max-time 20 -sS -o "/tmp/$n" -w "%{http_code}" "$u")
+            rc=$?
+            bytes=$(wc -c < "/tmp/$n" 2>/dev/null || echo 0)
+            echo "$n rc=$rc http=$code bytes=$bytes"
+          done
+          exit 0
