@@ -1,0 +1,51 @@
+name: Probe GR relations
+
+on:
+  push:
+    branches: [chatgpt-gr-gpx]
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request, urllib.parse, xml.etree.ElementTree as ET, time
+          known={"GR3":2704569,"GR48":10169937,"GR42":2410123,"GR429":10670466,"GR9":10670467}
+          out={}
+          for name,rid in known.items():
+              try:
+                  u=f"https://api.openstreetmap.org/api/0.6/relation/{rid}"
+                  with urllib.request.urlopen(urllib.request.Request(u,headers={"User-Agent":"route-audit"}),timeout=30) as r:
+                      root=ET.fromstring(r.read())
+                  rel=root.find("relation")
+                  members=[m.attrib for m in rel.findall("member")]
+                  tags={t.attrib["k"]:t.attrib["v"] for t in rel.findall("tag")}
+                  out[name]={"id":rid,"tags":tags,"member_counts":{},"sample_members":members[:12]}
+                  for m in members: out[name]["member_counts"][m["type"]]=out[name]["member_counts"].get(m["type"],0)+1
+              except Exception as e: out[name]={"error":str(e)}
+          q='''[out:json][timeout:45];
+          rel["route"="hiking"]["ref"~"^GR ?100$",i](46.55,0.75,46.80,1.10);
+          out tags ids;'''
+          data=urllib.parse.urlencode({"data":q}).encode()
+          obj=None
+          for s in ["https://overpass.kumi.systems/api/interpreter","https://overpass-api.de/api/interpreter"]:
+              try:
+                  req=urllib.request.Request(s,data=data,headers={"User-Agent":"route-audit"})
+                  with urllib.request.urlopen(req,timeout=60) as r: obj=json.load(r)
+                  break
+              except Exception as e: out["GR100_error"]=str(e)
+          if obj:
+              out["GR100_candidates"]=[{"id":e["id"],"tags":e.get("tags",{})} for e in obj.get("elements",[])]
+          print(json.dumps(out,ensure_ascii=False,indent=2))
+          open("probe.json","w").write(json.dumps(out,ensure_ascii=False,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: probe
+          path: probe.json
+          if-no-files-found: ignore
