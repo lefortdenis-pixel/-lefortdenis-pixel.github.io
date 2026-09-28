@@ -1,63 +1,35 @@
 name: tmp-gpx-route-fetch
-
 on:
   push:
-    branches:
-      - tmp-gpx-isolation-20260928
-
+    branches: [tmp-gpx-isolation-20260928]
 jobs:
   fetch:
     runs-on: ubuntu-latest
     steps:
-      - name: Query OSM route relations and test GPX downloads
+      - name: Search TrailSplits
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p out
-          cat > /tmp/find.py <<'PY'
-          import requests, json, time
-          endpoints=[
-            "https://overpass.kumi.systems/api/interpreter",
-            "https://overpass.nchc.org.tw/api/interpreter",
-            "https://lz4.overpass-api.de/api/interpreter",
-          ]
-          refs=["GR 3","GR 48","GR 100","GR 4","GR 42","GR 429","GR 9"]
-          allout={}
-          headers={"User-Agent":"Mozilla/5.0 GPX-route-research/1.0"}
-          for ref in refs:
-              num=ref.split()[-1]
-              q=f'''[out:json][timeout:90];
-              rel["type"="route"]["route"~"hiking|foot"]["ref"~"^GR ?{num}$",i];
-              out tags center;'''
-              data=None
-              last=None
-              for endpoint in endpoints:
-                  try:
-                      r=requests.get(endpoint,params={"data":q},headers=headers,timeout=120)
-                      print("GET",endpoint,r.status_code,len(r.content))
-                      r.raise_for_status()
-                      data=r.json().get("elements",[])
-                      break
-                  except Exception as e:
-                      last=e
-              if data is None:
-                  raise last
-              allout[ref]=data
-              print("\n###",ref)
-              for e in data:
-                  print(e.get("id"), e.get("center"), e.get("tags",{}))
-              time.sleep(1)
-          open("out/relations.json","w").write(json.dumps(allout,ensure_ascii=False,indent=2))
+          python - <<'PY'
+          import requests, json, urllib.parse, os
+          qs=["GR 3","GR 48","GR 100","GR 4","GR 42","GR 429","GR 9"]
+          all={}
+          for q in qs:
+              u="https://api.trailsplits.com/trails/v1/search"
+              r=requests.get(u,params={"q":q,"limit":100,"type":"hiking"},timeout=60)
+              print(q, r.status_code, len(r.content))
+              r.raise_for_status()
+              j=r.json(); all[q]=j
+              for ft in j.get("features",[]):
+                  p=ft.get("properties",{})
+                  bbox=p.get("bbox")
+                  if bbox and bbox[0] < 6 and bbox[2] > -1 and bbox[1] < 50 and bbox[3] > 43:
+                      print("CAND",q,p)
+          open("out/search.json","w").write(json.dumps(all,ensure_ascii=False,indent=2))
           PY
-          python /tmp/find.py
-          for id in 10169937 10670467; do
-            echo "Trying Waymarked relation $id"
-            curl -A "Mozilla/5.0" -fL --retry 2 --max-time 60 "https://hiking.waymarkedtrails.org/api/v1/details/relation/$id/geometry/gpx" -o "out/relation_$id.gpx" || true
-            ls -l "out/relation_$id.gpx" 2>/dev/null || true
-            head -c 200 "out/relation_$id.gpx" 2>/dev/null || true
-          done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: tmp-gpx-debug
+          name: tmp-trailsplits-search
           path: out
