@@ -6,30 +6,29 @@ jobs:
   fetch:
     runs-on: ubuntu-latest
     steps:
-      - name: Search TrailSplits
+      - name: Fetch route geometries and local relations
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p out
           python - <<'PY'
-          import requests, json, urllib.parse, os
-          qs=["GR 3","GR 48","GR 100","GR 4","GR 42","GR 429","GR 9"]
-          all={}
-          for q in qs:
-              u="https://api.trailsplits.com/trails/v1/search"
-              r=requests.get(u,params={"q":q,"limit":100,"type":"hiking"},timeout=60)
-              print(q, r.status_code, len(r.content))
-              r.raise_for_status()
-              j=r.json(); all[q]=j
-              for ft in j.get("features",[]):
-                  p=ft.get("properties",{})
-                  bbox=p.get("bbox")
-                  if bbox and bbox[0] < 6 and bbox[2] > -1 and bbox[1] < 50 and bbox[3] > 43:
-                      print("CAND",q,p)
-          open("out/search.json","w").write(json.dumps(all,ensure_ascii=False,indent=2))
+          import requests,json,os,time
+          S=requests.Session(); S.headers["User-Agent"]="route-research/1.0"
+          # local relation discovery: Angles -> Brenne -> Lys
+          for name,box in {
+            "brenne":{"min_lat":46.50,"min_lng":0.78,"max_lat":46.82,"max_lng":1.90,"type":"hiking","limit":100},
+            "rhone":{"min_lat":44.15,"min_lng":4.40,"max_lat":44.55,"max_lng":5.35,"type":"hiking","limit":100},
+          }.items():
+              r=S.get("https://api.trailsplits.com/trails/v1/bbox",params=box,timeout=60); print("bbox",name,r.status_code,len(r.content)); r.raise_for_status()
+              j=r.json(); open(f"out/{name}_bbox.json","w").write(json.dumps(j,ensure_ascii=False,indent=2))
+              for ft in j.get("features",[]): print(name,ft.get("properties",{}))
+          ids=[2704569,10169937,7457566,2410123,10670466,10670467]
+          for rid in ids:
+              r=S.get(f"https://api.trailsplits.com/trails/v1/relation/{rid}",timeout=120); print("rel",rid,r.status_code,len(r.content))
+              if r.ok: open(f"out/relation_{rid}.json","wb").write(r.content)
           PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: tmp-trailsplits-search
+          name: tmp-route-geoms
           path: out
