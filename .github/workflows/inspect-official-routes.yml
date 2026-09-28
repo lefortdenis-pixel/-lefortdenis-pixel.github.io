@@ -1,51 +1,44 @@
 name: Inspect official hiking relations
-
 on:
   push:
     branches: [chatgpt-official-routes]
-
 jobs:
   inspect:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: chatgpt-official-routes
       - name: Query Overpass
         shell: bash
         run: |
           python3 - <<'PY'
           import json, urllib.parse, urllib.request, time
-          boxes={
-            "touraine":"46.45,-0.25,47.45,1.95",
-            "rhone":"44.05,4.35,44.70,5.45",
-          }
-          servers=["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter"]
-          out={}
-          for label,bbox in boxes.items():
-              q=f'''[out:json][timeout:120];
-              rel["route"="hiking"]({bbox});
-              out tags ids;'''
+          refs=["GR 3","GR3","GR 48","GR48","GR 100","GR100","GR 42","GR42","GR 429","GR429","GR 9","GR9"]
+          servers=["https://overpass.kumi.systems/api/interpreter","https://overpass-api.de/api/interpreter"]
+          rows=[]
+          for ref in refs:
+              q=f'[out:json][timeout:30];rel["route"="hiking"]["ref"="{ref}"];out tags center;'
               data=urllib.parse.urlencode({"data":q}).encode()
-              err=None
+              got=None
               for s in servers:
                   try:
                       req=urllib.request.Request(s,data=data,headers={"User-Agent":"ChatGPT-official-route-audit/1.0"})
-                      with urllib.request.urlopen(req,timeout=150) as r:
-                          obj=json.load(r)
+                      with urllib.request.urlopen(req,timeout=50) as r: got=json.load(r)
                       break
-                  except Exception as e:
-                      err=e; time.sleep(3)
-              else: raise err
-              vals=[]
-              for e in obj.get("elements",[]):
+                  except Exception:
+                      time.sleep(2)
+              if not got: continue
+              for e in got.get("elements",[]):
                   t=e.get("tags",{})
-                  ref=t.get("ref","")
-                  name=t.get("name","")
-                  txt=(ref+" "+name).lower()
-                  if any(k in txt for k in ["gr 3","gr3","gr 48","gr48","gr 100","gr100","gr 4","gr4","gr 42","gr42","gr 429","gr429","gr 9","gr9","brenne","baronnies","dieulefit"]):
-                      vals.append({"id":e["id"],"ref":ref,"name":name,"network":t.get("network"),"operator":t.get("operator"),"from":t.get("from"),"to":t.get("to")})
-              out[label]=vals
-          print(json.dumps(out,ensure_ascii=False,indent=2))
-          with open("relations.json","w") as f: json.dump(out,f,ensure_ascii=False,indent=2)
+                  c=e.get("center") or {}
+                  # keep France/nearby by rough center
+                  lat,lon=c.get("lat"),c.get("lon")
+                  if lat is not None and not (41.0 <= lat <= 51.5 and -5.5 <= lon <= 10.0): continue
+                  rows.append({"id":e["id"],"ref":t.get("ref"),"name":t.get("name"),"from":t.get("from"),"to":t.get("to"),"network":t.get("network"),"operator":t.get("operator"),"center":c})
+              time.sleep(1)
+          print(json.dumps(rows,ensure_ascii=False,indent=2))
+          with open("relations.json","w") as f: json.dump(rows,f,ensure_ascii=False,indent=2)
           PY
       - uses: actions/upload-artifact@v4
         with:
