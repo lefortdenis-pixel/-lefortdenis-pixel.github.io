@@ -1,0 +1,25 @@
+name: Fetch WMT route details
+on:
+  push:
+    branches: [chatgpt-wmt-details]
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch sample
+        shell: bash
+        run: |
+          curl -L -A "Mozilla/5.0" --connect-timeout 8 --max-time 30 -sS             "https://hiking.waymarkedtrails.org/api/v1/details/relation/10169937"             -o details.json || true
+          echo "bytes $(wc -c < details.json 2>/dev/null || echo 0)"
+          python3 - <<'PY'
+          import json, pathlib
+          p=pathlib.Path("details.json")
+          if p.exists():
+            try:
+              o=json.loads(p.read_text())
+              print("keys",o.keys())
+              print("id",o.get("id"),"name",o.get("name"),"bbox",o.get("bbox"))
+              print("route_type",o.get("route",{}).get("route_type"))
+              print(json.dumps(o.get("route",{}),ensure_ascii=False)[:5000])
+            except Exception as e: print("parse",e,p.read_text()[:1000])
+          PY
