@@ -511,7 +511,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
   color:#777b75;
 }
 .waterList{gap:8px}
+.waterList{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+}
 .waterItem{
+  flex:0 0 auto;
   min-height:0;
   display:block;
   padding:11px 13px 10px;
