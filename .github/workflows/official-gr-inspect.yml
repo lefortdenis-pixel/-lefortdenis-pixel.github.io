@@ -1,0 +1,61 @@
+name: Official GR relation inspection
+on:
+  push:
+    branches: [chatgpt-official-gpx]
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect OSM route relations
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import urllib.request, urllib.parse, xml.etree.ElementTree as ET, json, time
+
+          UA={"User-Agent":"ChatGPT-official-GR-audit/1.0"}
+
+          def get_xml(url):
+              with urllib.request.urlopen(urllib.request.Request(url,headers=UA),timeout=60) as r:
+                  return ET.fromstring(r.read())
+
+          def relation_tags(rid):
+              root=get_xml(f"https://api.openstreetmap.org/api/0.6/relation/{rid}")
+              rel=root.find("relation")
+              tags={t.attrib["k"]:t.attrib["v"] for t in rel.findall("tag")}
+              mem=[m.attrib for m in rel.findall("member")]
+              return tags,mem
+
+          out={}
+          for name,rid in {"GR3":2704569,"GR9":10670467}.items():
+              try:
+                  tags,mem=relation_tags(rid)
+                  children=[]
+                  for m in mem:
+                      if m["type"]!="relation": continue
+                      cid=int(m["ref"])
+                      try:
+                          ct,cm=relation_tags(cid)
+                          children.append({"id":cid,"role":m.get("role",""),"tags":ct,"members":len(cm)})
+                      except Exception as e:
+                          children.append({"id":cid,"error":str(e)})
+                      time.sleep(.15)
+                  out[name]={"id":rid,"tags":tags,"children":children}
+              except Exception as e:
+                  out[name]={"error":str(e)}
+
+          q='[out:json][timeout:120];relation["route"="hiking"]["ref"="GR 100"];out ids tags;'
+          payload=urllib.parse.urlencode({"data":q}).encode()
+          errs=[]
+          for ep in ["https://overpass.kumi.systems/api/interpreter","https://overpass-api.de/api/interpreter"]:
+              try:
+                  req=urllib.request.Request(ep,data=payload,headers=UA)
+                  with urllib.request.urlopen(req,timeout=150) as r:
+                      data=json.load(r)
+                  out["GR100_candidates"]=data.get("elements",[])
+                  break
+              except Exception as e:
+                  errs.append(f"{ep}: {e}")
+          out["GR100_errors"]=errs
+
+          print(json.dumps(out,ensure_ascii=False,indent=2))
+          PY
