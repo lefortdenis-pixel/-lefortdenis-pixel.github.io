@@ -264,6 +264,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
 /* Stabilise l’écran pendant les changements de vue sur iOS. */
 html,body{overflow-x:hidden;overscroll-behavior-y:none;overflow-anchor:none}
 .wrap,.appView{overflow-anchor:none}
+.waterList{overscroll-behavior-y:contain}
 @supports (height:100svh){
   .homeView,.waterView{height:calc(100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 20px)!important}
   .storeDeck{min-height:calc(100svh - 96px)!important}
