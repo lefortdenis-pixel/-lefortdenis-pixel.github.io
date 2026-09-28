@@ -1,0 +1,52 @@
+name: Inspect exact GR relations
+
+on:
+  push:
+    branches: [chatgpt-gr-relations]
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Query Overpass exact refs
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, urllib.parse, urllib.request, time
+          refs=["3","48","100","4","42","429","9"]
+          servers=["https://overpass.kumi.systems/api/interpreter","https://overpass-api.de/api/interpreter"]
+          out={}
+          for ref in refs:
+              q=f'''[out:json][timeout:60];
+              (
+                rel["route"="hiking"]["ref"~"^GR ?{ref}$",i];
+                rel["route"="hiking"]["name"~"GR.? ?{ref}([^0-9]|$)",i];
+              );
+              out tags ids;'''
+              data=urllib.parse.urlencode({"data":q}).encode()
+              obj=None; err=None
+              for s in servers:
+                  try:
+                      req=urllib.request.Request(s,data=data,headers={"User-Agent":"ChatGPT-GR-audit/1.0"})
+                      with urllib.request.urlopen(req,timeout=80) as r:
+                          obj=json.load(r)
+                      break
+                  except Exception as e:
+                      err=e; time.sleep(2)
+              if obj is None: raise err
+              vals=[]
+              seen=set()
+              for e in obj.get("elements",[]):
+                  if e["id"] in seen: continue
+                  seen.add(e["id"])
+                  t=e.get("tags",{})
+                  vals.append({"id":e["id"],"ref":t.get("ref"),"name":t.get("name"),"network":t.get("network"),"operator":t.get("operator"),"from":t.get("from"),"to":t.get("to")})
+              out[ref]=vals
+          print(json.dumps(out,ensure_ascii=False,indent=2))
+          open("relations.json","w").write(json.dumps(out,ensure_ascii=False,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: exact-gr-relations
+          path: relations.json
