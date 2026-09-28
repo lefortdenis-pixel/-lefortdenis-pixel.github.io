@@ -6,30 +6,24 @@ jobs:
   fetch:
     runs-on: ubuntu-latest
     steps:
-      - name: Fetch OSM relation XML and targeted trails
+      - name: Fetch relevant OSM child relations
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p out
           python - <<'PY'
-          import requests,json,os
+          import requests,os
           S=requests.Session(); S.headers["User-Agent"]="route-research/1.0 (noncommercial)"
-          for rid in [2704569,7457566,10670467]:
-              for suffix in ["","/full"]:
-                  try:
-                      u=f"https://api.openstreetmap.org/api/0.6/relation/{rid}{suffix}"
-                      r=S.get(u,timeout=180); print("osm",rid,suffix or "meta",r.status_code,len(r.content),r.headers.get("content-type"))
-                      if r.ok: open(f"out/osm_{rid}{'_full' if suffix else ''}.xml","wb").write(r.content)
-                  except Exception as e: print("ERR OSM",rid,suffix,e)
-          # additional trail geometries
-          for rid in [19349104,11213343,12096538,12100728,10670466,2410123,15010169,15010168,15010200,15009926,15018525,15740158]:
+          ids=[12774885,13048526,13048672,11173071,18212755,18212756,18212758]
+          for rid in ids:
               try:
-                  r=S.get(f"https://api.trailsplits.com/trails/v1/relation/{rid}",timeout=120); print("ts",rid,r.status_code,len(r.content))
-                  if r.ok: open(f"out/ts_{rid}.json","wb").write(r.content)
-              except Exception as e: print("ERR TS",rid,e)
+                  r=S.get(f"https://api.openstreetmap.org/api/0.6/relation/{rid}/full",timeout=180)
+                  print(rid,r.status_code,len(r.content),r.headers.get("content-type"))
+                  if r.ok: open(f"out/osm_{rid}_full.xml","wb").write(r.content)
+              except Exception as e: print("ERR",rid,e)
           PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: tmp-osm-superroutes
+          name: tmp-osm-childroutes
           path: out
