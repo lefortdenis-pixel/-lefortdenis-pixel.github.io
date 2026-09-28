@@ -1010,15 +1010,17 @@ function select(km,stage){
 
   const windowEnd=autonomyWindowEnd(km,stage,autonomy);
   const endStage=stageFromKm(windowEnd);
-  const inWindow=s=>s.km>km && s.km<=windowEnd;
+  const onTargetDay=s=>s.km>km&&daysNeededForStore(km,stage,s.km)===autonomy;
 
-  const normal=usable.filter(s=>s.role==="NORMAL"&&inWindow(s)).sort((a,b)=>b.km-a.km)[0];
+  const normal=usable.filter(s=>s.role==="NORMAL"&&onTargetDay(s)).sort((a,b)=>b.km-a.km)[0];
   if(normal) return {verdict:"OK",role:"NORMAL",store:normal,windowEnd,endStage};
 
-  const secours=usable.filter(s=>s.role==="SECOURS"&&inWindow(s)).sort((a,b)=>b.km-a.km)[0];
+  const secours=usable.filter(s=>s.role==="SECOURS"&&onTargetDay(s)).sort((a,b)=>b.km-a.km)[0];
   if(secours) return {verdict:"OK",role:"SECOURS",store:secours,windowEnd,endStage};
 
-  const next=usable.filter(s=>s.role==="NORMAL"&&s.km>km).sort((a,b)=>a.km-b.km)[0];
+  const next=usable
+    .filter(s=>s.role==="NORMAL"&&s.km>km&&daysNeededForStore(km,stage,s.km)>autonomy)
+    .sort((a,b)=>a.km-b.km)[0];
   if(!next) return {verdict:"FIN",role:"FIN",store:null,windowEnd,endStage};
 
   const required=daysNeededForStore(km,stage,next.km);
@@ -1132,10 +1134,10 @@ function show(km,stage,offRoute=null){
   if(outsideWindow){
     badge.className="badge bad";
     badge.textContent="AUCUN MAGASIN";
-    if(storeEl)storeEl.textContent="Aucun magasin dans "+autonomy+" jour"+(autonomy>1?"s":"");
+    if(storeEl)storeEl.textContent="Aucun magasin prévu pour J"+autonomy;
     if(meta&&r.store){
       const delta=Math.max(0,r.store.km-km);
-      meta.textContent="Le prochain est dans "+delta.toFixed(1).replace(".",",")+" km · "+r.requiredDays+" jour"+(r.requiredDays>1?"s":"")+" nécessaire"+(r.requiredDays>1?"s":"");
+      meta.textContent="Le prochain est dans "+delta.toFixed(1).replace(".",",")+" km · atteignable en "+r.requiredDays+" jour"+(r.requiredDays>1?"s":"");
     }
     ignoredStores(km,r);
     return;
