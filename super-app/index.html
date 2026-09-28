@@ -261,6 +261,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial
 .waterRoute{border:0;background:var(--ink);color:#fff;text-decoration:none;border-radius:13px;padding:11px 12px;font-size:11px;font-weight:900;white-space:nowrap}
 @media(max-width:390px){.homeChoice{padding:14px;grid-template-columns:52px minmax(0,1fr) 25px;gap:11px;border-radius:24px}.homeChoice .homeIcon,.homeChoice.menuChoice .homeIcon,.homeChoice:not(.primary) .homeIcon{width:52px;height:52px;border-radius:17px;font-size:27px}.homeChoice b{font-size:19px}.homeChoice .arrow{font-size:24px}.waterCard{padding:18px 14px;border-radius:27px}.waterCard h1{font-size:38px;margin-bottom:14px}.waterGpsBtn{padding:15px}.waterItem{padding:12px}.waterName{font-size:15px}}
 
+/* Stabilise l’écran pendant les changements de vue sur iOS. */
+html,body{overflow-x:hidden;overscroll-behavior-y:none;overflow-anchor:none}
+.wrap,.appView{overflow-anchor:none}
+@supports (height:100svh){
+  .homeView,.waterView{height:calc(100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 20px)!important}
+  .storeDeck{min-height:calc(100svh - 96px)!important}
+  .storeCard{min-height:calc(100svh - 110px)!important}
+  .bivouacView.active{height:100svh!important}
+  #menuSection.active,#menuSection.active #menuHost{height:100svh!important;min-height:100svh!important}
+}
+
 /* v1.149 — accueil terrain compact */
 .homeView{
   height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 20px);
