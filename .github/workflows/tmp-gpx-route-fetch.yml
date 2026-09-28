@@ -6,15 +6,15 @@ jobs:
   fetch:
     runs-on: ubuntu-latest
     steps:
-      - name: Fetch relevant OSM child relations
+      - name: Fetch GR9 child relation geometry
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p out
           python - <<'PY'
-          import requests,os
+          import requests
           S=requests.Session(); S.headers["User-Agent"]="route-research/1.0 (noncommercial)"
-          ids=[12774885,13048526,13048672,11173071,18212755,18212756,18212758]
+          ids=[16354746,16327838,16327680,16327655,16327013,16326955,16326907,16323235,16323149,16323117,16322804,16322320,16321157,16321001,16320988,16320000,16319760,16318813]
           for rid in ids:
               try:
                   r=S.get(f"https://api.openstreetmap.org/api/0.6/relation/{rid}/full",timeout=180)
@@ -25,5 +25,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: tmp-osm-childroutes
+          name: tmp-gr9-children
           path: out
