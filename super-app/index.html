@@ -10,7 +10,9 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.211 hors ligne</title>
+<title>Traversée 2027 · v1.212 hors ligne</title>
+<link rel="stylesheet" href="./vendor/leaflet.css">
+<link rel="stylesheet" href="./home.css">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -626,43 +628,32 @@ html,body{height:100%;overflow:hidden}
 <body>
 <div class="wrap">
 
-  <section class="homeView appView active" id="homeView">
-    <div class="homeCard">
-      <header class="homeHero">
-        <img class="homeBrandIcon" src="./icons/icon-192.png" alt="">
-        <div class="homeHeroText">
-          <h1>Traversée 2027</h1>
-          <p>Les 5 outils utiles sur le terrain.</p>
+  <section class="homeView homeMapView appView active" id="homeView" aria-label="Carte de la traversée">
+    <div id="homeMap" aria-label="Carte OpenStreetMap et trace de la traversée"></div>
+    <header class="homeMapTop">
+      <h1 class="homeMapTitle">Traversée 2027</h1>
+      <div class="homePosition">
+        <button type="button" id="homeGpsToggle" class="homeGpsToggle" aria-label="Position GPS et kilomètre" aria-expanded="false" aria-controls="homeGpsPanel">⌖</button>
+        <div id="homeGpsPanel" class="homeGpsPanel" hidden>
+          <button type="button" id="homeGpsRefresh" class="homeGpsRefresh">Actualiser ma position GPS</button>
+          <form id="homeKmForm">
+            <label for="homeKmInput">Mon km</label>
+            <div class="homeGpsRow"><input type="number" id="homeKmInput" inputmode="decimal" min="0" max="2048.052" step="0.1" placeholder="Ex. 812" required><button type="submit">Afficher</button></div>
+          </form>
+          <p id="homeGpsStatus" class="homeGpsStatus" role="status" aria-live="polite"></p>
         </div>
-      </header>
-      <div class="homeChoices">
-        <button class="homeChoice menuChoice" id="openMenuBtn">
-          <span class="homeIcon">🍽️</span>
-          <span class="homeText"><b id="openMenuLabel">Trouver un menu</b><small id="openMenuStatus">Préparer repas et courses</small></span>
-          <span class="arrow">→</span>
-        </button>
-        <button class="homeChoice primary" id="openStoreBtn">
-          <span class="homeIcon">🛒</span>
-          <span class="homeText"><b>Trouver un magasin</b><small>Le prochain ravito sur ta trace</small></span>
-          <span class="arrow">→</span>
-        </button>
-        <button class="homeChoice waterChoice" id="openWaterBtn">
-          <span class="homeIcon">💧</span>
-          <span class="homeText"><b>Trouver de l’eau</b><small>Les points les plus proches</small></span>
-          <span class="arrow">→</span>
-        </button>
-        <button class="homeChoice gasChoice" id="openGasBtn">
-          <span class="homeIcon" aria-hidden="true">🔥</span>
-          <span class="homeText"><b>Trouver du gaz</b><small>Les points de ton GPX</small></span>
-          <span class="arrow">→</span>
-        </button>
-        <button class="homeChoice bivouacChoice" id="openBivouacBtn">
-          <span class="homeIcon">🏕️</span>
-          <span class="homeText"><b>Trouver un bivouac</b><small>Choisir où dormir ce soir</small></span>
-          <span class="arrow">→</span>
-        </button>
       </div>
-    </div>
+    </header>
+    <div id="homeMapMessage" class="homeMapMessage" role="status" hidden></div>
+    <div id="homePoiBubble" class="homePoiBubble" aria-live="polite" hidden></div>
+    <div class="homeMetro"><div id="homeMetroLine" class="homeMetroLine" aria-label="Prochains points utiles"></div></div>
+    <nav class="homeBottomBar" aria-label="Outils de la traversée">
+      <button type="button" id="openMenuBtn" aria-label="Trouver un menu"><span class="homeToolIcon" aria-hidden="true">🍽️</span><span>Menus</span></button>
+      <button type="button" id="openWaterBtn"><span class="homeToolIcon" aria-hidden="true">💧</span><span>Eau</span></button>
+      <button type="button" id="openStoreBtn"><span class="homeToolIcon" aria-hidden="true">🛒</span><span>Magasin</span></button>
+      <button type="button" id="openGasBtn"><span class="homeToolIcon" aria-hidden="true">🔥</span><span>Gaz</span></button>
+      <button type="button" id="openBivouacBtn"><span class="homeToolIcon" aria-hidden="true">⛺</span><span>Bivouac</span></button>
+    </nav>
   </section>
 
   <section class="appView" id="storeView">
@@ -862,6 +853,8 @@ function updateHistoryButton(){
   if(b)b.classList.toggle('has-history',ravitoHistory.length>0);
 }
 function updateHomeMenuButton(){
+  const button=document.getElementById('openMenuBtn');
+  if(button)button.setAttribute('aria-label',savedDraft?'Reprendre le ravito':(savedRavito?'Voir le ravito':'Trouver un menu'));
   const label=document.getElementById('openMenuLabel');
   const status=document.getElementById('openMenuStatus');
   if(label)label.textContent=savedDraft?'Reprendre le ravito':(savedRavito?'Voir le ravito':'Trouver un menu');
@@ -910,6 +903,7 @@ updateHistoryButton();
 function openAppView(name){
   Object.entries(appViews).forEach(([key,el])=>el?.classList.toggle("active",key===name));
   if(name!=="menu")window.scrollTo({top:0,behavior:"auto"});
+  window.dispatchEvent(new CustomEvent('traversee-view',{detail:{name}}));
 }
 document.getElementById("openStoreBtn")?.addEventListener("click",()=>openAppView("store"));
 document.getElementById("openWaterBtn")?.addEventListener("click",()=>openAppView("water"));
@@ -1353,6 +1347,7 @@ document.getElementById("gpsBtn").addEventListener("click",()=>{
       const offset=p.distanceMeters>150?" · "+Math.round(p.distanceMeters)+" m de la trace":"";
       status.textContent=quality+"Position : E"+p.stage+" · km "+p.km.toFixed(2)+offset;
       show(p.km,p.stage,p.distanceMeters);
+      window.dispatchEvent(new CustomEvent('traversee-position',{detail:{km:p.km,lat,lon,mode:'gps'}}));
     },20);
   },err=>{button.disabled=false;status.textContent=gpsErrorMessage(err)},{enableHighAccuracy:true,timeout:12000,maximumAge:15000});
 });
@@ -1368,6 +1363,7 @@ function simulateStoreKm(){
   const stage=stageFromKm(km);
   status.textContent="Trace de l’app : E"+stage+" · km "+km.toFixed(1);
   show(km,stage,0);
+  window.dispatchEvent(new CustomEvent('traversee-position',{detail:{km,mode:'km'}}));
 }
 document.getElementById("storeKmBtn")?.addEventListener("click",simulateStoreKm);
 document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
@@ -1624,6 +1620,7 @@ async function searchWater(origin,context='',originKm=null){
   waterGpsBtn.disabled=false;
   waterKmBtn.disabled=false;
 }
+window.TraverseeWater={search:searchWater};
 function locateWater(){
   if(!navigator.geolocation){
     waterStatus.textContent='GPS non disponible. Utilise le km simulé juste dessous.';
@@ -1634,6 +1631,8 @@ function locateWater(){
   waterKmBtn.disabled=true;
   navigator.geolocation.getCurrentPosition(position=>{
     const accuracy=Number(position.coords.accuracy)||9999;
+    const route=projectGps(position.coords.latitude,position.coords.longitude);
+    if(accuracy<=150&&route&&route.distanceMeters<=750)window.dispatchEvent(new CustomEvent('traversee-position',{detail:{km:route.km,lat:position.coords.latitude,lon:position.coords.longitude,mode:'gps'}}));
     const context=accuracy>150?'GPS imprécis ±'+Math.round(accuracy)+' m · ':accuracy>60?'GPS ±'+Math.round(accuracy)+' m · ':'';
     searchWater({lat:position.coords.latitude,lon:position.coords.longitude},context,null);
   },err=>{
@@ -1660,6 +1659,7 @@ async function simulateWaterKm(){
     return;
   }
   const point=routePointAtKm(km);
+  window.dispatchEvent(new CustomEvent('traversee-position',{detail:{km,mode:'km'}}));
   await searchWater(point,'Trace de l’app · km '+km.toFixed(1).replace('.',',')+' · ',km);
 }
 waterKmBtn?.addEventListener('click',simulateWaterKm);
@@ -1709,6 +1709,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
       return;
     }
     render(km);
+    window.dispatchEvent(new CustomEvent('traversee-position',{detail:{km,mode:'km'}}));
   }
   function busy(value){gps.disabled=value;kmButton.disabled=value;}
   gps.addEventListener('click',()=>{
@@ -1721,10 +1722,12 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
       const p=projectGps(position.coords.latitude,position.coords.longitude);
       if(!p||p.distanceMeters>750){status.textContent='Tu es trop loin de la trace pour déterminer ton avancement. Saisis ton km.';return;}
       input.value=p.km.toFixed(1);render(p.km);
+      window.dispatchEvent(new CustomEvent('traversee-position',{detail:{km:p.km,lat:position.coords.latitude,lon:position.coords.longitude,mode:'gps'}}));
       gps.textContent='⌖ Actualiser ma position';
     },error=>{busy(false);status.textContent=gpsErrorMessage(error);},{enableHighAccuracy:true,timeout:12000,maximumAge:15000});
   });
   kmButton.addEventListener('click',simulate);
+  window.TraverseeGas={render};
   input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();simulate();}});
   document.getElementById('openGasBtn').addEventListener('click',()=>{
     openAppView('gas');
@@ -2933,6 +2936,8 @@ clearPreparedResults();renderPrepState();
 <script>
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
+<script src="./vendor/leaflet.js"></script>
+<script src="./home.js"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>

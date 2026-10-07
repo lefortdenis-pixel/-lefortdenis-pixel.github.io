@@ -1,6 +1,6 @@
-const CACHE='traversee-v1-211-position-clean';
+const CACHE='traversee-v1-212-map-home';
 const TILE_CACHE='traversee-map-tiles-v1';
-const ASSETS=['./','./index.html','./store-points.js','./water-points.json','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./bivouac/index.html','./vendor/leaflet.css','./vendor/leaflet.js','./vendor/leaflet.sync.js'];
+const ASSETS=['./','./index.html','./home.css','./home.js','./home-pois.json','./store-points.js','./water-points.json','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./bivouac/index.html','./vendor/leaflet.css','./vendor/leaflet.js','./vendor/leaflet.sync.js'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()));
@@ -13,7 +13,7 @@ self.addEventListener('activate',event=>{
 function isMapTile(url){
   const h=url.hostname;
   return h==='server.arcgisonline.com'||h==='data.geopf.fr'||h==='tile.waymarkedtrails.org'||
-    h.endsWith('.tile.openstreetmap.org')||h.endsWith('.tile.opentopomap.org')||
+    h==='tile.openstreetmap.org'||h.endsWith('.tile.openstreetmap.org')||h.endsWith('.tile.opentopomap.org')||
     h.endsWith('.basemaps.cartocdn.com');
 }
 async function trimTileCache(max=1200){
@@ -67,4 +67,3 @@ self.addEventListener('fetch',event=>{
     );
   }
 });
-
