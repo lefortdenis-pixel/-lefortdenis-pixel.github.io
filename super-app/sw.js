@@ -1,6 +1,6 @@
-const CACHE='traversee-v1-213-brenne-r2';
+const CACHE='traversee-v1-214-brenne';
 const TILE_CACHE='traversee-map-tiles-v1';
-const ASSETS=['./','./index.html','./home.css?v=1.213','./home.js?v=1.213','./home-pois.json?v=1.213','./home-pois-brenne.json?v=1.213','./route-data.js?v=1.213','./route-engine.js?v=1.213','./store-points.js','./water-points.json?v=1.213','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./bivouac/index.html','./vendor/leaflet.css','./vendor/leaflet.js','./vendor/leaflet.sync.js'];
+const ASSETS=['./','./index.html','./home.css?v=1.214','./home.js?v=1.214','./home-pois.json?v=1.214','./home-pois-brenne.json?v=1.214','./route-data.js?v=1.214','./route-engine.js?v=1.214','./store-points.js','./water-points.json?v=1.214','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./bivouac/index.html','./vendor/leaflet.css','./vendor/leaflet.js','./vendor/leaflet.sync.js'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()));
