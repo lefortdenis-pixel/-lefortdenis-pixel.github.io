@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.214 hors ligne</title>
+<title>Traversée 2027 · v1.215 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
-<link rel="stylesheet" href="./home.css?v=1.214">
+<link rel="stylesheet" href="./home.css?v=1.215">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -1016,8 +1016,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.214"></script>
-<script src="./route-engine.js?v=1.214"></script>
+<script src="./route-data.js?v=1.215"></script>
+<script src="./route-engine.js?v=1.215"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1380,7 +1380,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.214';
+const GPX_WATER_URL='./water-points.json?v=1.215';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -2006,15 +2006,18 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 .inlineUnavailable{margin:5px 0 2px!important}
 .validationBox{margin-top:9px!important}
 
-/* Le menu reprend les marges et l'en-tête des autres outils. */
+/* Shared preparation header: return button stays inside the same card. */
+.menu-body:has(#prepCard:not(.hide)){position:relative}
+.menu-body:has(#prepCard:not(.hide)) .innerHome{position:absolute;right:max(28px,calc((100% - 492px)/2 + 14px));top:calc(24px + env(safe-area-inset-top))}
+
 .menu-body:has(#prepCard:not(.hide)){background:var(--bg)!important}
 .menu-body:not(.allDaysMode) #prepCard:not(.hide){
   width:calc(100% - 28px);max-width:492px;
   min-height:calc(100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 34px);
   margin:calc(10px + env(safe-area-inset-top)) auto 0;
-  border-radius:28px;box-shadow:0 8px 24px rgba(18,19,15,.07);
+  padding:22px 18px;border-radius:28px;box-shadow:0 8px 24px rgba(18,19,15,.07);
 }
-.prepTitle{margin-right:58px;font-size:39px;line-height:.98;letter-spacing:-.045em}
+.prepTitle{margin:4px 58px 20px 2px;font-weight:900;font-size:39px;line-height:.98;letter-spacing:-.045em}
 .innerHome{right:28px;top:calc(24px + env(safe-area-inset-top));width:44px;height:44px;box-shadow:0 4px 14px rgba(18,19,15,.07)}
 .innerReset{top:calc(28px + env(safe-area-inset-top));right:80px}
 #buy{padding-left:14px!important;padding-right:14px!important;padding-top:calc(60px + env(safe-area-inset-top))!important}
@@ -2938,7 +2941,8 @@ clearPreparedResults();renderPrepState();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home.js?v=1.214"></script>
+<script src="./home-bivouac.js?v=1.215"></script>
+<script src="./home.js?v=1.215"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>

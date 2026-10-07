@@ -30,11 +30,12 @@
   function closeGps(){panel.hidden=true;gps.setAttribute('aria-expanded','false');}
   function openGps(){closeBubble();panel.hidden=false;gps.setAttribute('aria-expanded','true');}
   function offsetText(p){
+    if(p.customRoute)return '';
     if(!Number.isFinite(p.offRouteMeters))return 'Écart hors trace non renseigné';
     if(p.offRouteMeters<=40)return 'Sur la trace';
     return (p.offRouteMeters>=1000?kmText(p.offRouteMeters/1000)+' km':Math.round(p.offRouteMeters/10)*10+' m')+' hors trace';
   }
-  function distanceText(p){return p.delta<.05?'À ton niveau':'Dans '+kmText(p.delta)+' km';}
+  function distanceText(p){return p.delta<-.05?kmText(-p.delta)+' km derrière':p.delta<.05?'À ton niveau':'Dans '+kmText(p.delta)+' km';}
   function cleanWaterName(p){
     const name=String(p.name||'Point d’eau').replace(/\s+\d+(?:[.,]\d+)?[a-z]?$/i,'').trim();
     if(name.toUpperCase()==='EAU')return 'Point d’eau';
@@ -65,18 +66,16 @@
         if(category.id==='water')point=nextProjected(state.data?.water,km);
         if(category.id==='gas')point=nextProjected(state.data?.gas,km);
         if(category.id==='store')point=nextStore(km);
-        if(category.id==='bivouac'){
-          if(state.bivouac&&state.bivouac.km>=km)point={...state.bivouac,delta:state.bivouac.km-km};
-          else point=nextProjected(state.data?.camping,km);
-        }
+        if(category.id==='bivouac'&&!state.bivouac)point=nextProjected(state.data?.camping,km);
       }
+      if(category.id==='bivouac'&&state.bivouac)point={...state.bivouac,delta:state.bivouac.customRoute||!Number.isFinite(km)?state.bivouac.distanceKm:state.bivouac.km-km};
       return {...category,label:point?.type==='camping'?'Camping':category.label,point};
     }).sort((a,b)=>(a.point?.delta??Infinity)-(b.point?.delta??Infinity));
   }
   function render(){
     state.points=buildPoints();
     line.innerHTML=state.points.map(item=>{
-      const distance=item.point?kmText(item.point.delta)+' <small>km</small>':item.id==='bivouac'?'À choisir':state.position?(state.data?'Aucun':'…'):'—';
+      const distance=item.point?kmText(Math.abs(item.point.delta))+' <small>km</small>':item.id==='bivouac'?'À choisir':state.position?(state.data?'Aucun':'…'):'—';
       return '<button type="button" class="homeMetroStop'+(item.point?'':' is-unavailable')+'" data-category="'+item.id+'" aria-expanded="false" aria-controls="homePoiBubble" aria-label="'+escape(item.label+(item.point?' · '+distanceText(item.point):''))+'"><span class="homeMetroCircle" aria-hidden="true">'+item.icon+'</span><b>'+distance+'</b><small>'+item.label+'</small></button>';
     }).join('');
     if(state.map){
