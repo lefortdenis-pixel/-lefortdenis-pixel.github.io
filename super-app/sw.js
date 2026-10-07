@@ -1,6 +1,6 @@
-const CACHE='traversee-v1-215-bivouac';
+const CACHE='traversee-v1-216-menu-header';
 const TILE_CACHE='traversee-map-tiles-v1';
-const ASSETS=['./','./index.html','./home.css?v=1.215','./home.js?v=1.215','./home-bivouac.js?v=1.215','./home-pois.json?v=1.215','./home-pois-brenne.json?v=1.215','./route-data.js?v=1.215','./route-engine.js?v=1.215','./store-points.js','./water-points.json?v=1.215','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./bivouac/index.html','./vendor/leaflet.css','./vendor/leaflet.js','./vendor/leaflet.sync.js'];
+const ASSETS=['./','./index.html','./home.css?v=1.216','./home.js?v=1.216','./home-bivouac.js?v=1.216','./home-pois.json?v=1.216','./home-pois-brenne.json?v=1.216','./route-data.js?v=1.216','./route-engine.js?v=1.216','./store-points.js','./water-points.json?v=1.216','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./bivouac/index.html','./vendor/leaflet.css','./vendor/leaflet.js','./vendor/leaflet.sync.js'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()));
