@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.209 hors ligne</title>
+<title>Traversée 2027 · v1.210 hors ligne</title>
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -613,6 +613,14 @@ html,body{height:100%;overflow:hidden}
 #gasView .waterEmpty{font-size:15px;line-height:1.45}
 @media(max-width:390px){.homeChoice b{font-size:18px}.homeChoice .homeIcon{width:46px!important;height:46px!important}.homeChoice{grid-template-columns:46px minmax(0,1fr) 30px}.homeCard{gap:12px}}
 
+
+/* Accès direct au kilomètre, sans volet intermédiaire. */
+.positionFields .waterSim{display:grid;grid-template-columns:60px minmax(0,1fr);gap:8px;align-items:center;margin-top:12px;padding:0;border:0;background:transparent}
+.positionFields .waterSim label{margin:0;font-size:14px;line-height:1.2;color:var(--ink);font-weight:750}
+.positionFields .waterSimRow{min-width:0}
+.positionFields .waterSim>.waterStatus{grid-column:1 / -1;margin:0 0 3px;font-weight:500}
+.positionFields .manual{margin-top:12px}
+
 </style>
 </head>
 <body>
@@ -676,10 +684,9 @@ html,body{height:100%;overflow:hidden}
       <div class="block">
         <button class="gpsBtn" id="gpsBtn">⌖ Utiliser ma position GPS</button>
       <div id="status" role="status" aria-live="polite"></div>
-        <details class="fieldOptions">
-          <summary>••• Autres façons de se positionner</summary>
+        <div class="positionFields">
           <div class="waterSim">
-            <label for="storeKmInput">Saisir le km indiqué par cette app</label>
+            <label for="storeKmInput">Mon km</label>
             <div class="waterSimRow">
               <input class="waterKmInput" id="storeKmInput" type="number" inputmode="decimal" min="0" max="2048.052" step="0.1" placeholder="Ex. 375">
               <button class="waterKmBtn" id="storeKmBtn">Afficher</button>
@@ -694,7 +701,7 @@ html,body{height:100%;overflow:hidden}
             </div>
             <button class="secondary" id="calcBtn">Calculer depuis ces coordonnées</button>
           </details>
-        </details>
+        </div>
       </div>
 
       <div class="result" id="result">
@@ -719,17 +726,16 @@ html,body{height:100%;overflow:hidden}
       <div class="waterSearch">
         <button class="waterGpsBtn" id="waterGpsBtn">⌖ Utiliser ma position GPS</button>
         <div class="waterStatus" id="waterStatus" role="status" aria-live="polite"></div>
-        <details class="fieldOptions">
-          <summary>••• Autre position</summary>
+        <div class="positionFields">
           <div class="waterSim">
-            <label for="waterKmInput">Saisir le km indiqué par cette app</label>
+            <label for="waterKmInput">Mon km</label>
             <div class="waterSimRow">
               <input class="waterKmInput" id="waterKmInput" type="number" inputmode="decimal" min="0" max="2048.052" step="0.1" placeholder="Ex. 375">
               <button class="waterKmBtn" id="waterKmBtn">Afficher</button>
             </div>
             <div class="waterStatus">N’utilise pas le km d’une autre trace ou d’une montre.</div>
           </div>
-        </details>
+        </div>
       </div>
       <div class="waterList" id="waterList"><div class="waterEmpty">Utilise ta position pour afficher les points les plus proches.</div></div>
     </div>
@@ -742,16 +748,15 @@ html,body{height:100%;overflow:hidden}
       <div class="waterSearch">
         <button class="waterGpsBtn" id="gasGpsBtn">⌖ Utiliser ma position GPS</button>
         <div class="waterStatus" id="gasStatus" role="status" aria-live="polite"></div>
-        <details class="fieldOptions">
-          <summary>••• Autre position</summary>
+        <div class="positionFields">
           <div class="waterSim">
-            <label for="gasKmInput">Saisir le km indiqué par cette app</label>
+            <label for="gasKmInput">Mon km</label>
             <div class="waterSimRow">
               <input class="waterKmInput" id="gasKmInput" type="number" inputmode="decimal" min="0" max="2048.052" step="0.1" placeholder="Ex. 375">
               <button class="waterKmBtn" id="gasKmBtn">Afficher</button>
             </div>
           </div>
-        </details>
+        </div>
       </div>
       <div class="waterList" id="gasList"><div class="waterEmpty">Utilise ta position ou saisis ton km pour trouver du gaz.</div></div>
     </div>
