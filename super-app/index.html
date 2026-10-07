@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.210 hors ligne</title>
+<title>Traversée 2027 · v1.211 hors ligne</title>
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -691,16 +691,7 @@ html,body{height:100%;overflow:hidden}
               <input class="waterKmInput" id="storeKmInput" type="number" inputmode="decimal" min="0" max="2048.052" step="0.1" placeholder="Ex. 375">
               <button class="waterKmBtn" id="storeKmBtn">Afficher</button>
             </div>
-            <div class="waterStatus">Référence unique : trace embarquée de l’app.</div>
           </div>
-          <details class="manual">
-            <summary>Coordonnées GPS manuelles</summary>
-            <div class="coords">
-              <div class="field"><label for="lat">Latitude</label><input id="lat" inputmode="decimal" placeholder="45.5117"></div>
-              <div class="field"><label for="lon">Longitude</label><input id="lon" inputmode="decimal" placeholder="2.8554"></div>
-            </div>
-            <button class="secondary" id="calcBtn">Calculer depuis ces coordonnées</button>
-          </details>
         </div>
       </div>
 
@@ -733,7 +724,6 @@ html,body{height:100%;overflow:hidden}
               <input class="waterKmInput" id="waterKmInput" type="number" inputmode="decimal" min="0" max="2048.052" step="0.1" placeholder="Ex. 375">
               <button class="waterKmBtn" id="waterKmBtn">Afficher</button>
             </div>
-            <div class="waterStatus">N’utilise pas le km d’une autre trace ou d’une montre.</div>
           </div>
         </div>
       </div>
@@ -758,7 +748,7 @@ html,body{height:100%;overflow:hidden}
           </div>
         </div>
       </div>
-      <div class="waterList" id="gasList"><div class="waterEmpty">Utilise ta position ou saisis ton km pour trouver du gaz.</div></div>
+      <div class="waterList" id="gasList"></div>
     </div>
   </section>
 
@@ -1328,28 +1318,18 @@ document.getElementById("nearestStoreBtn")?.addEventListener("click",()=>{
 });
 
 
-document.getElementById("calcBtn").addEventListener("click",()=>{
-  const lat=Number(document.getElementById("lat").value), lon=Number(document.getElementById("lon").value);
-  if(!Number.isFinite(lat)||!Number.isFinite(lon)){document.getElementById("status").textContent="Coordonnées invalides. Vérifie latitude et longitude.";return}
-  document.getElementById("status").textContent="Projection sur la trace…";
-  setTimeout(()=>{
-    const p=projectGps(lat,lon);
-    document.getElementById("status").textContent="Position projetée : E"+p.stage+" · km "+p.km.toFixed(2);
-    show(p.km,p.stage,p.distanceMeters);
-  },20);
-});
 
 function gpsErrorMessage(err){
   if(err?.code===1)return "Accès GPS refusé. Autorise la localisation dans les réglages, ou utilise le km simulé.";
   if(err?.code===2)return "Position GPS indisponible. Réessaie dehors ou utilise le km simulé.";
   if(err?.code===3)return "Le GPS met trop de temps à répondre. Réessaie ou utilise le km simulé.";
-  return "GPS indisponible. Utilise le km simulé ou les coordonnées manuelles.";
+  return "GPS indisponible. Utilise le km simulé.";
 }
 document.getElementById("gpsBtn").addEventListener("click",()=>{
   const status=document.getElementById("status");
   const button=document.getElementById("gpsBtn");
   if(!navigator.geolocation){
-    status.textContent="GPS non disponible. Utilise le km simulé ou les coordonnées manuelles.";
+    status.textContent="GPS non disponible. Utilise le km simulé.";
     return;
   }
   button.disabled=true;
@@ -1357,8 +1337,6 @@ document.getElementById("gpsBtn").addEventListener("click",()=>{
   navigator.geolocation.getCurrentPosition(pos=>{
     button.disabled=false;
     const lat=pos.coords.latitude,lon=pos.coords.longitude,accuracy=Number(pos.coords.accuracy)||9999;
-    document.getElementById("lat").value=lat.toFixed(6);
-    document.getElementById("lon").value=lon.toFixed(6);
     if(accuracy>150){
       status.textContent="GPS trop imprécis (±"+Math.round(accuracy)+" m). Réessaie ou utilise le km simulé.";
       return;
