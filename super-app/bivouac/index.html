@@ -57,6 +57,7 @@ main{height:100dvh;display:grid;grid-template-rows:minmax(0,1fr) 136px}.mapwrap{
 .baseChoice{position:relative;min-width:0;padding:3px;border:2px solid #e1e5dc;border-radius:13px;background:#fff;color:#263027;text-align:left;overflow:hidden;cursor:pointer}.baseChoice[aria-pressed="true"]{border-color:#62942e;background:#f1f7e8}.baseChoice:focus-visible,.pickerClose:focus-visible{outline:3px solid #426d23;outline-offset:2px}.basePreview{display:block;position:relative;height:52px;overflow:hidden;border-radius:8px;background:#eef0e9}.basePreview img{width:100%;height:100%;object-fit:cover;display:block}.basePreview img[hidden]{display:none}.previewFallback{display:grid;place-items:center;position:absolute;inset:0;color:#78816e;font-size:10px;text-align:center;padding:5px}.basePreview.loaded .previewFallback{display:none}.baseName{display:block;padding:6px 3px 4px;font-size:11px;line-height:1.2;font-weight:800}.baseCheck{display:none;position:absolute;top:7px;right:7px;width:21px;height:21px;border-radius:50%;background:#4b7c26;color:#fff;font-size:13px;text-align:center;line-height:21px;box-shadow:0 1px 5px #0003}.baseChoice[aria-pressed="true"] .baseCheck{display:block}
 .pickerOverlays{border-top:1px solid var(--line);padding-top:7px;display:grid;gap:2px}.pickerOverlays .overlayToggle{min-height:44px;margin:0;display:flex;justify-content:space-between;font-size:13px;font-weight:700}.pickerOverlays input{width:20px;height:20px;accent-color:#62942e}
 @media(max-width:760px){.mapPicker{position:fixed;left:12px;right:12px;top:auto;bottom:calc(166px + env(safe-area-inset-bottom));margin:0;width:calc(100% - 24px);max-width:none;max-height:calc(100dvh - 190px - env(safe-area-inset-bottom));overflow:auto;overscroll-behavior:contain}.mapActions #layerFab{flex-direction:column;gap:3px;white-space:normal}.mapActions #layerFab .activeBase{font-size:10px;font-weight:650;color:#69736b;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mapStyle.open{display:none}}
+.routeCampingMarker{display:grid;place-items:center;background:#fff;border:2px solid #315ecb;border-radius:50%;font-size:19px;box-shadow:0 2px 8px #0003}
 </style>
 </head>
 <body>
@@ -101,7 +102,45 @@ function setBase(side,n){const left=side==='left',map=left?S.map:S.mapIgn,key=le
 function addPanes(map){[['routePane',500],['zonePane',520],['reliefPane',530],['markerPane2',650],['hitPane',680],['interactionPane',1200]].forEach(([n,z])=>{map.createPane(n);map.getPane(n).style.zIndex=z});map.getPane('interactionPane').style.pointerEvents='none'}
 function initMap(){if(S.map)return;S.map=L.map('map',{zoomControl:false,preferCanvas:true});S.mapIgn=L.map('mapIgn',{zoomControl:false,preferCanvas:true});addPanes(S.map);addPanes(S.mapIgn);let savedLeft=safeLsGet('bivouac-basemap-left')||safeLsGet('bivouac-basemap')||'sat',savedRight=safeLsGet('bivouac-basemap-right')||'ign';if(savedLeft==='cycle')savedLeft='sat';if(savedRight==='cycle')savedRight='ign';setBase('left',savedLeft);setBase('right',savedRight);S.hiking=L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png',{maxZoom:18,opacity:.72,attribution:'© Waymarked Trails · OpenStreetMap'});S.hikingIgn=L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png',{maxZoom:18,opacity:.72,attribution:'© Waymarked Trails · OpenStreetMap'});S.map.setView([46.7,2.5],6);S.mapIgn.setView([46.7,2.5],6);S.map.sync(S.mapIgn);S.mapIgn.sync(S.map);S.map.on('zoomend',()=>S.pts.length&&addDirectionMarkers());S.mapIgn.on('zoomend',()=>S.pts.length&&addDirectionMarkers())}
 function hav(a,b){const R=6371.0088,r=Math.PI/180,dl=(b.lat-a.lat)*r,dn=(b.lng-a.lng)*r,l1=a.lat*r,l2=b.lat*r,h=Math.sin(dl/2)**2+Math.cos(l1)*Math.cos(l2)*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
-function parse(t){const x=new DOMParser().parseFromString(t,'application/xml');let n=[...x.getElementsByTagNameNS('*','trkpt')];if(!n.length)n=[...x.getElementsByTagNameNS('*','rtept')];const p=n.map(e=>{const z=[...e.children].find(c=>c.localName==='ele');return{lat:+e.getAttribute('lat'),lng:+e.getAttribute('lon'),ele:z?+z.textContent:null}}).filter(p=>isFinite(p.lat)&&isFinite(p.lng));if(p.length<2)throw Error('GPX sans trace exploitable');return p}
+function parentRoute(){try{return window.parent!==window?window.parent.TraverseeRoutes:null}catch(_){return null}}
+function parse(t){
+  let x=new DOMParser().parseFromString(t,'application/xml');
+  if(x.getElementsByTagName('parsererror').length)throw Error('GPX illisible');
+  const tracks=[...x.getElementsByTagNameNS('*','trk')];
+  if(tracks.length>1){
+    const names=tracks.map(n=>n.getElementsByTagNameNS('*','name')[0]?.textContent||'');
+    const route=parentRoute();
+    if(route&&names[0]==='Traversée 2027 — Ouistreham → Gare du Trayas'&&names[1].startsWith('VARIANTE Brenne'))x=new DOMParser().parseFromString(route.gpx(),'application/xml');
+    else throw Error('Ce GPX contient plusieurs parcours. Importe une seule trace ou choisis le parcours dans le menu GPS de la superapp.');
+  }
+  let n=[...x.getElementsByTagNameNS('*','trkpt')];if(!n.length)n=[...x.getElementsByTagNameNS('*','rtept')];
+  const p=n.map(e=>{const z=[...e.children].find(c=>c.localName==='ele');return{lat:+e.getAttribute('lat'),lng:+e.getAttribute('lon'),ele:z?+z.textContent:null}}).filter(p=>isFinite(p.lat)&&isFinite(p.lng));
+  if(p.length<2)throw Error('GPX sans trace exploitable');return p;
+}
+function isAppRoute(t){
+  const route=parentRoute();if(!route)return false;
+  const p=parse(t),first=route.points[0],last=route.points.at(-1);
+  return p.length>1000&&hav(p[0],{lat:first[0],lng:first[1]})<.1&&hav(p.at(-1),{lat:last[0],lng:last[1]})<.1;
+}
+function coordinateAt(points,km){const cum=cumulative(points);let i=1;while(i<points.length-1&&cum[i]<km)i++;const a=points[i-1],b=points[i],t=Math.max(0,Math.min(1,(km-cum[i-1])/(cum[i]-cum[i-1]||1)));return {lat:a.lat+(b.lat-a.lat)*t,lng:a.lng+(b.lng-a.lng)*t};}
+function selectedAppProject(saved){
+  const route=parentRoute();if(!route||saved?.mode==='three'||(saved?.gpx&&!isAppRoute(saved.gpx)))return saved;
+  let progressKm=0;
+  if(saved?.gpx){const coord=coordinateAt(parse(saved.gpx),Number(saved.progressKm)||0),r=route.project(coord.lat,coord.lng);if(r&&r.distanceMeters<=750)progressKm=r.km;}
+  const position=window.parent.TraverseeHome?.getPosition();if(position)progressKm=position.km;
+  return {...saved,gpx:route.gpx(),mode:'traverse',progressKm};
+}
+let routeCampLayers=[];
+function drawRouteCamps(){
+  routeCampLayers.forEach(m=>m.remove());routeCampLayers=[];
+  const route=parentRoute();if(!route||S.mode==='three'||!isAppRoute(S.gpxText))return;
+  for(const p of route.camping||[])for(const map of [S.map,S.mapIgn]){
+    const el=document.createElement('div'),title=document.createElement('strong'),info=document.createElement('p'),link=document.createElement('a');
+    title.textContent=p.name;info.textContent=p.note;link.textContent='Infos du camping ↗';link.href=p.sourceUrl;link.target='_blank';link.rel='noopener';el.append(title,info,link);
+    routeCampLayers.push(L.marker([p.lat,p.lon],{title:p.name,icon:L.divIcon({className:'routeCampingMarker',html:'⛺',iconSize:[32,32],iconAnchor:[16,16]})}).addTo(map).bindPopup(el));
+  }
+}
+
 function cumulative(p){const c=[0];for(let i=1;i<p.length;i++)c[i]=c[i-1]+hav(p[i-1],p[i]);return c}
 function at(k){k=Math.max(0,Math.min(k,S.total));let lo=0,hi=S.cum.length-1;while(lo<hi){const m=(lo+hi)>>1;if(S.cum[m]<k)lo=m+1;else hi=m}const i=Math.max(1,lo),a=S.pts[i-1],b=S.pts[i],d0=S.cum[i-1],d1=S.cum[i],t=d1===d0?0:(k-d0)/(d1-d0);return{lat:a.lat+(b.lat-a.lat)*t,lng:a.lng+(b.lng-a.lng)*t,ele:a.ele!=null&&b.ele!=null?a.ele+(b.ele-a.ele)*t:(a.ele==null?b.ele:a.ele),km:k,index:i}}
 function slice(a,b){const A=at(a),B=at(b),o=[[A.lat,A.lng]];for(let i=A.index;i<B.index;i++)o.push([S.pts[i].lat,S.pts[i].lng]);o.push([B.lat,B.lng]);return o}
@@ -140,8 +179,18 @@ async function saveNow(){if(!S.gpxText||S.restoring)return;clearTimeout(saveTime
 function scheduleSave(){if(!S.gpxText||S.restoring)return;clearTimeout(saveTimer);saveTimer=setTimeout(saveNow,650)}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')saveNow()});
 window.addEventListener('pagehide',()=>saveNow())
-async function restoreProject(){try{const db=await projectDb(),saved=await new Promise((resolve,reject)=>{const r=db.transaction('projects').objectStore('projects').get('current');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});if(!saved?.gpx||S.touched)return;S.restoring=true;try{loadTrack(saved.gpx,{zones:saved.zones,focus:saved.focus,progressKm:saved.progressKm,completed:saved.completed,mode:saved.mode})}catch(e){try{const tx=db.transaction('projects','readwrite');tx.objectStore('projects').delete('current')}catch(_){}showBivNotice('La sauvegarde Bivouac était illisible et a été écartée. Importe simplement ton GPX pour repartir.')}}catch(e){showBivNotice('Impossible de lire la sauvegarde locale. L’app reste utilisable, mais vérifie ton projet avant de fermer.',0)}finally{S.restoring=false}}
-function loadTrack(t,saved={}){const pts=parse(t),cum=cumulative(pts),total=cum.at(-1);if(!isFinite(total)||total<=0)throw Error('Trace GPX invalide');S.gpxText=t;S.pts=pts;S.cum=cum;S.total=total;S.progressKm=Math.max(0,Math.min(total,Number(saved.progressKm)||0));S.completed=Array.isArray(saved.completed)?saved.completed.slice(-120):[];S.mode=saved.mode==='three'?'three':(saved.mode==='traverse'?'traverse':S.mode);safeLsSet('bivouac-mode',S.mode);const savedZones=Array.isArray(saved.zones)?saved.zones.map(Number).filter(Number.isFinite):[];if(S.mode==='three'){const avg=Math.max(20,Math.min(35,total/3));S.zones=[{dayKm:savedZones[0]??avg},{dayKm:savedZones[1]??avg}]}else{S.zones=[{dayKm:savedZones[0]??20}]};S.selected=0;S.focus=!!saved.focus;S.undo=[];q('#undo').disabled=true;normalize();q('#addZone').disabled=false;q('#bulkZone').disabled=false;q('#exportProject').disabled=false;updateBulk();S.current=at(S.progressKm);renderCards();drawMap();renderProfile();scheduleSave()}
+async function restoreProject(){
+  try{
+    const db=await projectDb(),saved=await new Promise((resolve,reject)=>{const r=db.transaction('projects').objectStore('projects').get('current');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
+    if(S.touched)return;
+    const selected=selectedAppProject(saved);if(!selected?.gpx)return;
+    S.restoring=true;
+    try{loadTrack(selected.gpx,selected)}catch(e){showBivNotice('La sauvegarde Bivouac n’a pas pu être chargée. Importe ton GPX pour la récupérer.',0)}
+  }catch(e){showBivNotice('Impossible de lire la sauvegarde locale. Vérifie ton projet avant de fermer.',0)}
+  finally{S.restoring=false;if(S.gpxText)scheduleSave()}
+}
+
+function loadTrack(t,saved={}){if(saved.mode!=='three'&&isAppRoute(t))t=parentRoute().gpx();const pts=parse(t),cum=cumulative(pts),total=cum.at(-1);if(!isFinite(total)||total<=0)throw Error('Trace GPX invalide');S.gpxText=t;S.pts=pts;S.cum=cum;S.total=total;S.progressKm=Math.max(0,Math.min(total,Number(saved.progressKm)||0));S.completed=Array.isArray(saved.completed)?saved.completed.slice(-120):[];S.mode=saved.mode==='three'?'three':(saved.mode==='traverse'?'traverse':S.mode);safeLsSet('bivouac-mode',S.mode);const savedZones=Array.isArray(saved.zones)?saved.zones.map(Number).filter(Number.isFinite):[];if(S.mode==='three'){const avg=Math.max(20,Math.min(35,total/3));S.zones=[{dayKm:savedZones[0]??avg},{dayKm:savedZones[1]??avg}]}else{S.zones=savedZones.length?savedZones.map(dayKm=>({dayKm})):[{dayKm:20}]};S.selected=0;S.focus=!!saved.focus;S.undo=[];q('#undo').disabled=true;normalize();q('#addZone').disabled=false;q('#bulkZone').disabled=false;q('#exportProject').disabled=false;updateBulk();S.current=at(S.progressKm);renderCards();drawMap();drawRouteCamps();renderProfile();scheduleSave()}
 function exportProject(){if(!S.gpxText)return;const data={version:2,gpx:S.gpxText,zones:S.zones.map(z=>z.dayKm),selected:0,focus:S.focus,progressKm:S.progressKm,completed:S.completed,mode:S.mode},url=URL.createObjectURL(new Blob([JSON.stringify(data)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='bivouac-scout-projet.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000)}
 function selectStage(i){if(!S.zones.length)return;clearPoi();S.selected=Math.max(0,Math.min(S.zones.length-1,i));renderCards();renderProfile();scheduleSave();if(S.pts.length){const b=bounds(S.selected);const view=L.polyline(slice(b[0],b[1])).getBounds();S.map.fitBounds(view,{padding:[36,36],maxZoom:14,animate:false});S.mapIgn.fitBounds(view,{padding:[36,36],maxZoom:14,animate:false})}}
 function stageGain(i){const start=usedBefore(i),end=center(i);let gain=0,baseline=null;for(let km=start;km<=end+.25;km+=.25){const e=at(Math.min(km,end)).ele;if(e==null||!isFinite(e))continue;if(baseline!=null&&e-baseline>3){gain+=e-baseline;baseline=e}else if(baseline==null||e<baseline)baseline=e}return Math.round(gain)}
@@ -329,4 +378,5 @@ function resizeMaps(){S.map.invalidateSize({pan:false,debounceMoveend:true});S.m
 </script>
 </body>
 </html>
+
 

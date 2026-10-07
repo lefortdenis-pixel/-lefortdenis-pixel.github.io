@@ -1,0 +1,16 @@
+{
+  "verifiedOn": "2026-10-07",
+  "water": [
+    {"a":46.7987521,"o":1.30531311,"n":"Eau potable — Bellebouche","t":"EAU","d":"Point d’eau potable signalé sur le site de loisirs. Repère à l’accueil du site, robinet à repérer sur place ; accès saisonnier à vérifier.","note":"Repère du site · robinet à repérer sur place","sourceUrl":"https://baignades.sante.gouv.fr/baignades/consultSite.do?dptddass=036&site=036000807","coordinateSource":"https://www.parc-naturel-brenne.fr/bougez/sur-terre/base-de-loisirs-de-bellebouche-66"},
+    {"a":46.7987521,"o":1.30531311,"n":"Toilettes — Bellebouche","t":"WC","d":"Toilettes signalées sur le site de loisirs. Repère à l’accueil du site ; accès saisonnier à vérifier.","note":"Repère du site · sanitaires à repérer sur place","sourceUrl":"https://baignades.sante.gouv.fr/baignades/consultSite.do?dptddass=036&site=036000807","coordinateSource":"https://www.parc-naturel-brenne.fr/bougez/sur-terre/base-de-loisirs-de-bellebouche-66"}
+  ],
+  "camping": [
+    {"name":"Camping de Bellebouche","lat":46.7983949,"lon":1.3064285,"type":"camping","note":"Camping aménagé · disponibilité à vérifier","sourceUrl":"https://www.domainedebellebouche.com/fr/page/camping","coordinateSource":"https://www.cirkwi.com/fr/point-interet/4973371-camping-du-domaine-de-bellebouche"}
+  ],
+  "excluded": [
+    {"name":"Proxi Azay-le-Ferron","reason":"Fermeture provisoire indiquée par la commune","sourceUrl":"https://www.azay-le-ferron.fr/vie-economique/commercants/"},
+    {"name":"Camping municipal de la Caillauderie","reason":"Fermeture temporaire signalée par le Parc","sourceUrl":"https://www.parc-naturel-brenne.fr/sejournez/ou-dormir/campings-et-accueils-camping-cars"}
+  ],
+  "gas": [],
+  "gasStatus": "Aucun vendeur supplémentaire de cartouches à vis EN417 vérifié pour cette variante. Les 37 points gaz du GPX existant restent disponibles, avec leur écart réel au parcours choisi."
+}
