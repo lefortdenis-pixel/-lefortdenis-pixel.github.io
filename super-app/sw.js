@@ -1,6 +1,6 @@
-const CACHE='traversee-v1-219-perspective';
+const CACHE='traversee-v1-220-tile-cors';
 const TILE_CACHE='traversee-map-tiles-v1';
-const ASSETS=['./','./index.html','./home.css?v=1.219','./home.js?v=1.219','./home-bivouac.js?v=1.219','./home-pois.json?v=1.219','./home-pois-brenne.json?v=1.219','./route-data.js?v=1.219','./route-engine.js?v=1.219','./store-points.js','./water-points.json?v=1.219','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./bivouac/index.html','./home-map.js?v=1.219','./vendor/maplibre-gl.js','./vendor/maplibre-gl.css','./vendor/leaflet.css','./vendor/leaflet.js','./vendor/leaflet.sync.js'];
+const ASSETS=['./','./index.html','./home.css?v=1.220','./home.js?v=1.220','./home-bivouac.js?v=1.220','./home-pois.json?v=1.220','./home-pois-brenne.json?v=1.220','./route-data.js?v=1.220','./route-engine.js?v=1.220','./store-points.js','./water-points.json?v=1.220','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./bivouac/index.html','./home-map.js?v=1.220','./vendor/maplibre-gl.js','./vendor/maplibre-gl.css','./vendor/leaflet.css','./vendor/leaflet.js','./vendor/leaflet.sync.js'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()));
@@ -53,7 +53,9 @@ self.addEventListener('fetch',event=>{
     event.respondWith(
       caches.open(TILE_CACHE).then(async cache=>{
         const cached=await cache.match(event.request);
-        if(cached)return cached;
+        // Leaflet image requests cache opaque responses. WebGL fetches require
+        // readable CORS responses, so upgrade only incompatible cached tiles.
+        if(cached&&(event.request.mode==='no-cors'||cached.type!=='opaque'))return cached;
         try{
           const resp=await fetch(event.request);
           if(resp.ok||resp.type==='opaque'){
