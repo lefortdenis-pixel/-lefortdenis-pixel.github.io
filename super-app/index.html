@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.208 hors ligne</title>
+<title>Traversée 2027 · v1.209 hors ligne</title>
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -604,7 +604,6 @@ html,body{height:100%;overflow:hidden}
 #gasView .waterSearch{min-height:0;max-height:65%;overflow:auto;flex-shrink:0}
 #gasView h1{font-size:36px}
 #gasStatus{font-size:14px;min-height:20px}
-.gasNote{margin:10px 2px 12px;font-size:13px;line-height:1.35;color:var(--muted)}
 #gasView .waterDistance{font-size:15px;color:#91430d;line-height:1.35}
 #gasView .waterName{font-size:17px;line-height:1.4}
 #gasView .waterDesc{font-size:14px;line-height:1.4}
@@ -753,7 +752,6 @@ html,body{height:100%;overflow:hidden}
             </div>
           </div>
         </details>
-        <p class="gasNote">Cartouches à vis et stock à confirmer. Écart hors trace à vol d’oiseau.</p>
       </div>
       <div class="waterList" id="gasList"><div class="waterEmpty">Utilise ta position ou saisis ton km pour trouver du gaz.</div></div>
     </div>
@@ -1710,13 +1708,13 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
   }
   function render(km){
     const points=rankedPoints(km);
-    status.textContent='Position : E'+stageFromKm(km)+' · km '+formatKm(km)+' · '+points.length+' point'+(points.length>1?'s':'')+ ' à venir';
+    status.textContent='Position : km '+formatKm(km)+' · '+points.length+' point'+(points.length>1?'s':'')+ ' à venir';
     list.innerHTML=points.length?points.map((point,index)=>{
       const onTrace=point.offRouteMeters<=40;
-      const routeDistance=Math.abs(point.delta)<0.05?'À ton niveau sur la trace':(point.delta<0?formatKm(-point.delta)+' km en arrière sur la trace':'Dans '+formatKm(point.delta)+' km sur la trace');
+      const routeDistance=Math.abs(point.delta)<0.05?'À ton niveau':(point.delta<0?formatKm(-point.delta)+' km en arrière':'Dans '+formatKm(point.delta)+' km');
       const offset=onTrace?'Sur la trace':(point.offRouteMeters>=1000?formatKm(point.offRouteMeters/1000)+' km':Math.round(point.offRouteMeters/10)*10+' m')+' hors trace';
       const map='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(point.lat+','+point.lon);
-      return '<article class="waterItem gasItem"><div class="waterDistance">'+escapeHtml(routeDistance)+'</div><div class="waterName">'+escapeHtml(point.name)+(index===0?' <span class="gasBadge">Le plus proche</span>':'')+'</div><div class="waterDesc">E'+point.stage+' · km '+formatKm(point.km)+' · '+escapeHtml(offset)+'</div><a class="gasMapLink" href="'+map+'" target="_blank" rel="noopener noreferrer" aria-label="Ouvrir '+escapeHtml(point.name)+' sur la carte">Voir sur la carte</a></article>';
+      return '<article class="waterItem gasItem"><div class="waterDistance">'+escapeHtml(routeDistance)+'</div><div class="waterName">'+escapeHtml(point.name)+(index===0?' <span class="gasBadge">Le plus proche</span>':'')+'</div><div class="waterDesc">km '+formatKm(point.km)+' · '+escapeHtml(offset)+'</div><a class="gasMapLink" href="'+map+'" target="_blank" rel="noopener noreferrer" aria-label="Ouvrir '+escapeHtml(point.name)+' sur la carte">Voir sur la carte</a></article>';
     }).join(''):'<div class="waterEmpty">Aucun autre point gaz prévu jusqu’à l’arrivée.</div>';
     list.scrollTop=0;
   }
