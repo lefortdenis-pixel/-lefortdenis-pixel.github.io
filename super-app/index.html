@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.207 hors ligne</title>
+<title>Traversée 2027 · v1.208 hors ligne</title>
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -604,9 +604,6 @@ html,body{height:100%;overflow:hidden}
 #gasView .waterSearch{min-height:0;max-height:65%;overflow:auto;flex-shrink:0}
 #gasView h1{font-size:36px}
 #gasStatus{font-size:14px;min-height:20px}
-.gasModes{display:flex;gap:8px;margin-top:12px}
-.gasModes button{flex:1;border:1px solid var(--line);border-radius:13px;background:var(--panel);padding:11px 8px;font-size:14px;font-weight:800;color:var(--ink)}
-.gasModes button[aria-pressed="true"]{background:#fff0df;border-color:#c56418;color:#91430d}
 .gasNote{margin:10px 2px 12px;font-size:13px;line-height:1.35;color:var(--muted)}
 #gasView .waterDistance{font-size:15px;color:#91430d;line-height:1.35}
 #gasView .waterName{font-size:17px;line-height:1.4}
@@ -756,11 +753,7 @@ html,body{height:100%;overflow:hidden}
             </div>
           </div>
         </details>
-        <div class="gasModes" role="group" aria-label="Points gaz à afficher">
-          <button id="gasAheadBtn" type="button" aria-pressed="true">Devant moi</button>
-          <button id="gasNearestBtn" type="button" aria-pressed="false">Les plus proches</button>
-        </div>
-        <p class="gasNote">37 repères de ton GPX · cartouches à vis et stock à confirmer. Classement : distance sur la trace + écart à vol d’oiseau.</p>
+        <p class="gasNote">Cartouches à vis et stock à confirmer. Écart hors trace à vol d’oiseau.</p>
       </div>
       <div class="waterList" id="gasList"><div class="waterEmpty">Utilise ta position ou saisis ton km pour trouver du gaz.</div></div>
     </div>
@@ -1696,14 +1689,12 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 <script id="gas-search">
 (()=>{
   const rows=[{"name": "GAZ 1", "lat": 49.289754, "lon": -0.285281}, {"name": "GAZ 2", "lat": 49.192691, "lon": -0.296294}, {"name": "GAZ 3", "lat": 49.168901, "lon": -0.319095}, {"name": "GAZ 4", "lat": 49.113075, "lon": -0.376511}, {"name": "GAZ 5", "lat": 48.979963, "lon": -0.469216}, {"name": "GAZ 6", "lat": 48.75986, "lon": -0.2478}, {"name": "GAZ 7", "lat": 48.231111, "lon": 0.115833}, {"name": "GAZ 8", "lat": 48.004793, "lon": 0.248306}, {"name": "GAZ 9", "lat": 47.639448, "lon": 0.150314}, {"name": "GAZ 10", "lat": 47.278493, "lon": -0.06431}, {"name": "GAZ 11", "lat": 47.263692, "lon": -0.092882}, {"name": "GAZ 12", "lat": 47.181192, "lon": 0.266428}, {"name": "GAZ 13", "lat": 47.180053, "lon": 0.261283}, {"name": "GAZ 14", "lat": 47.379624, "lon": 0.714207}, {"name": "GAZ 15", "lat": 47.329911, "lon": 0.706668}, {"name": "GAZ 16", "lat": 47.136963, "lon": 0.984623}, {"name": "GAZ 17", "lat": 46.987026, "lon": 1.167096}, {"name": "GAZ 18", "lat": 46.775497, "lon": 1.645285}, {"name": "GAZ 19", "lat": 46.781981, "lon": 1.655303}, {"name": "GAZ 20", "lat": 46.80889, "lon": 1.68222}, {"name": "GAZ 21", "lat": 46.79441, "lon": 1.738541}, {"name": "GAZ 22", "lat": 46.575141, "lon": 1.975482}, {"name": "GAZ 23", "lat": 45.573551, "lon": 2.809866}, {"name": "GAZ 24", "lat": 45.570645, "lon": 2.81235}, {"name": "GAZ 25", "lat": 45.51181, "lon": 2.855211}, {"name": "GAZ 26", "lat": 45.506725, "lon": 2.853273}, {"name": "GAZ 27", "lat": 45.088061, "lon": 2.743896}, {"name": "GAZ 28", "lat": 45.082501, "lon": 2.74972}, {"name": "GAZ 29", "lat": 45.038123, "lon": 3.061439}, {"name": "GAZ 30", "lat": 44.722672, "lon": 3.286028}, {"name": "GAZ 31", "lat": 44.40611, "lon": 4.13361}, {"name": "GAZ 32", "lat": 44.240123, "lon": 4.639142}, {"name": "GAZ 33", "lat": 44.261077, "lon": 4.706398}, {"name": "GAZ 34", "lat": 43.818669, "lon": 5.795409}, {"name": "GAZ 35", "lat": 43.819238, "lon": 5.798349}, {"name": "GAZ 36", "lat": 43.78167, "lon": 6.34194}, {"name": "GAZ 37", "lat": 43.604999, "lon": 6.753372}];
-  let projected=null,positionKm=null,mode='ahead';
+  let projected=null;
   const status=document.getElementById('gasStatus');
   const list=document.getElementById('gasList');
   const gps=document.getElementById('gasGpsBtn');
   const input=document.getElementById('gasKmInput');
   const kmButton=document.getElementById('gasKmBtn');
-  const aheadButton=document.getElementById('gasAheadBtn');
-  const nearestButton=document.getElementById('gasNearestBtn');
   const formatKm=value=>value.toFixed(1).replace('.',',');
   function projectedPoints(){
     if(!projected)projected=rows.map(point=>{
@@ -1714,20 +1705,19 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
   }
   function rankedPoints(km){
     return projectedPoints().map(point=>({...point,delta:point.km-km}))
-      .filter(point=>mode!=='ahead'||point.delta>=0)
+      .filter(point=>point.delta>=0)
       .sort((a,b)=>(Math.abs(a.delta)+a.offRouteMeters/1000)-(Math.abs(b.delta)+b.offRouteMeters/1000)||a.km-b.km);
   }
   function render(km){
-    positionKm=km;
     const points=rankedPoints(km);
-    status.textContent='Position : E'+stageFromKm(km)+' · km '+formatKm(km)+' · '+points.length+' point'+(points.length>1?'s':'')+(mode==='ahead'?' devant toi':' dans le GPX');
+    status.textContent='Position : E'+stageFromKm(km)+' · km '+formatKm(km)+' · '+points.length+' point'+(points.length>1?'s':'')+ ' à venir';
     list.innerHTML=points.length?points.map((point,index)=>{
       const onTrace=point.offRouteMeters<=40;
       const routeDistance=Math.abs(point.delta)<0.05?'À ton niveau sur la trace':(point.delta<0?formatKm(-point.delta)+' km en arrière sur la trace':'Dans '+formatKm(point.delta)+' km sur la trace');
       const offset=onTrace?'Sur la trace':(point.offRouteMeters>=1000?formatKm(point.offRouteMeters/1000)+' km':Math.round(point.offRouteMeters/10)*10+' m')+' hors trace';
       const map='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(point.lat+','+point.lon);
       return '<article class="waterItem gasItem"><div class="waterDistance">'+escapeHtml(routeDistance)+'</div><div class="waterName">'+escapeHtml(point.name)+(index===0?' <span class="gasBadge">Le plus proche</span>':'')+'</div><div class="waterDesc">E'+point.stage+' · km '+formatKm(point.km)+' · '+escapeHtml(offset)+'</div><a class="gasMapLink" href="'+map+'" target="_blank" rel="noopener noreferrer" aria-label="Ouvrir '+escapeHtml(point.name)+' sur la carte">Voir sur la carte</a></article>';
-    }).join(''):'<div class="waterEmpty">Aucun point gaz devant toi dans ce GPX. « Les plus proches » permet de voir les points déjà dépassés.</div>';
+    }).join(''):'<div class="waterEmpty">Aucun autre point gaz prévu jusqu’à l’arrivée.</div>';
     list.scrollTop=0;
   }
   function simulate(){
@@ -1755,17 +1745,9 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
   });
   kmButton.addEventListener('click',simulate);
   input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();simulate();}});
-  function changeMode(next){
-    mode=next;
-    aheadButton.setAttribute('aria-pressed',String(mode==='ahead'));
-    nearestButton.setAttribute('aria-pressed',String(mode==='nearest'));
-    if(positionKm!==null)render(positionKm);
-  }
-  aheadButton.addEventListener('click',()=>changeMode('ahead'));
-  nearestButton.addEventListener('click',()=>changeMode('nearest'));
   document.getElementById('openGasBtn').addEventListener('click',()=>{
     openAppView('gas');
-    if(positionKm===null&&lastShown){input.value=lastShown.km.toFixed(1);render(lastShown.km);}
+    if(lastShown){input.value=lastShown.km.toFixed(1);render(lastShown.km);}
   });
 })();
 </script>
