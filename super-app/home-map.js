@@ -19,7 +19,7 @@
         addMarker(p,icon,title,click){const el=document.createElement('button');el.type='button';el.className='homeMapPin';el.innerHTML='<span>'+icon+'</span>';el.setAttribute('aria-label',title);el.addEventListener('click',e=>{e.stopPropagation();click()});return new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([p.lon,p.lat]).addTo(map)},
         selectMarker(marker,on){marker.getElement().classList.toggle('homeMapPinSelected',on)}
       };
-    }catch(_){document.getElementById('homeMap').replaceChildren();return leaflet({tracks,inactive,start})}
+    }catch(error){console.warn('Carte perspective indisponible : '+error.message);document.getElementById('homeMap').replaceChildren();return leaflet({tracks,inactive,start})}
   }
   function leaflet({tracks,inactive,start}){
     if(!window.L)return null;
