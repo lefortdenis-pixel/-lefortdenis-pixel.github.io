@@ -52,3 +52,13 @@
 @media(max-height:560px){.homeMetro{bottom:calc(87px + env(safe-area-inset-bottom));padding:10px 7px 6px}.homeMetroStop{min-height:83px;gap:3px}.homePoiBubble{bottom:calc(205px + env(safe-area-inset-bottom))}.homeMapTitle{padding:10px 12px}.homeMapTop{top:calc(8px + env(safe-area-inset-top))}}
 @media(min-width:800px){.homeMapTop{left:24px;right:24px}.homeBottomBar{left:50%;right:auto;transform:translateX(-50%);width:540px;border-radius:22px 22px 0 0}.homeMetro{bottom:calc(100px + env(safe-area-inset-bottom))}}
 @media(prefers-reduced-motion:reduce){.homeGpsToggle.is-loading:after{animation:none}}
+
+
+/* One quiet, round position control over the map. */
+.homeMapTop{justify-content:flex-end}
+.homeGpsToggle{width:48px;height:48px;border-radius:50%;background:#fff;color:#182820;border:1px solid #e1e5dc;box-shadow:0 4px 16px #1828201a}
+.homeGpsToggle svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
+.homeGpsToggle[aria-expanded=true]{background:#edf2ff;color:#315ecb}
+.homeGpsToggle.is-loading:after{border-radius:50%}
+#homeMap .maplibregl-ctrl-attrib{font-size:10px;background:#fffffff0}
+#homeMap .homeMapPin{padding:0;cursor:pointer}

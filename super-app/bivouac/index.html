@@ -178,7 +178,7 @@ function projectDb(){return dbPromise??=new Promise((resolve,reject)=>{if(!('ind
 function publishBivouac(){
   if(!S.pts.length||!S.zones.length)return null;
   const coordinate=at(center(S.selected)),route=parentRoute(),canonical=S.mode!=='three'&&S.appRoute;
-  const point={lat:coordinate.lat,lon:coordinate.lng,routeKm:coordinate.km,distanceKm:coordinate.km-routeBase(),routeId:canonical?route?.id:null,routeVersion:canonical?route?.version:null,note:S.mode==='three'?'Depuis le départ de ton GPX':'Depuis la position du projet Bivouac',updatedAt:Date.now()};
+  const point={zoneCoordinates:slice(...bounds(S.selected)),lat:coordinate.lat,lon:coordinate.lng,routeKm:coordinate.km,distanceKm:coordinate.km-routeBase(),routeId:canonical?route?.id:null,routeVersion:canonical?route?.version:null,note:S.mode==='three'?'Depuis le départ de ton GPX':'Depuis la position du projet Bivouac',updatedAt:Date.now()};
   if(window.parent!==window)window.parent.postMessage({type:'bivouac-selection',point},location.origin);
   return point;
 }

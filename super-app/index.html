@@ -10,9 +10,10 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.216 hors ligne</title>
+<title>Traversée 2027 · v1.217 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
-<link rel="stylesheet" href="./home.css?v=1.216">
+<link rel="stylesheet" href="./vendor/maplibre-gl.css">
+<link rel="stylesheet" href="./home.css?v=1.217">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -623,6 +624,9 @@ html,body{height:100%;overflow:hidden}
 .positionFields .waterSim>.waterStatus{grid-column:1 / -1;margin:0 0 3px;font-weight:500}
 .positionFields .manual{margin-top:12px}
 
+/* All menu states share the same surrounding background as other tools. */
+#menuSection.active{background:var(--bg)!important}
+#menuSection.active #menuHost{background:transparent!important}
 </style>
 </head>
 <body>
@@ -631,9 +635,8 @@ html,body{height:100%;overflow:hidden}
   <section class="homeView homeMapView appView active" id="homeView" aria-label="Carte de la traversée">
     <div id="homeMap" aria-label="Carte OpenStreetMap et trace de la traversée"></div>
     <header class="homeMapTop">
-      <h1 class="homeMapTitle">Traversée 2027</h1>
       <div class="homePosition">
-        <button type="button" id="homeGpsToggle" class="homeGpsToggle" aria-label="Position GPS et kilomètre" aria-expanded="false" aria-controls="homeGpsPanel">⌖</button>
+        <button type="button" id="homeGpsToggle" class="homeGpsToggle" aria-label="Position GPS et kilomètre" aria-expanded="false" aria-controls="homeGpsPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg></button>
         <div id="homeGpsPanel" class="homeGpsPanel" hidden>
           <button type="button" id="homeGpsRefresh" class="homeGpsRefresh">Actualiser ma position GPS</button>
           <label for="homeRouteChoice">Parcours</label>
@@ -1016,8 +1019,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.216"></script>
-<script src="./route-engine.js?v=1.216"></script>
+<script src="./route-data.js?v=1.217"></script>
+<script src="./route-engine.js?v=1.217"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1380,7 +1383,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.216';
+const GPX_WATER_URL='./water-points.json?v=1.217';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -2052,6 +2055,28 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 }
 .allDaysMode.saved-mode #menus{padding-top:30px!important}
 .allDaysMode.saved-mode .savedChip{top:0}
+
+/* Generated menus live inside one rounded card, including their navigation. */
+.allDaysMode{
+  display:flex;flex-direction:column;
+  width:calc(100% - 28px);max-width:720px;
+  height:calc(100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 34px)!important;
+  margin:calc(10px + env(safe-area-inset-top)) auto 0;
+  background:#fff!important;border:1px solid #e7e7e0;border-radius:28px;
+  box-shadow:0 8px 24px rgba(18,19,15,.07);overflow:hidden!important;
+}
+.allDaysMode .menuToolbar{flex:0 0 64px;height:64px;padding:10px 12px;background:transparent}
+.allDaysMode #menus{
+  flex:1 1 auto;min-height:0!important;height:auto!important;
+  padding:0 7px 6px!important;
+}
+.allDaysMode.saved-mode #menus{padding-top:30px!important}
+.allDaysMode .bottomNav{
+  flex:0 0 auto;position:static!important;inset:auto!important;
+  width:100%!important;padding:6px 7px 10px!important;border:0!important;
+  border-radius:0!important;box-shadow:none!important;transform:none!important;
+}
+.allDaysMode #validation{display:none!important}
 
 </style><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
 <div id="prepCard">
@@ -2967,8 +2992,11 @@ clearPreparedResults();renderPrepState();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.216"></script>
-<script src="./home.js?v=1.216"></script>
+<script src="./home-bivouac.js?v=1.217"></script>
+<script src="./vendor/maplibre-gl.js"></script>
+<script src="./home-map.js?v=1.217"></script>
+<script src="./home.js?v=1.217"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>
+

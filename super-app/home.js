@@ -80,20 +80,28 @@
     }).join('');
     if(state.map){
       state.markers.forEach(m=>m.remove());state.markers.clear();
+      state.map.setZone(bivouacZone());
       state.points.forEach(item=>{
         if(!item.point)return;
         const p=item.point;
         const title=(p.routeAnchor?'Accès sur la trace · ':'')+(item.id==='water'?cleanWaterName(p):p.name);
-        const marker=L.marker([p.lat,p.lon],{icon:markerIcon(item),title,keyboard:true}).addTo(state.map);
-        marker.on('click',e=>{L.DomEvent.stopPropagation(e);showBubble(item.id,false)});
+        if(item.id==='bivouac'&&p.type!=='camping')return;
+        const marker=state.map.addMarker(p,item.icon,title,()=>showBubble(item.id,false));
         state.markers.set(item.id,marker);
       });
     }
   }
-  function markerIcon(item){return L.divIcon({className:'homeMapPin'+(state.selected===item.id?' homeMapPinSelected':''),html:'<span>'+item.icon+'</span>',iconSize:[36,36],iconAnchor:[18,18]});}
+  function bivouacZone(){
+    const p=state.bivouac;if(!p)return null;
+    if(p.zoneCoordinates?.length>1)return p.zoneCoordinates;
+    if(p.customRoute||!Number.isFinite(p.km))return null;
+    const a=Math.max(0,p.km-3),b=Math.min(DATA.routeLengthKm,p.km+3),coords=[];
+    for(let k=a;k<b;k+=.025){const p=atKm(k);coords.push([p.lat,p.lon])}
+    const end=atKm(b);coords.push([end.lat,end.lon]);return coords;
+  }
   function updateMarkerStyles(){
     if(!state.map)return;
-    state.points.forEach(item=>state.markers.get(item.id)?.setIcon(markerIcon(item)));
+    state.points.forEach(item=>{const m=state.markers.get(item.id);if(m)state.map.selectMarker(m,state.selected===item.id)});
   }
   function showBubble(id,pan=true){
     const item=state.points.find(p=>p.id===id);if(!item)return;
@@ -121,22 +129,16 @@
     status.textContent=(state.position.mode==='gps'?'GPS':'Position saisie')+' · km '+kmText(position.km);
     closeBubble();render();
     if(state.map){
-      if(state.location)state.location.remove();
-      state.location=L.circleMarker([coord.lat,coord.lon],{radius:9,weight:3,color:'#fff',fillColor:'#315ecb',fillOpacity:1}).addTo(state.map);
-      state.location.bindTooltip(state.position.mode==='gps'?'Ma position GPS':'Position au km '+kmText(position.km));
-      if(center)state.map.setView([coord.lat,coord.lon],14,{animate:false});
+      state.map.setPosition(state.position,center);
     }
   }
   function initMap(){
-    if(!window.L){notice('Carte indisponible. Les outils restent accessibles.',0);return;}
-    state.map=L.map('homeMap',{zoomControl:false,preferCanvas:true});
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'}).addTo(state.map);
-    L.polyline(window.TraverseeRoutes.inactiveLeg,{color:'#7d8b7e',weight:3,dashArray:'7 7',opacity:.7,interactive:false}).addTo(state.map);
-    DATA.tracks.forEach(track=>L.polyline(track.map(p=>[p[0],p[1]]),{color:'#315ecb',weight:4,opacity:.95,interactive:false}).addTo(state.map));
-    if(state.position)setPosition(state.position,{persist:false});
-    else state.map.setView(DATA.tracks[0][0].slice(0,2),13);
+    const start=state.position||atKm(0);
+    state.map=window.TraverseeHomeMap.create({tracks:DATA.tracks,inactive:window.TraverseeRoutes.inactiveLeg,start,atKm});
+    if(!state.map){notice('Carte indisponible. Les outils restent accessibles.',0);return}
+    if(state.position)setPosition(state.position,{persist:false});else render();
     state.map.on('click',()=>{closeBubble();closeGps()});
-    requestAnimationFrame(()=>state.map.invalidateSize({pan:false}));
+    requestAnimationFrame(()=>state.map.invalidateSize());
   }
   function gpsBusy(value){state.gpsBusy=value;gps.classList.toggle('is-loading',value);refresh.disabled=value;gps.setAttribute('aria-busy',String(value));}
   function locate(){
@@ -158,7 +160,7 @@
   }
   async function loadPoints(){
     try{
-      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.214':'./home-pois.json?v=1.214');if(!response.ok)throw Error('points');
+      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.217':'./home-pois.json?v=1.217');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}
@@ -174,33 +176,24 @@
       });
       const saved=await new Promise((resolve,reject)=>{const r=db.transaction('projects').objectStore('projects').get('current');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
       if(request!==bivouacRequest)return;
-      const previous=JSON.stringify(state.bivouac);state.bivouac=null;
-      if(saved?.gpx&&saved.mode!=='three'&&Number.isFinite(Number(saved.zones?.[0]))){
-        const xml=new DOMParser().parseFromString(saved.gpx,'application/xml');
-        const points=Array.from(xml.getElementsByTagName('trkpt')).map(p=>[Number(p.getAttribute('lat')),Number(p.getAttribute('lon'))]).filter(p=>p.every(Number.isFinite));
-        if(points.length>1){
-          let walked=0,coordinate=null;const target=Number(saved.progressKm||0)+Number(saved.zones[0]);
-          for(let i=1;i<points.length;i++){
-            const length=havKm(points[i-1],points[i]);
-            if(coordinate===null&&walked+length>=target){const t=length?Math.max(0,Math.min(1,(target-walked)/length)):0;coordinate=[points[i-1][0]+(points[i][0]-points[i-1][0])*t,points[i-1][1]+(points[i][1]-points[i-1][1])*t];}
-            walked+=length;
-          }
-          if(Math.abs(walked-DATA.routeLengthKm)<DATA.routeLengthKm*.03&&coordinate){
-            const r=projectGps(...coordinate);
-            if(r&&r.distanceMeters<=750)state.bivouac={name:'Bivouac prévu',km:r.km,lat:coordinate[0],lon:coordinate[1],offRouteMeters:r.distanceMeters};
-          }
-        }
-      }
+      const previous=JSON.stringify(state.bivouac);
+      const point=window.TraverseeBivouacPoint.fromSaved(saved,{...window.TraverseeRoutes,project:projectGps});
+      if(point&&point.updatedAt<(state.bivouac?.updatedAt||0))return;
+      state.bivouac=point;
       if(previous!==JSON.stringify(state.bivouac)){
         const selected=state.selected;render();
         if(selected)showBubble(selected,false);
       }
     }catch(_){/* A missing optional project does not block the home. */}finally{db?.close();}
   }
+  window.addEventListener('message',event=>{
+    if(event.origin!==location.origin||event.source!==q('bivouacHost')?.contentWindow||event.data?.type!=='bivouac-selection')return;
+    const point=window.TraverseeBivouacPoint.fromSnapshot(event.data.point,window.TraverseeRoutes);if(!point)return;
+    ++bivouacRequest;state.bivouac=point;const selected=state.selected;render();if(selected)showBubble(selected,false);
+  });
   gps.addEventListener('click',()=>panel.hidden?openGps():closeGps());
   refresh.addEventListener('click',locate);
   const routeChoice=q('homeRouteChoice');routeChoice.value=DATA.routeId;
-  if(DATA.routeId==='brenne')root.querySelector('.homeMapTitle').textContent='Traversée 2027 · Brenne';
   routeChoice.addEventListener('change',()=>{if(window.TraverseeRoutes.choose(routeChoice.value)===false){routeChoice.value=DATA.routeId;status.textContent='Impossible de mémoriser le parcours.';}});
   q('homeKmForm').addEventListener('submit',event=>{
     event.preventDefault();if(!input.reportValidity())return;
@@ -251,3 +244,4 @@
   }
   render();initMap();loadPoints();refreshBivouac();locate();
 })();
+
