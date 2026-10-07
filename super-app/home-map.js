@@ -11,7 +11,7 @@
       map.addControl(new maplibregl.AttributionControl({compact:true}),'bottom-right');
       let zone=empty(),position=empty();
       map.on('load',()=>{map.getSource('bivouac').setData(zone);map.getSource('position').setData(position)});
-      const update=(id,data)=>{if(map.isStyleLoaded())map.getSource(id)?.setData(data)};
+      const update=(id,data)=>{map.getSource(id)?.setData(data)};
       return {gl:true,on:(e,fn)=>map.on(e,fn),invalidateSize:()=>map.resize(),getZoom:()=>map.getZoom(),
         setView(ll,z){map.jumpTo({center:[ll[1],ll[0]],zoom:z})},
         setPosition(p,center){position=feature('Point',[p.lon,p.lat]);update('position',position);if(center){const ahead=atKm(p.km+.5);map.jumpTo({center:[p.lon,p.lat],zoom:14.5,pitch:45,bearing:bearing(p,ahead)});map.panBy([0,-Math.min(110,map.getContainer().clientHeight*.16)],{duration:0})}},

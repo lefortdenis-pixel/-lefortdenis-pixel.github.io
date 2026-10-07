@@ -120,7 +120,7 @@
   }
   function setPosition(position,{center=true,persist=true}={}){
     if(!position||!Number.isFinite(position.km)||position.km<0||position.km>DATA.routeLengthKm)return;
-    const coord=Number.isFinite(position.lat)&&Number.isFinite(position.lon)?{lat:position.lat,lon:position.lon}:atKm(position.km);
+    const coord=position.mode==='gps'&&Number.isFinite(position.lat)&&Number.isFinite(position.lon)?{lat:position.lat,lon:position.lon}:atKm(position.km);
     state.position={km:position.km,...coord,mode:position.mode==='gps'?'gps':'km',updatedAt:Date.now(),routeId:DATA.routeId,routeVersion:DATA.version};
     if(persist)safeStorageSet(POSITION_KEY,JSON.stringify(state.position));
     input.value=position.km.toFixed(1);
@@ -160,7 +160,7 @@
   }
   async function loadPoints(){
     try{
-      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.220':'./home-pois.json?v=1.220');if(!response.ok)throw Error('points');
+      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.221':'./home-pois.json?v=1.221');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}
@@ -213,12 +213,12 @@
   });
   root.addEventListener('keydown',event=>{if(event.key==='Escape'){closeBubble();closeGps();gps.focus();}});
   window.addEventListener('traversee-position',event=>{
-    ++state.request;gpsBusy(false);setPosition(event.detail,{center:false});
+    ++state.request;gpsBusy(false);setPosition(event.detail,{center:event.detail?.mode!=='gps'});
   });
   window.addEventListener('traversee-view',event=>{
     closeBubble();closeGps();const name=event.detail.name,p=state.position;
     if(name==='home'){
-      requestAnimationFrame(()=>state.map?.invalidateSize({pan:false}));
+      requestAnimationFrame(()=>{state.map?.invalidateSize({pan:false});if(p)state.map?.setPosition(p,true)});
       refreshBivouac();setTimeout(refreshBivouac,800);
     }
     if(!p)return;
