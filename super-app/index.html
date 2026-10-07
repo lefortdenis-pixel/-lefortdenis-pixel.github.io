@@ -10,10 +10,10 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.221 hors ligne</title>
+<title>Traversée 2027 · v1.222 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.221">
+<link rel="stylesheet" href="./home.css?v=1.222">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -1019,8 +1019,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.221"></script>
-<script src="./route-engine.js?v=1.221"></script>
+<script src="./route-data.js?v=1.222"></script>
+<script src="./route-engine.js?v=1.222"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1383,7 +1383,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.221';
+const GPX_WATER_URL='./water-points.json?v=1.222';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -2992,10 +2992,10 @@ clearPreparedResults();renderPrepState();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.221"></script>
+<script src="./home-bivouac.js?v=1.222"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./home-map.js?v=1.221"></script>
-<script src="./home.js?v=1.221"></script>
+<script src="./home-map.js?v=1.222"></script>
+<script src="./home.js?v=1.222"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>
