@@ -12,8 +12,8 @@
  function at(km){const s=SEGMENTS.find(s=>km<=s.startKm+s.lengthKm)||SEGMENTS.at(-1),t=s.lengthKm?Math.max(0,Math.min(1,(km-s.startKm)/s.lengthKm)):0;return {lat:s.a[0]+(s.b[0]-s.a[0])*t,lon:s.a[1]+(s.b[1]-s.a[1])*t}}
  function eligible(p){return p.level==='complete'&&p.offRouteMeters<=5000}
  function next(km){return E.upcoming(points,km).find(p=>p.level!=='backup'&&p.offRouteMeters<=5000)||null}
- function distance(p){return position?days(Math.max(0,p.km-position.km))+' · '+Math.round(Math.max(0,p.km-position.km))+' km sur la trace':'Km '+Math.round(p.km)+' sur le parcours'}
- function access(p){const m=p.offRouteMeters;if(!Number.isFinite(m))return '';return 'À '+(m<1000?Math.max(10,Math.round(m/10)*10)+' m':fmt(m/1000)+' km')+' de la trace · à vol d’oiseau'}
+ function distance(p){return position?days(Math.max(0,p.km-position.km))+' · au kilomètre '+Math.round(p.km):'Au kilomètre '+Math.round(p.km)}
+ function access(p){const m=p.offRouteMeters;if(!Number.isFinite(m))return '';return m<=500?'Sur la trace':'À '+(m<1000?Math.round(m/10)*10+' m':fmt(m/1000)+' km')+' de la trace'}
  const serviceIcons={shower:['Douche','🚿'],washer:['Lave-linge','<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="2" width="18" height="20" rx="3"/><path d="M3 7h18M6 4.5h3"/><circle cx="12" cy="14" r="5"/><path d="M8 14q2-2 4 0t4 0"/></svg>'],dryer:['Sèche-linge','<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="17" cy="6" r="3"/><path d="M17 1v1m0 8v1m-5-5h1m8 0h1M2 12h12q4 0 4 3t-4 3M2 16h7M2 20h10"/></svg>'],power:['Recharge','🔌'],sleep:['Camping','⛺']};
  function service(p){return Object.entries(serviceIcons).map(([k,[name,icon]])=>{const status=p.services[k]===true?'Confirmé':p.services[k]===false?'Absent':'À confirmer',label=name+' : '+status;return '<li class="resetService '+(p.services[k]===true?'yes':p.services[k]===false?'no':'unknown')+'" title="'+label+'" aria-label="'+label+'"><span aria-hidden="true">'+icon+'</span>'+(['washer','dryer'].includes(k)?'<small>'+(k==='washer'?'Lavage':'Séchage')+'</small>':'')+'<b aria-hidden="true">'+(p.services[k]===true?'✓':p.services[k]===false?'×':'?')+'</b></li>'}).join('')}
 
@@ -41,7 +41,7 @@
  q('resetRouteChoice').addEventListener('change',()=>{if(window.TraverseeRoutes.choose(q('resetRouteChoice').value)===false)q('resetMessage').textContent='Impossible de mémoriser le parcours.'});
  q('openResetBtn').addEventListener('click',()=>openAppView('reset'));
  window.addEventListener('traversee-home-position',event=>{position=event.detail;selectedId=null;recordSample(position);render()});
- window.addEventListener('traversee-view',event=>{if(event.detail.name!=='reset')return;render();initMap();requestAnimationFrame(()=>map?.invalidateSize());if(selectedId)select(selectedId)});
+ window.addEventListener('traversee-view',event=>{if(event.detail.name!=='reset')return;render();initMap();requestAnimationFrame(()=>{map?.invalidateSize();updateMap()});if(selectedId)select(selectedId)});
  window.TraverseeResets={points,next,open(id){selectedId=id;q('openResetBtn').click()},pace};
  render();
 })();
