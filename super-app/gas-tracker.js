@@ -84,7 +84,7 @@
   const outOfRange=!missed&&d?.kind==='urgent'&&d.target?.id===target?.id;
   const label=target?pointLabel(target,target.km):'';
   const distance=target&&position?fmt(Math.max(0,target.km-position.km)):'';
-  const place=/^Point de ravitaillement/.test(label)?'Magasin au km '+fmt(target.km):label;
+  const place=/^Point de ravitaillement/.test(label)?'':label;
   const next=target?getPoints().filter(p=>p.status==='identified'&&p.offRouteMeters<=5000&&p.km>target.km+.05).sort((a,b)=>a.km-b.km)[0]:null;
   const gapKm=target?Math.max(0,(next?.km??DATA.routeLengthKm)-target.km):0;
   const gapDays=target?(gapKm+2*(next?.offRouteMeters||0)/1000)/PACE:0;
@@ -102,7 +102,7 @@
   }
   const banner=q('homeGasAlert');
   banner.classList.toggle('gasWarning',!!activeAlert||!!(d?.kind==='urgent'));
-  banner.innerHTML='<strong>🔥 '+esc(title)+'</strong><span>'+esc(detail)+'</span>';
+  banner.innerHTML='<strong>🔥 '+esc(title)+'</strong>'+(detail?'<span>'+esc(detail)+'</span>':'');
 
   const status=q('gasCartStatus');
   status.textContent=state.cart?state.cart.grams+' g · commencée le '+state.cart.started.split('-').reverse().join('/')+' · environ '+fmt(days)+' jours restants':'Aucune cartouche déclarée';
@@ -113,18 +113,17 @@
    result.innerHTML='<strong>Cartouche enregistrée</strong><p>Indique ton kilomètre pour que l’app calcule quand acheter.</p>';
   }else if(activeAlert){
    const heading=missed?'Achète du gaz dès que possible':outOfRange?'Cherche du gaz dès maintenant':purchase+' dans '+distance+' km';
-   result.innerHTML='<strong>'+esc(heading)+'</strong><p>'+esc(missed?'Tu as dépassé le magasin prévu : '+place+'.':place)+'</p>';
+   result.innerHTML='<strong>'+esc(heading)+'</strong>'+(missed?'<p>'+esc('Tu as dépassé le magasin prévu'+(place?' : '+place:'')+'.')+'</p>':place?'<p>'+esc(place)+'</p>':'');
    if(!missed){
     result.innerHTML+='<p>'+(outOfRange?'Le prochain vendeur enregistré est dans '+distance+' km, trop loin pour ton autonomie restante.':next?'Ta cartouche ne suffira pas pour atteindre le vendeur identifié suivant.':'Ta cartouche ne suffira pas pour terminer le parcours.')+'</p>';
     if(gapDays>14)result.innerHTML+='<p class="gasRisk">'+esc(next?'Aucun autre vendeur identifié enregistré sur les '+fmt(gapKm)+' km suivants.':'Aucun autre vendeur identifié enregistré jusqu’à l’arrivée.')+'</p>';
     if(!outOfRange)result.innerHTML+='<a class="gasDirections" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(target.lat+','+target.lon)+'" target="_blank" rel="noopener">Y aller ↗</a>';
    }
    if(alternative&&!missed)result.innerHTML+='<p class="gasFollow">Autre possibilité dans '+fmt(alternative.km-position.km)+' km : '+esc(pointLabel(alternative,alternative.km))+'. Gaz compatible à vérifier.</p>';
-   result.innerHTML+='<p class="gasFollow">Continue à utiliser ta cartouche actuelle. Quand tu la remplaces, appuie sur « Je change de cartouche ».</p>';
   }else if(d?.kind==='finish'){
    result.innerHTML='<strong>Rien à faire maintenant</strong><p>Ta cartouche couvre la fin du parcours avec la marge prévue.</p>';
   }else if(d?.target){
-   result.innerHTML='<strong>Rien à faire maintenant</strong><p>Prochain achat dans '+distance+' km.</p><p>'+esc(place)+'</p>';
+   result.innerHTML='<strong>Rien à faire maintenant</strong><p>Prochain achat dans '+distance+' km.</p>'+(place?'<p>'+esc(place)+'</p>':'');
   }else{
    result.innerHTML='<strong>Cherche un vendeur de gaz</strong><p>Aucun vendeur enregistré n’est assez proche pour ton autonomie restante.</p>';
   }
