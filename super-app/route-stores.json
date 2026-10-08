@@ -266,24 +266,40 @@
   {
     "stage": 65,
     "km": 1512.8,
-    "name": "Carrefour Express — Lou Claoux",
+    "name": "Carrefour Express — Lou Claoux — Le Bleymard",
     "role": "NORMAL",
     "reliability": 4,
-    "status": "Routage réel prioritaire",
-    "source": "https://www.visorando.com/randonnee-chasserades-le-bleymard/ | https://www.chemin-stevenson.org/autres_prestations/commercants-carrefour-express-le-bleymard-sas-la-gazelle/",
-    "anchorLat": 44.483115541492324,
-    "anchorLon": 3.686387774871068
+    "status": "Identifié",
+    "source": "https://www.carrefour.fr/magasin/express-mont-lozere-et-goulet | https://www.openstreetmap.org/node/1467628205",
+    "lat": 44.4901,
+    "lon": 3.74019,
+    "offRouteMeters": 454,
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/1467628205",
+      "coordinateMatchMeters": 0.2,
+      "hoursConfirmed": false
+    }
   },
   {
     "stage": 78,
     "km": 1789.3,
-    "name": "Magasin UTILE — Céreste-en-Luberon",
+    "name": "Utile — Céreste",
     "role": "NORMAL",
     "reliability": 4,
-    "status": "Routage réel prioritaire — très bon candidat",
-    "source": "https://magasins.utile-upf.fr/55-utile-cereste | https://mapcarta.com/fr/W153367914 | https://mapcarta.com/fr/N7435414980",
-    "anchorLat": 43.90271963995159,
-    "anchorLon": 5.617515002006246
+    "status": "Identifié",
+    "source": "https://magasins.utile-upf.fr/55-utile-cereste | https://www.openstreetmap.org/node/7476393057",
+    "lat": 43.85806,
+    "lon": 5.59797,
+    "offRouteMeters": 126,
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/7476393057",
+      "coordinateMatchMeters": 0.4,
+      "hoursConfirmed": false
+    }
   },
   {
     "stage": 49,
@@ -310,13 +326,21 @@
   {
     "stage": 51,
     "km": 1229.4,
-    "name": "SPAR Deli Kat n Fred — Le Lioran",
+    "name": "Spar — Le Lioran",
     "role": "SECOURS",
     "reliability": 4,
-    "status": "Saisonnier — non garanti fin mai",
-    "source": "https://www.hautesterrestourisme.fr/fr/fiche/commerce-et-service/spar-deli-kat-n-fred-superette-produits-locaux-le-lioran_TFO4703089/",
-    "anchorLat": 45.102307905772314,
-    "anchorLon": 2.7163847865493387
+    "status": "Identifié",
+    "source": "https://magasins.spar.fr/fr/s/spar-laveissiere | https://www.openstreetmap.org/node/11847043468",
+    "lat": 45.0828,
+    "lon": 2.7495,
+    "offRouteMeters": 18,
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/11847043468",
+      "coordinateMatchMeters": 0.4,
+      "hoursConfirmed": false
+    }
   },
   {
     "stage": 52,
@@ -335,10 +359,18 @@
     "name": "Saveurs des Volcans d’Auvergne — Valuéjols",
     "role": "NORMAL",
     "reliability": 4,
-    "status": "Vérifié — ravito robuste",
-    "source": "https://valuejols.fr/vivre-a-valuejols/commerces-et-entreprises/",
-    "anchorLat": 45.0518962410103,
-    "anchorLon": 2.8861088378949225
+    "status": "Identifié",
+    "source": "https://valuejols.fr/vivre-a-valuejols/commerces-et-entreprises/ | https://www.openstreetmap.org/node/2326067307",
+    "lat": 45.05267,
+    "lon": 2.93376,
+    "offRouteMeters": 32,
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/2326067307",
+      "coordinateMatchMeters": 0.2,
+      "hoursConfirmed": false
+    }
   },
   {
     "stage": 49,
@@ -570,10 +602,18 @@
     "lat": 49.27702,
     "lon": -0.25586,
     "offRouteMeters": 373,
-    "name": "Commerce alimentaire à vérifier — E01",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Proxi — Ouistreham",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://acceslibre.beta.gouv.fr/app/14-ouistreham/a/superette/erp/proxi-31/ | https://www.openstreetmap.org/node/5033073145",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/5033073145",
+      "coordinateMatchMeters": 0.4,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 5.078,
@@ -581,10 +621,18 @@
     "lat": 49.24415,
     "lon": -0.27729,
     "offRouteMeters": 224,
-    "name": "Commerce alimentaire à vérifier — E01",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "CocciMarket — Bénouville",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.coccinelle.fr/magasins?page=3 | https://www.openstreetmap.org/node/13996895439",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/13996895439",
+      "coordinateMatchMeters": 0.4,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 16.06,
@@ -592,10 +640,18 @@
     "lat": 49.1849,
     "lon": -0.34919,
     "offRouteMeters": 47,
-    "name": "Commerce alimentaire à vérifier — E01",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Lidl — Caen Tourville",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.lidl.fr/s/fr-FR/supermarches/caen/avenue-de-tourville-57/ | https://www.openstreetmap.org/node/12405619702",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/12405619702",
+      "coordinateMatchMeters": 0.4,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 369.269,
@@ -603,10 +659,18 @@
     "lat": 47.87154,
     "lon": 0.33296,
     "offRouteMeters": 174,
-    "name": "Commerce alimentaire à vérifier — E15",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Le Petit Marché — Saint-Mars-d’Outillé",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://stmarsdoutille.fr/cadre-de-vie/annuaire-des-commercants-et-artisans/ | https://www.openstreetmap.org/node/13784244441",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/13784244441",
+      "coordinateMatchMeters": 0.2,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 397.928,
@@ -614,10 +678,18 @@
     "lat": 47.75715,
     "lon": 0.27335,
     "offRouteMeters": 27,
-    "name": "Commerce alimentaire à vérifier — E16",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "SPAR — Mayet",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://annuaire-entreprises.data.gouv.fr/etablissement/83128404700022 | https://www.openstreetmap.org/way/301578409",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/way/301578409",
+      "coordinateMatchMeters": 6.1,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 412.119,
@@ -625,10 +697,18 @@
     "lat": 47.68981,
     "lon": 0.20206,
     "offRouteMeters": 10,
-    "name": "Commerce alimentaire à vérifier — E17",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Café de la Mairie — Coulongé",
+    "role": "SECOURS",
+    "reliability": 2,
+    "status": "Identifié",
+    "source": "https://www.villepratique.fr/bureaux-tabac/coulonge-72800/cafe-de-la-mairie | https://www.openstreetmap.org/node/11298984756",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/11298984756",
+      "coordinateMatchMeters": 0.2,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 523.689,
@@ -636,10 +716,18 @@
     "lat": 47.22288,
     "lon": 0.02908,
     "offRouteMeters": 22,
-    "name": "Commerce alimentaire à vérifier — E21",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "La Cave — Turquant",
+    "role": "SECOURS",
+    "reliability": 2,
+    "status": "Identifié",
+    "source": "https://www.turquant.fr/annuaire/12169/commune | https://www.openstreetmap.org/node/7746845341",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/7746845341",
+      "coordinateMatchMeters": 0.5,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 526.528,
@@ -647,10 +735,18 @@
     "lat": 47.21642,
     "lon": 0.05726,
     "offRouteMeters": 31,
-    "name": "Commerce alimentaire à vérifier — E21",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Vivéco — Montsoreau",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://ville-montsoreau.fr/vivre-ici/commerce-et-artisanat-liste-de-commerces/viveco/ | https://www.openstreetmap.org/node/1768493590",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/1768493590",
+      "coordinateMatchMeters": 0.2,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 534.659,
@@ -658,10 +754,18 @@
     "lat": 47.18195,
     "lon": 0.04963,
     "offRouteMeters": 35,
-    "name": "Commerce alimentaire à vérifier — E22",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Chez Mimie — Fontevraud-l’Abbaye",
+    "role": "EXCLU",
+    "reliability": 0,
+    "status": "Restaurant identifié ; activité de ravitaillement en épicerie non confirmée",
+    "source": "https://www.loireavelo.fr/tsft/chez-mimie-fontevraud-labbaye/ | https://www.openstreetmap.org/node/1768496466",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "excluded-after-review",
+      "osm": "https://www.openstreetmap.org/node/1768496466",
+      "coordinateMatchMeters": 0.4,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 551.543,
@@ -669,10 +773,18 @@
     "lat": 47.1666,
     "lon": 0.23969,
     "offRouteMeters": 129,
-    "name": "Commerce alimentaire à vérifier — E22",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Carrefour City — Chinon",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.carrefour.fr/magasin/city-chinon | https://www.openstreetmap.org/node/12612794894",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/12612794894",
+      "coordinateMatchMeters": 0.5,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 556.912,
@@ -680,10 +792,18 @@
     "lat": 47.18339,
     "lon": 0.26548,
     "offRouteMeters": 343,
-    "name": "Commerce alimentaire à vérifier — E23",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "E. Leclerc — Chinon",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.e.leclerc/mag/e-leclerc-chinon | https://www.openstreetmap.org/way/94667042",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/way/94667042",
+      "coordinateMatchMeters": 42.5,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 580.578,
@@ -691,10 +811,18 @@
     "lat": 47.26144,
     "lon": 0.46565,
     "offRouteMeters": 5,
-    "name": "Commerce alimentaire à vérifier — E24",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Carrefour Express — Azay-le-Rideau",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.carrefour.fr/magasin/express-azay-le-rideau | https://www.openstreetmap.org/node/13730559201",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/13730559201",
+      "coordinateMatchMeters": 0.2,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 597.146,
@@ -702,10 +830,18 @@
     "lat": 47.34806,
     "lon": 0.54623,
     "offRouteMeters": 35,
-    "name": "Commerce alimentaire à vérifier — E24",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "SPAR — Savonnières",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.pappers.fr/entreprise/verdier-jean-louis-301615050 | https://www.openstreetmap.org/node/461205656",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/461205656",
+      "coordinateMatchMeters": 0.4,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 619.431,
@@ -713,10 +849,18 @@
     "lat": 47.36901,
     "lon": 0.70783,
     "offRouteMeters": 77,
-    "name": "Commerce alimentaire à vérifier — E25",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Carrefour Market — Tours Fontaines",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.carrefour.fr/magasin/market-tours-fontaines | https://www.openstreetmap.org/node/627499484",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/627499484",
+      "coordinateMatchMeters": 6.3,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 621.117,
@@ -724,10 +868,18 @@
     "lat": 47.36743,
     "lon": 0.7269,
     "offRouteMeters": 406,
-    "name": "Commerce alimentaire à vérifier — E25",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "La Mesure — Saint-Avertin",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.pappers.fr/entreprise/saint-georges-843548421 | https://www.openstreetmap.org/node/6185847876",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/6185847876",
+      "coordinateMatchMeters": 0.2,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 636.783,
@@ -735,10 +887,18 @@
     "lat": 47.28371,
     "lon": 0.78672,
     "offRouteMeters": 51,
-    "name": "Commerce alimentaire à vérifier — E26",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "L’Art à Table — Esvres",
+    "role": "EXCLU",
+    "reliability": 0,
+    "status": "Ancien point cartographique sans confirmation indépendante de l’activité actuelle",
+    "source": "https://mapcarta.com/fr/N3940653250 | https://www.openstreetmap.org/node/3940653250",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "excluded-after-review",
+      "osm": "https://www.openstreetmap.org/node/3940653250",
+      "coordinateMatchMeters": 0.4,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 644.668,
@@ -746,10 +906,18 @@
     "lat": 47.26812,
     "lon": 0.83588,
     "offRouteMeters": 106,
-    "name": "Commerce alimentaire à vérifier — E26",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Le Panier de Féfé — Cormery",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.cormery.fr/vivre-a-cormery/commerces-artisants/ | https://www.openstreetmap.org/node/1120476027",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/1120476027",
+      "coordinateMatchMeters": 0.3,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 656.064,
@@ -757,10 +925,18 @@
     "lat": 47.22714,
     "lon": 0.91628,
     "offRouteMeters": 96,
-    "name": "Commerce alimentaire à vérifier — E26",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Proxy — Azay-sur-Indre",
+    "role": "SECOURS",
+    "reliability": 2,
+    "status": "Identifié",
+    "source": "https://ville-data.com/magasin/Azay-sur-Indre-37-37016 | https://www.openstreetmap.org/way/63214585",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/way/63214585",
+      "coordinateMatchMeters": 1.2,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 682.515,
@@ -768,10 +944,18 @@
     "lat": 47.12868,
     "lon": 0.99708,
     "offRouteMeters": 344,
-    "name": "Commerce alimentaire à vérifier — E27",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Les Paniers d’Angélique — Loches",
+    "role": "SECOURS",
+    "reliability": 2,
+    "status": "Identifié",
+    "source": "https://app.cagette.net/cooperative-paysanne-de-beletre | https://www.openstreetmap.org/node/5840879053",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/5840879053",
+      "coordinateMatchMeters": 0.7,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 746.714,
@@ -779,10 +963,18 @@
     "lat": 46.93059,
     "lon": 1.33995,
     "offRouteMeters": 123,
-    "name": "Commerce alimentaire à vérifier — E30",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Le Rabelais — Saint-Genou",
+    "role": "SECOURS",
+    "reliability": 2,
+    "status": "Identifié",
+    "source": "https://www.achat-indre.com/ann7490-LE-RABELAIS.htm | https://www.openstreetmap.org/node/5089774284",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/5089774284",
+      "coordinateMatchMeters": 0.4,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 775.418,
@@ -790,10 +982,18 @@
     "lat": 46.84758,
     "lon": 1.53726,
     "offRouteMeters": 9,
-    "name": "Commerce alimentaire à vérifier — E31",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Mini Marché — Villedieu-sur-Indre",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://annuaire-entreprises.data.gouv.fr/entreprise/982961351 | https://www.openstreetmap.org/node/13644142358",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/13644142358",
+      "coordinateMatchMeters": 0.5,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 780.069,
@@ -801,10 +1001,18 @@
     "lat": 46.82917,
     "lon": 1.5647,
     "offRouteMeters": 7,
-    "name": "Commerce alimentaire à vérifier — E31",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "PCS Gastronomie — Niherne",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.pagesjaunes.fr/pros/08960714 | https://www.openstreetmap.org/node/13647271775",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/13647271775",
+      "coordinateMatchMeters": 0.3,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 795.102,
@@ -812,10 +1020,18 @@
     "lat": 46.81102,
     "lon": 1.68043,
     "offRouteMeters": 233,
-    "name": "Commerce alimentaire à vérifier — E32",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Épicerie Mazagan — Châteauroux",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.epiciersdefrance.org/annuaire/epicerie-epicerie-mazagan | https://www.openstreetmap.org/node/7346310744",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/7346310744",
+      "coordinateMatchMeters": 0.2,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 803.846,
@@ -823,10 +1039,18 @@
     "lat": 46.79638,
     "lon": 1.70629,
     "offRouteMeters": 77,
-    "name": "Commerce alimentaire à vérifier — E32",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Netto — Châteauroux",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://magasin.netto.fr/481-netto-chateauroux | https://www.openstreetmap.org/way/186035492",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/way/186035492",
+      "coordinateMatchMeters": 10.6,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 877.452,
@@ -834,10 +1058,18 @@
     "lat": 46.48638,
     "lon": 2.07002,
     "offRouteMeters": 50,
-    "name": "Commerce alimentaire à vérifier — E35",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Proxi — Sainte-Sévère-sur-Indre",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://sainte-severe-sur-indre.fr/proxi/ | https://www.openstreetmap.org/node/3655602783",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/3655602783",
+      "coordinateMatchMeters": 0.4,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 951.926,
@@ -845,10 +1077,18 @@
     "lat": 46.18658,
     "lon": 2.43033,
     "offRouteMeters": 130,
-    "name": "Commerce alimentaire à vérifier — E38",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Intermarché — Chambon-sur-Voueize",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.intermarche.com/magasins/50118/chambon-sur-voueize-23170/infos-pratiques | https://www.openstreetmap.org/way/297040981",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/way/297040981",
+      "coordinateMatchMeters": 6.5,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 974.153,
@@ -856,10 +1096,18 @@
     "lat": 46.04987,
     "lon": 2.38872,
     "offRouteMeters": 23,
-    "name": "Commerce alimentaire à vérifier — E39",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Vival — Mainsat",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.tourisme-creuse.com/marche-et-combraille/bouger/itinerance/grp-marche-et-combraille-en-aquitaine/grp-boucle-de-la-combraille/ | https://www.openstreetmap.org/node/12232856388",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/12232856388",
+      "coordinateMatchMeters": 0.4,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1017.083,
@@ -867,10 +1115,18 @@
     "lat": 45.86754,
     "lon": 2.36824,
     "offRouteMeters": 9,
-    "name": "Commerce alimentaire à vérifier — E41",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Vival — Crocq",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://vival.casino.fr/stores/e0114/crocq-43-grand-rue | https://www.openstreetmap.org/node/12000426969",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/12000426969",
+      "coordinateMatchMeters": 0.5,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1038.381,
@@ -878,10 +1134,18 @@
     "lat": 45.8523,
     "lon": 2.56284,
     "offRouteMeters": 51,
-    "name": "Commerce alimentaire à vérifier — E42",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Boulangerie-épicerie Multiple Rural — Condat-en-Combraille",
+    "role": "SECOURS",
+    "reliability": 2,
+    "status": "Identifié",
+    "source": "https://www.combrailles-auvergne-tourisme.fr/annuaire-pratique/alimentation/supermarches-et-epiceries/ | https://www.openstreetmap.org/node/1545915306",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/1545915306",
+      "coordinateMatchMeters": 0.5,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1051.669,
@@ -889,10 +1153,18 @@
     "lat": 45.86793,
     "lon": 2.67504,
     "offRouteMeters": 16,
-    "name": "Commerce alimentaire à vérifier — E43",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "La Gentiane — Pontaumur",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://pontaumur.fr/commerces/ | https://www.openstreetmap.org/node/11957614122",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/11957614122",
+      "coordinateMatchMeters": 0.5,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1061.182,
@@ -900,10 +1172,18 @@
     "lat": 45.89867,
     "lon": 2.71706,
     "offRouteMeters": 32,
-    "name": "Commerce alimentaire à vérifier — E43",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Chez Greg et Sab — Miremont",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.combrailles-auvergne-tourisme.fr/commerce-et-service/epicerie-multi-services-chez-greg-et-sab-miremont/ | https://www.openstreetmap.org/node/6653018769",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/6653018769",
+      "coordinateMatchMeters": 0.4,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1153.388,
@@ -911,10 +1191,18 @@
     "lat": 45.51118,
     "lon": 2.85549,
     "offRouteMeters": 43,
-    "name": "Commerce alimentaire à vérifier — E48",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Proxi Maison Métrard — Super-Besse",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://acceslibre.beta.gouv.fr/app/63-besse-et-saint-anastaise/a/superette/erp/proxi-pgm-maison-metrard/ | https://www.openstreetmap.org/node/7755721385",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/7755721385",
+      "coordinateMatchMeters": 0.5,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1169.175,
@@ -922,10 +1210,18 @@
     "lat": 45.40769,
     "lon": 2.82723,
     "offRouteMeters": 5,
-    "name": "Commerce alimentaire à vérifier — E49",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Petit Casino — Égliseneuve-d’Entraigues",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://annuaire-entreprises.data.gouv.fr/etablissement/42826802329878 | https://www.openstreetmap.org/way/84935109",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/way/84935109",
+      "coordinateMatchMeters": 2.7,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1183.954,
@@ -933,32 +1229,18 @@
     "lat": 45.33997,
     "lon": 2.75914,
     "offRouteMeters": 9,
-    "name": "Commerce alimentaire à vérifier — E49",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
-  },
-  {
-    "km": 1233.874,
-    "stage": 51,
-    "lat": 45.0828,
-    "lon": 2.7495,
-    "offRouteMeters": 18,
-    "name": "Commerce alimentaire à vérifier — E51",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
-  },
-  {
-    "km": 1260.24,
-    "stage": 53,
-    "lat": 45.05267,
-    "lon": 2.93376,
-    "offRouteMeters": 32,
-    "name": "Commerce alimentaire à vérifier — E53",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Burons & Bouchons — Condat",
+    "role": "SECOURS",
+    "reliability": 2,
+    "status": "Identifié",
+    "source": "https://www.burons-bouchons.fr/qui-sommes-nous/notre-histoire-cantalienne/ | https://www.openstreetmap.org/node/13020316625",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/13020316625",
+      "coordinateMatchMeters": 0.3,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1336.648,
@@ -966,10 +1248,18 @@
     "lat": 44.818,
     "lon": 3.11987,
     "offRouteMeters": 257,
-    "name": "Commerce alimentaire à vérifier — E56",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Votre Marché — Fournels",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.aubrac-lozere.com/wp-content/uploads/2025/10/Plan-Fournels.pdf | https://www.openstreetmap.org/node/3004138225",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/3004138225",
+      "coordinateMatchMeters": 0.2,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1388.418,
@@ -977,10 +1267,18 @@
     "lat": 44.66259,
     "lon": 3.04546,
     "offRouteMeters": 5,
-    "name": "Commerce alimentaire à vérifier — E59",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Votre Marché — Nasbinals",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.epiciersdefrance.org/annuaire/epicerie-votre-marche-10 | https://www.openstreetmap.org/node/1995678808",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/1995678808",
+      "coordinateMatchMeters": 0.5,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1404.733,
@@ -988,21 +1286,18 @@
     "lat": 44.59117,
     "lon": 2.92219,
     "offRouteMeters": 39,
-    "name": "Commerce alimentaire à vérifier — E59",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
-  },
-  {
-    "km": 1518.261,
-    "stage": 65,
-    "lat": 44.4901,
-    "lon": 3.74019,
-    "offRouteMeters": 454,
-    "name": "Commerce alimentaire à vérifier — E65",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "La Saint-Chéloise — Saint-Chély-d’Aubrac",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.tourisme-aveyron.com/fr/diffusio/autres-commerces/boulangerie-epicerie-la-saint-cheloise-saint-chely-d-aubrac_TFO500225742343 | https://www.openstreetmap.org/way/143981927",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/way/143981927",
+      "coordinateMatchMeters": 1.9,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1542.623,
@@ -1010,10 +1305,18 @@
     "lat": 44.44134,
     "lon": 3.93174,
     "offRouteMeters": 10,
-    "name": "Commerce alimentaire à vérifier — E66",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "La Petite Boutique — Villefort",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.lozere-tourisme.com/commerce-service/la-petite-boutique/ | https://www.openstreetmap.org/node/9979497115",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/9979497115",
+      "coordinateMatchMeters": 0.6,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1569.044,
@@ -1021,10 +1324,18 @@
     "lat": 44.40531,
     "lon": 4.13256,
     "offRouteMeters": 6,
-    "name": "Commerce alimentaire à vérifier — E67",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Le Garde-Manger Bio — Les Vans",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.cevennes-ardeche.com/commerce-service/le-garde-manger-bio-34477/ | https://www.openstreetmap.org/node/5528062777",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/5528062777",
+      "coordinateMatchMeters": 0.5,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1587.101,
@@ -1032,10 +1343,18 @@
     "lat": 44.38124,
     "lon": 4.27667,
     "offRouteMeters": 352,
-    "name": "Commerce alimentaire à vérifier — E68",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Ancien point alimentaire — Grospierres",
+    "role": "EXCLU",
+    "reliability": 0,
+    "status": "Point sans nom ; correspondance précise avec un commerce accessible non confirmée",
+    "source": "https://www.openstreetmap.org/node/6468045814 | https://www.openstreetmap.org/node/6468045814",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "excluded-after-review",
+      "osm": "https://www.openstreetmap.org/node/6468045814",
+      "coordinateMatchMeters": 0.2,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1629.92,
@@ -1043,10 +1362,18 @@
     "lat": 44.29408,
     "lon": 4.56706,
     "offRouteMeters": 50,
-    "name": "Commerce alimentaire à vérifier — E70",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "U Express — Saint-Julien-de-Peyrolas",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.pagesjaunes.fr/annuaire/ardoise-l-30/location-d-automobiles-tourisme-et-utilitaires | https://www.openstreetmap.org/node/12780098978",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/12780098978",
+      "coordinateMatchMeters": 0.2,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1634.878,
@@ -1054,10 +1381,18 @@
     "lat": 44.26253,
     "lon": 4.59754,
     "offRouteMeters": 254,
-    "name": "Commerce alimentaire à vérifier — E70",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Proxi — Saint-Paulet-de-Caisson",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.myproxi.fr/proxi-alimentation-generale-saint-paulet-de-caisson | https://www.openstreetmap.org/node/13031886701",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/13031886701",
+      "coordinateMatchMeters": 0.5,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1639.54,
@@ -1065,10 +1400,18 @@
     "lat": 44.25842,
     "lon": 4.64958,
     "offRouteMeters": 15,
-    "name": "Commerce alimentaire à vérifier — E70",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Bonjour — station TotalEnergies, Pont-Saint-Esprit",
+    "role": "SECOURS",
+    "reliability": 2,
+    "status": "Identifié",
+    "source": "https://services.totalenergies.fr | https://www.openstreetmap.org/node/7778217076",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/7778217076",
+      "coordinateMatchMeters": 0.3,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1647.354,
@@ -1076,10 +1419,18 @@
     "lat": 44.23479,
     "lon": 4.71059,
     "offRouteMeters": 173,
-    "name": "Commerce alimentaire à vérifier — E70",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Carrefour Contact Mondragon — Mondragon",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.carrefour.fr/magasin/contact-mondragon | https://www.openstreetmap.org/way/76309991",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/way/76309991",
+      "coordinateMatchMeters": 4.3,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1665.559,
@@ -1087,10 +1438,18 @@
     "lat": 44.2323,
     "lon": 4.88234,
     "offRouteMeters": 50,
-    "name": "Commerce alimentaire à vérifier — E71",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "U Express — Sainte-Cécile-les-Vignes",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.magasins-u.com/magasin/uexpress-saintececilelesvignes.m91230 | https://www.openstreetmap.org/node/8108636340",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/8108636340",
+      "coordinateMatchMeters": 0.6,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1672.213,
@@ -1098,10 +1457,18 @@
     "lat": 44.23035,
     "lon": 4.93227,
     "offRouteMeters": 226,
-    "name": "Commerce alimentaire à vérifier — E71",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "À la Petite Jeanette — Cairanne",
+    "role": "SECOURS",
+    "reliability": 2,
+    "status": "Identifié",
+    "source": "https://mapcarta.com/fr/N4319347729 | https://www.openstreetmap.org/node/4319347729",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/4319347729",
+      "coordinateMatchMeters": 0.5,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1683.916,
@@ -1109,21 +1476,18 @@
     "lat": 44.2449,
     "lon": 5.01846,
     "offRouteMeters": 79,
-    "name": "Commerce alimentaire à vérifier — E72",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
-  },
-  {
-    "km": 1796.317,
-    "stage": 78,
-    "lat": 43.85806,
-    "lon": 5.59797,
-    "offRouteMeters": 126,
-    "name": "Commerce alimentaire à vérifier — E78",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Proxi — Rasteau",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.pagesjaunes.fr/annuaire/rasteau-84/magasin-alimentaire | https://www.openstreetmap.org/way/79956665",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/way/79956665",
+      "coordinateMatchMeters": 5.7,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1813.406,
@@ -1131,10 +1495,18 @@
     "lat": 43.8112,
     "lon": 5.74986,
     "offRouteMeters": 122,
-    "name": "Commerce alimentaire à vérifier — E78",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Vival — Pierrevert",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://vival.casino.fr/stores/e3399/pierrevert-place-du-19-mars-1962 | https://www.openstreetmap.org/node/1822111755",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/1822111755",
+      "coordinateMatchMeters": 0.4,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1817.801,
@@ -1142,10 +1514,18 @@
     "lat": 43.83027,
     "lon": 5.78478,
     "offRouteMeters": 41,
-    "name": "Commerce alimentaire à vérifier — E79",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "L’Enchanteur — Manosque",
+    "role": "SECOURS",
+    "reliability": 2,
+    "status": "Identifié",
+    "source": "https://www.paysdemanosque.com/manosque-1.html | https://www.openstreetmap.org/node/4014713689",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/4014713689",
+      "coordinateMatchMeters": 0.3,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1832.933,
@@ -1153,10 +1533,18 @@
     "lat": 43.75824,
     "lon": 5.8879,
     "offRouteMeters": 8,
-    "name": "Commerce alimentaire à vérifier — E79",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "CocciMarket — Gréoux-les-Bains",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.coccinelle.fr/magasin/greoux-les-bains | https://www.openstreetmap.org/node/7816350203",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/7816350203",
+      "coordinateMatchMeters": 0.6,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1841.13,
@@ -1164,10 +1552,18 @@
     "lat": 43.76983,
     "lon": 5.94476,
     "offRouteMeters": 7,
-    "name": "Commerce alimentaire à vérifier — E80",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Épicerie La Fontaine — Saint-Martin-de-Brômes",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://provence-alpes-cotedazur.com/sejourner/informations-pratiques/tous-les-services-pratiques/epicerie-la-fontaine-saint-martin-de-bromes-fr-3019990/ | https://www.openstreetmap.org/node/5092289329",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/5092289329",
+      "coordinateMatchMeters": 0.1,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1853.322,
@@ -1175,10 +1571,18 @@
     "lat": 43.73804,
     "lon": 5.97093,
     "offRouteMeters": 160,
-    "name": "Commerce alimentaire à vérifier — E80",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Panier Sympa — Esparron-de-Verdon",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.credit-agricole.fr/particulier/agence/provence-cote-d-azur/le-panier-sympa-12224.html | https://www.openstreetmap.org/node/5119984797",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/5119984797",
+      "coordinateMatchMeters": 0.7,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1862.526,
@@ -1186,10 +1590,18 @@
     "lat": 43.70206,
     "lon": 6.03901,
     "offRouteMeters": 5,
-    "name": "Commerce alimentaire à vérifier — E81",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Proxi — Quinson",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.paysdemanosque.com/quinson-1.html | https://www.openstreetmap.org/node/4811311637",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/4811311637",
+      "coordinateMatchMeters": 0.3,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1915.669,
@@ -1197,10 +1609,18 @@
     "lat": 43.78025,
     "lon": 6.34165,
     "offRouteMeters": 172,
-    "name": "Commerce alimentaire à vérifier — E84",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Proxi La Boutique — La Palud-sur-Verdon",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.verdontourisme.com/en/preparer-mon-sejour/discover-verdon/decouvrir-les-villages/la-palud-sur-verdon/shops-and-services-a-la-palud-sur-verdon/ | https://www.openstreetmap.org/node/925373311",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/925373311",
+      "coordinateMatchMeters": 0.1,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1937.529,
@@ -1208,10 +1628,18 @@
     "lat": 43.79927,
     "lon": 6.40147,
     "offRouteMeters": 0,
-    "name": "Commerce alimentaire à vérifier — E85",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "La Terrasse — Rougon",
+    "role": "SECOURS",
+    "reliability": 2,
+    "status": "Identifié",
+    "source": "https://www.rougon.fr/commerces-et-adresses/commerces-artisanat-services/ | https://www.openstreetmap.org/node/2920791254",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/2920791254",
+      "coordinateMatchMeters": 0.3,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 1988.684,
@@ -1219,10 +1647,19 @@
     "lat": 43.69015,
     "lon": 6.71359,
     "offRouteMeters": 223,
-    "name": "Commerce alimentaire à vérifier — E87",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Épicerie Monsoise — Le Comptoir des Saveurs",
+    "role": "SECOURS",
+    "reliability": 2,
+    "status": "Identifié",
+    "source": "https://cotedazurfrance.fr/offres/epicerie-monsoise-le-comptoir-des-saveurs-mons-fr-2997112/ | https://www.openstreetmap.org/node/2744388725",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/2744388725",
+      "coordinateMatchMeters": 0.4,
+      "hoursConfirmed": false
+    },
+    "note": "Épicerie saisonnière — ouverture estivale"
   },
   {
     "km": 2000.133,
@@ -1230,10 +1667,18 @@
     "lat": 43.65022,
     "lon": 6.79467,
     "offRouteMeters": 282,
-    "name": "Commerce alimentaire à vérifier — E88",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Carrefour Contact — Saint-Cézaire-sur-Siagne",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.carrefour.fr/magasin/contact-saint-cezaire | https://www.openstreetmap.org/way/278227531",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/way/278227531",
+      "coordinateMatchMeters": 3.6,
+      "hoursConfirmed": false
+    }
   },
   {
     "km": 2028.354,
@@ -1241,10 +1686,18 @@
     "lat": 43.52587,
     "lon": 6.8139,
     "offRouteMeters": 194,
-    "name": "Commerce alimentaire à vérifier — E90",
-    "role": "CANDIDATE",
-    "reliability": 1,
-    "status": "Point issu du GPX — existence et horaires à vérifier"
+    "name": "Petit Casino — Les Adrets-de-l’Estérel",
+    "role": "NORMAL",
+    "reliability": 3,
+    "status": "Identifié",
+    "source": "https://www.lesadretsdelesterel.fr/annuaire/petit-casino/ | https://www.openstreetmap.org/node/1485189859",
+    "verifiedAt": "2026-10-08",
+    "verification": {
+      "method": "coordinate-and-public-listing",
+      "osm": "https://www.openstreetmap.org/node/1485189859",
+      "coordinateMatchMeters": 0.2,
+      "hoursConfirmed": false
+    }
   },
   {
     "name": "Proxi — Mézières-en-Brenne",

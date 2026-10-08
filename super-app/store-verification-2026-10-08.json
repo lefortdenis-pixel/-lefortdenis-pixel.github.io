@@ -1,0 +1,1347 @@
+{
+  "checkedAt": "2026-10-08",
+  "scope": "62 unnamed candidate stores from public route data",
+  "limit": "Public coordinate/name/food-retail check; not a guarantee of opening hours or future availability.",
+  "records": [
+    {
+      "originalLat": 49.27702,
+      "originalLon": -0.25586,
+      "originalName": "Commerce alimentaire à vérifier — E01",
+      "name": "Proxi — Ouistreham",
+      "decision": "identified",
+      "sources": [
+        "https://acceslibre.beta.gouv.fr/app/14-ouistreham/a/superette/erp/proxi-31/",
+        "https://www.openstreetmap.org/node/5033073145"
+      ],
+      "osmTags": {
+        "addr:housenumber": "46",
+        "addr:street": "Avenue Michel Cabieu",
+        "brand": "Proxi",
+        "brand:wikidata": "Q3408522",
+        "brand:wikipedia": "fr:Proxi",
+        "contact:phone": "+33 2 31 96 35 82",
+        "name": "Proxi",
+        "ref:FR:SIRET": "94034753700018",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.4
+    },
+    {
+      "originalLat": 49.24415,
+      "originalLon": -0.27729,
+      "originalName": "Commerce alimentaire à vérifier — E01",
+      "name": "CocciMarket — Bénouville",
+      "decision": "identified",
+      "sources": [
+        "https://www.coccinelle.fr/magasins?page=3",
+        "https://www.openstreetmap.org/node/13996895439"
+      ],
+      "osmTags": {
+        "brand": "CocciMarket",
+        "brand:wikidata": "Q90020480",
+        "contact:facebook": "61591321292998",
+        "contact:housenumber": "8",
+        "contact:street": "Avenue de la Côte de Nacre",
+        "name": "CocciMarket",
+        "opening_hours": "Mo-Su 09:00-22:00",
+        "phone": "+33 6 21 60 51 53",
+        "ref:FR:SIRET": "83258105200046",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.4
+    },
+    {
+      "originalLat": 49.1849,
+      "originalLon": -0.34919,
+      "originalName": "Commerce alimentaire à vérifier — E01",
+      "name": "Lidl — Caen Tourville",
+      "decision": "identified",
+      "sources": [
+        "https://www.lidl.fr/s/fr-FR/supermarches/caen/avenue-de-tourville-57/",
+        "https://www.openstreetmap.org/node/12405619702"
+      ],
+      "osmTags": {
+        "addr:city": "Caen",
+        "addr:housenumber": "57",
+        "addr:postcode": "14000",
+        "addr:street": "Avenue de Tourville",
+        "brand": "Lidl",
+        "brand:wikidata": "Q151954",
+        "brand:wikipedia": "en:Lidl",
+        "check_date": "2023-12-06",
+        "name": "Lidl",
+        "opening_hours": "Mo-Sa 08:30-20:00; Su 08:30-12:15",
+        "ref:FR:NAF": "47.11D",
+        "ref:FR:SIREN": "343262622",
+        "ref:FR:SIRET": "34326262218174",
+        "shop": "supermarket",
+        "website": "https://www.lidl.fr/s/fr-FR/supermarches/caen/avenue-de-tourville-57/"
+      },
+      "coordinateMatchMeters": 0.4
+    },
+    {
+      "originalLat": 47.87154,
+      "originalLon": 0.33296,
+      "originalName": "Commerce alimentaire à vérifier — E15",
+      "name": "Le Petit Marché — Saint-Mars-d’Outillé",
+      "decision": "identified",
+      "sources": [
+        "https://stmarsdoutille.fr/cadre-de-vie/annuaire-des-commercants-et-artisans/",
+        "https://www.openstreetmap.org/node/13784244441"
+      ],
+      "osmTags": {
+        "contact:housenumber": "21",
+        "contact:street": "Rue Nationale",
+        "name": "Le Petit Marché",
+        "opening_hours": "Mo-Sa 07:00-13:00,15:00-19:30; Th off; Su 07:00-13:00",
+        "ref:FR:SIRET": "75322919400018",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.2
+    },
+    {
+      "originalLat": 47.75715,
+      "originalLon": 0.27335,
+      "originalName": "Commerce alimentaire à vérifier — E16",
+      "name": "SPAR — Mayet",
+      "decision": "identified",
+      "sources": [
+        "https://annuaire-entreprises.data.gouv.fr/etablissement/83128404700022",
+        "https://www.openstreetmap.org/way/301578409"
+      ],
+      "osmTags": {
+        "addr:housenumber": "3",
+        "addr:street": "Rue de la Croix Beudet",
+        "brand": "Spar",
+        "brand:wikidata": "Q610492",
+        "building": "retail",
+        "name": "Spar",
+        "opening_hours": "Mo-Fr 08:30-13:00, 15:00-19:30; Sa 08:30-19:30; Su 08:30-12:30",
+        "phone": "+33 2 43 44 43 85",
+        "shop": "supermarket",
+        "source": "cadastre-dgi-fr source : Direction Générale des Finances Publiques - Cadastre. Mise à jour : 2014",
+        "website": "https://spar.casino.fr/stores/tl928"
+      },
+      "coordinateMatchMeters": 6.1
+    },
+    {
+      "originalLat": 47.68981,
+      "originalLon": 0.20206,
+      "originalName": "Commerce alimentaire à vérifier — E17",
+      "name": "Café de la Mairie — Coulongé",
+      "decision": "identified",
+      "sources": [
+        "https://www.villepratique.fr/bureaux-tabac/coulonge-72800/cafe-de-la-mairie",
+        "https://www.openstreetmap.org/node/11298984756"
+      ],
+      "osmTags": {
+        "amenity": "bar",
+        "gambling": "yes",
+        "name": "Café de la Mairie",
+        "ref:FR:SIRET": "94461335500014",
+        "shop": "convenience",
+        "tobacco": "yes"
+      },
+      "coordinateMatchMeters": 0.2
+    },
+    {
+      "originalLat": 47.22288,
+      "originalLon": 0.02908,
+      "originalName": "Commerce alimentaire à vérifier — E21",
+      "name": "La Cave — Turquant",
+      "decision": "identified",
+      "sources": [
+        "https://www.turquant.fr/annuaire/12169/commune",
+        "https://www.openstreetmap.org/node/7746845341"
+      ],
+      "osmTags": {
+        "check_date": "2025-08-09",
+        "name": "La Cave",
+        "opening_hours": "Mo-Su 10:00-14:00,17:00-20:00",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.5
+    },
+    {
+      "originalLat": 47.21642,
+      "originalLon": 0.05726,
+      "originalName": "Commerce alimentaire à vérifier — E21",
+      "name": "Vivéco — Montsoreau",
+      "decision": "identified",
+      "sources": [
+        "https://ville-montsoreau.fr/vivre-ici/commerce-et-artisanat-liste-de-commerces/viveco/",
+        "https://www.openstreetmap.org/node/1768493590"
+      ],
+      "osmTags": {
+        "brand": "Viveco",
+        "check_date": "2026-07-09",
+        "name": "Viveco",
+        "opening_hours": "Mo-Sa 08:00-12:00,15:00-19:00, Su 09:00-13:00,02:00-17:00",
+        "operator": "Viveco",
+        "payment:cards": "yes",
+        "payment:cash": "yes",
+        "phone": "+33 2 41 51 45 17",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.2
+    },
+    {
+      "originalLat": 47.18195,
+      "originalLon": 0.04963,
+      "originalName": "Commerce alimentaire à vérifier — E22",
+      "name": "Chez Mimie — Fontevraud-l’Abbaye",
+      "decision": "excluded",
+      "sources": [
+        "https://www.loireavelo.fr/tsft/chez-mimie-fontevraud-labbaye/",
+        "https://www.openstreetmap.org/node/1768496466"
+      ],
+      "osmTags": {
+        "amenity": "restaurant",
+        "name": "Chez mimie",
+        "shop": "convenience",
+        "source": "GPS"
+      },
+      "coordinateMatchMeters": 0.4
+    },
+    {
+      "originalLat": 47.1666,
+      "originalLon": 0.23969,
+      "originalName": "Commerce alimentaire à vérifier — E22",
+      "name": "Carrefour City — Chinon",
+      "decision": "identified",
+      "sources": [
+        "https://www.carrefour.fr/magasin/city-chinon",
+        "https://www.openstreetmap.org/node/12612794894"
+      ],
+      "osmTags": {
+        "addr:city": "Chinon",
+        "addr:housenumber": "20",
+        "addr:postcode": "37500",
+        "addr:street": "Place du Général de Gaulle",
+        "brand": "Carrefour City",
+        "brand:wikidata": "Q2940187",
+        "brand:wikipedia": "fr:Carrefour City",
+        "name": "Carrefour City",
+        "opening_hours": "Mo-Sa 07:00-20:15; Su 09:00-13:00",
+        "phone": "+33 2 47 93 00 63",
+        "shop": "convenience",
+        "website": "https://www.carrefour.fr/magasin/city-chinon",
+        "wheelchair": "yes"
+      },
+      "coordinateMatchMeters": 0.5
+    },
+    {
+      "originalLat": 47.18339,
+      "originalLon": 0.26548,
+      "originalName": "Commerce alimentaire à vérifier — E23",
+      "name": "E. Leclerc — Chinon",
+      "decision": "identified",
+      "sources": [
+        "https://www.e.leclerc/mag/e-leclerc-chinon",
+        "https://www.openstreetmap.org/way/94667042"
+      ],
+      "osmTags": {
+        "addr:city": "Chinon",
+        "addr:postcode": "37500",
+        "addr:street": "Rue Georges Guynemer",
+        "brand": "E. Leclerc",
+        "brand:wikidata": "Q1273376",
+        "brand:wikipedia": "fr:E.Leclerc",
+        "building": "retail",
+        "contact:facebook": "https://www.facebook.com/eleclerc.chinon",
+        "name": "E. Leclerc",
+        "opening_hours": "Mo-Sa 08:30-20:00",
+        "phone": "+33 2 47 93 59 30",
+        "shop": "supermarket",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2011",
+        "website": "https://www.e.leclerc/mag/e-leclerc-chinon",
+        "wheelchair": "yes"
+      },
+      "coordinateMatchMeters": 42.5
+    },
+    {
+      "originalLat": 47.26144,
+      "originalLon": 0.46565,
+      "originalName": "Commerce alimentaire à vérifier — E24",
+      "name": "Carrefour Express — Azay-le-Rideau",
+      "decision": "identified",
+      "sources": [
+        "https://www.carrefour.fr/magasin/express-azay-le-rideau",
+        "https://www.openstreetmap.org/node/13730559201"
+      ],
+      "osmTags": {
+        "brand": "Carrefour Express",
+        "brand:wikidata": "Q2940190",
+        "contact:city": "Azay-le-Rideau",
+        "contact:housenumber": "30",
+        "contact:postcode": "37190",
+        "contact:street": "Rue Nationale",
+        "name": "Carrefour Express",
+        "opening_hours": "Mo-Sa 08:00-21:00; Su 09:00-20:00",
+        "phone": "+33 2 36 16 26 55",
+        "ref:FR:NAF": "47.11C",
+        "ref:FR:SIRET": "10348750000011",
+        "shop": "convenience",
+        "website": "https://www.carrefour.fr/magasin/express-azay-le-rideau"
+      },
+      "coordinateMatchMeters": 0.2
+    },
+    {
+      "originalLat": 47.34806,
+      "originalLon": 0.54623,
+      "originalName": "Commerce alimentaire à vérifier — E24",
+      "name": "SPAR — Savonnières",
+      "decision": "identified",
+      "sources": [
+        "https://www.pappers.fr/entreprise/verdier-jean-louis-301615050",
+        "https://www.openstreetmap.org/node/461205656"
+      ],
+      "osmTags": {
+        "brand": "Spar",
+        "brand:wikidata": "Q610492",
+        "fixme": "Ce magasin n'est pas listé sur le site de Spar. Est-ce que ça existe encore ?",
+        "name": "Spar",
+        "operator": "Spar",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.4
+    },
+    {
+      "originalLat": 47.36901,
+      "originalLon": 0.70783,
+      "originalName": "Commerce alimentaire à vérifier — E25",
+      "name": "Carrefour Market — Tours Fontaines",
+      "decision": "identified",
+      "sources": [
+        "https://www.carrefour.fr/magasin/market-tours-fontaines",
+        "https://www.openstreetmap.org/node/627499484"
+      ],
+      "osmTags": {
+        "branch": "Tours Fontaines",
+        "brand": "Carrefour Market",
+        "brand:wikidata": "Q2689639",
+        "brand:wikipedia": "fr:Carrefour Market",
+        "contact:city": "Tours",
+        "contact:postcode": "37200",
+        "contact:street": "Avenue Stendhal",
+        "level": "0",
+        "name": "Carrefour Market",
+        "opening_hours": "Mo-Sa 08:30-20:00; Su 09:00-12:30",
+        "operator": "Carrefour",
+        "phone": "+33 2 47 28 50 65",
+        "post_office": "post_partner",
+        "post_office:brand": "La Poste",
+        "post_office:brand:wikipedia": "fr:La Poste (entreprise française)",
+        "ref:FR:LaPoste": "22790D",
+        "ref:FR:SIRET": "88841654200015",
+        "shop": "supermarket",
+        "source:opening_hours": "website",
+        "source:post_office": "La Poste - 2026-07",
+        "website": "https://www.carrefour.fr/magasin/market-tours-fontaines",
+        "wheelchair": "yes"
+      },
+      "coordinateMatchMeters": 6.3
+    },
+    {
+      "originalLat": 47.36743,
+      "originalLon": 0.7269,
+      "originalName": "Commerce alimentaire à vérifier — E25",
+      "name": "La Mesure — Saint-Avertin",
+      "decision": "identified",
+      "sources": [
+        "https://www.pappers.fr/entreprise/saint-georges-843548421",
+        "https://www.openstreetmap.org/node/6185847876"
+      ],
+      "osmTags": {
+        "addr:housenumber": "9bis",
+        "addr:street": "Rue de Rochepinard",
+        "brand": "La Mesure",
+        "brand:email": "contact@lamesure-boutiques.fr",
+        "brand:facebook": "https://www.facebook.com/lamesurejustecequilvousfaut/",
+        "brand:website": "https://www.lamesure-boutiques.fr",
+        "bulk_purchase": "only",
+        "contact:instagram": "https://www.instagram.com/lamesure_stavertin/",
+        "contact:phone": "+33 2 34 38 39 34",
+        "contact:website": "https://www.lamesure-boutiques.fr/saint_avertin/",
+        "description": "\"epicerie fine 100% vrac\"",
+        "end_date": "2025-05-16",
+        "name": "La Mesure",
+        "opening_hours": "Tu-Fr 09:30-13:00,15:00-19:00; Sa 09:00-13:00,14:30-18:30",
+        "ref:FR:SIREN": "843548421",
+        "ref:FR:SIRET": "84354842100018",
+        "ref:vatin": "FR53843548421",
+        "shop": "convenience",
+        "start_date": "2019-01-16"
+      },
+      "coordinateMatchMeters": 0.2
+    },
+    {
+      "originalLat": 47.28371,
+      "originalLon": 0.78672,
+      "originalName": "Commerce alimentaire à vérifier — E26",
+      "name": "L’Art à Table — Esvres",
+      "decision": "excluded",
+      "sources": [
+        "https://mapcarta.com/fr/N3940653250",
+        "https://www.openstreetmap.org/node/3940653250"
+      ],
+      "osmTags": {
+        "addr:city": "Esvres",
+        "addr:housenumber": "9",
+        "addr:postcode": "37320",
+        "addr:street": "Place Joseph Bourreau",
+        "name": "L'Art à Table",
+        "shop": "convenience",
+        "source": "survey"
+      },
+      "coordinateMatchMeters": 0.4
+    },
+    {
+      "originalLat": 47.26812,
+      "originalLon": 0.83588,
+      "originalName": "Commerce alimentaire à vérifier — E26",
+      "name": "Le Panier de Féfé — Cormery",
+      "decision": "identified",
+      "sources": [
+        "https://www.cormery.fr/vivre-a-cormery/commerces-artisants/",
+        "https://www.openstreetmap.org/node/1120476027"
+      ],
+      "osmTags": {
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.3
+    },
+    {
+      "originalLat": 47.22714,
+      "originalLon": 0.91628,
+      "originalName": "Commerce alimentaire à vérifier — E26",
+      "name": "Proxy — Azay-sur-Indre",
+      "decision": "identified",
+      "sources": [
+        "https://ville-data.com/magasin/Azay-sur-Indre-37-37016",
+        "https://www.openstreetmap.org/way/63214585"
+      ],
+      "osmTags": {
+        "building": "yes",
+        "name": "Proxy Azay-sur-Indre",
+        "opening_hours": "Mo-Tu,Th-Su 08:45-13:00; Mo-Tu,Th-Sa 15:00-19:00",
+        "shop": "convenience",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "wheelchair": "yes"
+      },
+      "coordinateMatchMeters": 1.2
+    },
+    {
+      "originalLat": 47.12868,
+      "originalLon": 0.99708,
+      "originalName": "Commerce alimentaire à vérifier — E27",
+      "name": "Les Paniers d’Angélique — Loches",
+      "decision": "identified",
+      "sources": [
+        "https://app.cagette.net/cooperative-paysanne-de-beletre",
+        "https://www.openstreetmap.org/node/5840879053"
+      ],
+      "osmTags": {
+        "name": "Les paniers d'angélique",
+        "opening_hours": "Tu-Fr 09:00-12:30, 15:00-19:00; Sa 09:00-13:00; 15:00-19:00",
+        "organic": "only",
+        "shop": "convenience",
+        "wheelchair": "no"
+      },
+      "coordinateMatchMeters": 0.7
+    },
+    {
+      "originalLat": 46.93059,
+      "originalLon": 1.33995,
+      "originalName": "Commerce alimentaire à vérifier — E30",
+      "name": "Le Rabelais — Saint-Genou",
+      "decision": "identified",
+      "sources": [
+        "https://www.achat-indre.com/ann7490-LE-RABELAIS.htm",
+        "https://www.openstreetmap.org/node/5089774284"
+      ],
+      "osmTags": {
+        "bar": "yes",
+        "fuel:gas": "yes",
+        "fuel:gas:exchange": "yes",
+        "name": "Le Rabelais",
+        "ref:FR:SIRET": "49942786200010",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.4
+    },
+    {
+      "originalLat": 46.84758,
+      "originalLon": 1.53726,
+      "originalName": "Commerce alimentaire à vérifier — E31",
+      "name": "Mini Marché — Villedieu-sur-Indre",
+      "decision": "identified",
+      "sources": [
+        "https://annuaire-entreprises.data.gouv.fr/entreprise/982961351",
+        "https://www.openstreetmap.org/node/13644142358"
+      ],
+      "osmTags": {
+        "name": "Mini Marché",
+        "ref:FR:SIRET": "98296135100011",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.5
+    },
+    {
+      "originalLat": 46.82917,
+      "originalLon": 1.5647,
+      "originalName": "Commerce alimentaire à vérifier — E31",
+      "name": "PCS Gastronomie — Niherne",
+      "decision": "identified",
+      "sources": [
+        "https://www.pagesjaunes.fr/pros/08960714",
+        "https://www.openstreetmap.org/node/13647271775"
+      ],
+      "osmTags": {
+        "contact:facebook": "https://www.facebook.com/PCSGASTRONOMIE/",
+        "name": "PCS Gastronomie",
+        "ref:FR:SIRET": "79230403200016",
+        "shop": "convenience",
+        "source": "INSEE"
+      },
+      "coordinateMatchMeters": 0.3
+    },
+    {
+      "originalLat": 46.81102,
+      "originalLon": 1.68043,
+      "originalName": "Commerce alimentaire à vérifier — E32",
+      "name": "Épicerie Mazagan — Châteauroux",
+      "decision": "identified",
+      "sources": [
+        "https://www.epiciersdefrance.org/annuaire/epicerie-epicerie-mazagan",
+        "https://www.openstreetmap.org/node/7346310744"
+      ],
+      "osmTags": {
+        "contact:city": "Châteauroux",
+        "contact:housenumber": "45",
+        "contact:postcode": "36000",
+        "contact:street": "Avenue François Mitterrand",
+        "delivery": "yes",
+        "email": "bouyrigu.ahmed@sfr.fr",
+        "name": "Épicerie Mazagan",
+        "phone": "+33 2 54 08 09 14",
+        "ref:FR:SIRET": "42492137700026",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.2
+    },
+    {
+      "originalLat": 46.79638,
+      "originalLon": 1.70629,
+      "originalName": "Commerce alimentaire à vérifier — E32",
+      "name": "Netto — Châteauroux",
+      "decision": "identified",
+      "sources": [
+        "https://magasin.netto.fr/481-netto-chateauroux",
+        "https://www.openstreetmap.org/way/186035492"
+      ],
+      "osmTags": {
+        "brand": "Netto",
+        "brand:wikidata": "Q2720988",
+        "brand:wikipedia": "fr:Netto",
+        "building": "retail",
+        "check_date:opening_hours": "2024-08-02",
+        "name": "Netto",
+        "opening_hours": "Mo-Sa 09:00-19:00",
+        "operator": "Groupement des Mousquetaires",
+        "phone": "+33254264040",
+        "ref:FR:SIRET": "89942732200024",
+        "shop": "supermarket",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2012",
+        "website": "https://magasin.netto.fr/481-netto-chateauroux",
+        "wheelchair": "yes"
+      },
+      "coordinateMatchMeters": 10.6
+    },
+    {
+      "originalLat": 46.48638,
+      "originalLon": 2.07002,
+      "originalName": "Commerce alimentaire à vérifier — E35",
+      "name": "Proxi — Sainte-Sévère-sur-Indre",
+      "decision": "identified",
+      "sources": [
+        "https://sainte-severe-sur-indre.fr/proxi/",
+        "https://www.openstreetmap.org/node/3655602783"
+      ],
+      "osmTags": {
+        "brand": "Proxi",
+        "brand:wikidata": "Q3408522",
+        "level": "0",
+        "name": "Proxi",
+        "opening_hours": "Tu-Sa 08:30-12:30,14:30-19:00; Su,PH 08:30-12:30",
+        "shop": "convenience",
+        "wheelchair": "yes"
+      },
+      "coordinateMatchMeters": 0.4
+    },
+    {
+      "originalLat": 46.18658,
+      "originalLon": 2.43033,
+      "originalName": "Commerce alimentaire à vérifier — E38",
+      "name": "Intermarché — Chambon-sur-Voueize",
+      "decision": "identified",
+      "sources": [
+        "https://www.intermarche.com/magasins/50118/chambon-sur-voueize-23170/infos-pratiques",
+        "https://www.openstreetmap.org/way/297040981"
+      ],
+      "osmTags": {
+        "brand": "Intermarché",
+        "brand:wikidata": "Q3153200",
+        "brand:wikipedia": "fr:Intermarché",
+        "building": "retail",
+        "name": "Intermarché",
+        "opening_hours": "Mo-Sa 09:00-19:00; Su 09:00-12:00",
+        "operator": "Groupement des Mousquetaires",
+        "shop": "supermarket",
+        "website": "https://www.intermarche.com/magasins/50118/chambon-sur-voueize-23170/infos-pratiques"
+      },
+      "coordinateMatchMeters": 6.5
+    },
+    {
+      "originalLat": 46.04987,
+      "originalLon": 2.38872,
+      "originalName": "Commerce alimentaire à vérifier — E39",
+      "name": "Vival — Mainsat",
+      "decision": "identified",
+      "sources": [
+        "https://www.tourisme-creuse.com/marche-et-combraille/bouger/itinerance/grp-marche-et-combraille-en-aquitaine/grp-boucle-de-la-combraille/",
+        "https://www.openstreetmap.org/node/12232856388"
+      ],
+      "osmTags": {
+        "brand": "Vival",
+        "brand:wikidata": "Q7937525",
+        "name": "Vival",
+        "opening_hours": "Mo-Tu,Th-Sa 09:00-12:30,14:30-18:30; Su 09:00-12:00",
+        "phone": "+33 5 55 83 15 01",
+        "shop": "convenience",
+        "website": "https://vival.casino.fr/fr/stores/e0350"
+      },
+      "coordinateMatchMeters": 0.4
+    },
+    {
+      "originalLat": 45.86754,
+      "originalLon": 2.36824,
+      "originalName": "Commerce alimentaire à vérifier — E41",
+      "name": "Vival — Crocq",
+      "decision": "identified",
+      "sources": [
+        "https://vival.casino.fr/stores/e0114/crocq-43-grand-rue",
+        "https://www.openstreetmap.org/node/12000426969"
+      ],
+      "osmTags": {
+        "addr:housenumber": "43",
+        "addr:postcode": "23260",
+        "addr:street": "Grande Rue",
+        "brand": "Vival",
+        "brand:wikidata": "Q7937525",
+        "name": "Vival",
+        "opening_hours": "Mo-Tu, Th 08:00-12:30, 15:00-19:00; Fr-Sa 08:00-12:30, 15:30-19:00; Su 08:30-12:30",
+        "phone": "+33 5 55 66 38 52",
+        "shop": "convenience",
+        "website": "https://vival.casino.fr/stores/e0114/crocq-43-grand-rue"
+      },
+      "coordinateMatchMeters": 0.5
+    },
+    {
+      "originalLat": 45.8523,
+      "originalLon": 2.56284,
+      "originalName": "Commerce alimentaire à vérifier — E42",
+      "name": "Boulangerie-épicerie Multiple Rural — Condat-en-Combraille",
+      "decision": "identified",
+      "sources": [
+        "https://www.combrailles-auvergne-tourisme.fr/annuaire-pratique/alimentation/supermarches-et-epiceries/",
+        "https://www.openstreetmap.org/node/1545915306"
+      ],
+      "osmTags": {
+        "name": "Boulangerie-Epicerie",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.5
+    },
+    {
+      "originalLat": 45.86793,
+      "originalLon": 2.67504,
+      "originalName": "Commerce alimentaire à vérifier — E43",
+      "name": "La Gentiane — Pontaumur",
+      "decision": "identified",
+      "sources": [
+        "https://pontaumur.fr/commerces/",
+        "https://www.openstreetmap.org/node/11957614122"
+      ],
+      "osmTags": {
+        "name": "La gentiane - Magasin bio",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.5
+    },
+    {
+      "originalLat": 45.89867,
+      "originalLon": 2.71706,
+      "originalName": "Commerce alimentaire à vérifier — E43",
+      "name": "Chez Greg et Sab — Miremont",
+      "decision": "identified",
+      "sources": [
+        "https://www.combrailles-auvergne-tourisme.fr/commerce-et-service/epicerie-multi-services-chez-greg-et-sab-miremont/",
+        "https://www.openstreetmap.org/node/6653018769"
+      ],
+      "osmTags": {
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.4
+    },
+    {
+      "originalLat": 45.51118,
+      "originalLon": 2.85549,
+      "originalName": "Commerce alimentaire à vérifier — E48",
+      "name": "Proxi Maison Métrard — Super-Besse",
+      "decision": "identified",
+      "sources": [
+        "https://acceslibre.beta.gouv.fr/app/63-besse-et-saint-anastaise/a/superette/erp/proxi-pgm-maison-metrard/",
+        "https://www.openstreetmap.org/node/7755721385"
+      ],
+      "osmTags": {
+        "brand": "Proxi",
+        "brand:wikidata": "Q3408522",
+        "brand:wikipedia": "fr:Proxi",
+        "check_date": "2023-08-11",
+        "name": "Proxi",
+        "opening_hours": "Mo-Su 09:00-12:30,14:30-19:00",
+        "shop": "convenience",
+        "wheelchair": "yes"
+      },
+      "coordinateMatchMeters": 0.5
+    },
+    {
+      "originalLat": 45.40769,
+      "originalLon": 2.82723,
+      "originalName": "Commerce alimentaire à vérifier — E49",
+      "name": "Petit Casino — Égliseneuve-d’Entraigues",
+      "decision": "identified",
+      "sources": [
+        "https://annuaire-entreprises.data.gouv.fr/etablissement/42826802329878",
+        "https://www.openstreetmap.org/way/84935109"
+      ],
+      "osmTags": {
+        "brand": "Le Petit Casino",
+        "brand:wikidata": "Q89029249",
+        "building": "yes",
+        "name": "Le Petit Casino",
+        "opening_hours": "Tu-Sa 07:30-12:30, Tu-Sa 15:00-19:30, Su 08:00-12:30",
+        "shop": "convenience",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+      },
+      "coordinateMatchMeters": 2.7
+    },
+    {
+      "originalLat": 45.33997,
+      "originalLon": 2.75914,
+      "originalName": "Commerce alimentaire à vérifier — E49",
+      "name": "Burons & Bouchons — Condat",
+      "decision": "identified",
+      "sources": [
+        "https://www.burons-bouchons.fr/qui-sommes-nous/notre-histoire-cantalienne/",
+        "https://www.openstreetmap.org/node/13020316625"
+      ],
+      "osmTags": {
+        "name": "Burons et Bouchons",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.3
+    },
+    {
+      "originalLat": 45.0828,
+      "originalLon": 2.7495,
+      "originalName": "Commerce alimentaire à vérifier — E51",
+      "name": "Spar — Le Lioran",
+      "decision": "merged",
+      "sources": [
+        "https://magasins.spar.fr/fr/s/spar-laveissiere",
+        "https://www.openstreetmap.org/node/11847043468"
+      ],
+      "osmTags": {
+        "brand": "Spar",
+        "brand:wikidata": "Q610492",
+        "name": "Spar",
+        "opening_hours": "Mo-Su 08:00-18:30",
+        "phone": "+33 4 71 49 58 81",
+        "shop": "convenience",
+        "website": "https://magasins.spar.fr/fr/s/spar-laveissiere"
+      },
+      "coordinateMatchMeters": 0.4,
+      "mergedInto": "Spar — Le Lioran"
+    },
+    {
+      "originalLat": 45.05267,
+      "originalLon": 2.93376,
+      "originalName": "Commerce alimentaire à vérifier — E53",
+      "name": "Saveurs des Volcans d’Auvergne — Valuéjols",
+      "decision": "merged",
+      "sources": [
+        "https://valuejols.fr/vivre-a-valuejols/commerces-et-entreprises/",
+        "https://www.openstreetmap.org/node/2326067307"
+      ],
+      "osmTags": {
+        "addr:city": "Valuéjols",
+        "addr:postcode": "15300",
+        "addr:street": "Place du Griffe",
+        "name": "Saveurs des volcans d'Auvergne",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.2,
+      "mergedInto": "Saveurs des Volcans d’Auvergne — Valuéjols"
+    },
+    {
+      "originalLat": 44.818,
+      "originalLon": 3.11987,
+      "originalName": "Commerce alimentaire à vérifier — E56",
+      "name": "Votre Marché — Fournels",
+      "decision": "identified",
+      "sources": [
+        "https://www.aubrac-lozere.com/wp-content/uploads/2025/10/Plan-Fournels.pdf",
+        "https://www.openstreetmap.org/node/3004138225"
+      ],
+      "osmTags": {
+        "brand": "Vival",
+        "brand:wikidata": "Q7937525",
+        "name": "Votre Marché",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.2
+    },
+    {
+      "originalLat": 44.66259,
+      "originalLon": 3.04546,
+      "originalName": "Commerce alimentaire à vérifier — E59",
+      "name": "Votre Marché — Nasbinals",
+      "decision": "identified",
+      "sources": [
+        "https://www.epiciersdefrance.org/annuaire/epicerie-votre-marche-10",
+        "https://www.openstreetmap.org/node/1995678808"
+      ],
+      "osmTags": {
+        "brand": "Votre Marché",
+        "brand:wikidata": "Q89135338",
+        "name": "Votre Marché",
+        "opening_hours": "Tu-Sa 08:30-12:30,15:00-19:00; Su 09:00-12:30",
+        "operator": "Votre Marché",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.5
+    },
+    {
+      "originalLat": 44.59117,
+      "originalLon": 2.92219,
+      "originalName": "Commerce alimentaire à vérifier — E59",
+      "name": "La Saint-Chéloise — Saint-Chély-d’Aubrac",
+      "decision": "identified",
+      "sources": [
+        "https://www.tourisme-aveyron.com/fr/diffusio/autres-commerces/boulangerie-epicerie-la-saint-cheloise-saint-chely-d-aubrac_TFO500225742343",
+        "https://www.openstreetmap.org/way/143981927"
+      ],
+      "osmTags": {
+        "building": "retail",
+        "name": "La boulangère et l'épicier",
+        "shop": "convenience",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2012"
+      },
+      "coordinateMatchMeters": 1.9
+    },
+    {
+      "originalLat": 44.4901,
+      "originalLon": 3.74019,
+      "originalName": "Commerce alimentaire à vérifier — E65",
+      "name": "Carrefour Express — Lou Claoux — Le Bleymard",
+      "decision": "merged",
+      "sources": [
+        "https://www.carrefour.fr/magasin/express-mont-lozere-et-goulet",
+        "https://www.openstreetmap.org/node/1467628205"
+      ],
+      "osmTags": {
+        "addr:city": "Mont Lozère et Goulet",
+        "addr:postcode": "48190",
+        "addr:street": "Le Claoux, La Remise",
+        "brand": "Carrefour Express",
+        "brand:wikidata": "Q2940190",
+        "brand:wikipedia": "fr:Carrefour Express",
+        "name": "Carrefour Express",
+        "opening_hours": "Mo-Sa 07:30-20:00; Su 07:30-13:00",
+        "phone": "+33 4 66 48 61 11",
+        "shop": "convenience",
+        "source": "Bing",
+        "website": "https://www.carrefour.fr/magasin/express-mont-lozere-et-goulet"
+      },
+      "coordinateMatchMeters": 0.2,
+      "mergedInto": "Carrefour Express — Lou Claoux — Le Bleymard"
+    },
+    {
+      "originalLat": 44.44134,
+      "originalLon": 3.93174,
+      "originalName": "Commerce alimentaire à vérifier — E66",
+      "name": "La Petite Boutique — Villefort",
+      "decision": "identified",
+      "sources": [
+        "https://www.lozere-tourisme.com/commerce-service/la-petite-boutique/",
+        "https://www.openstreetmap.org/node/9979497115"
+      ],
+      "osmTags": {
+        "bulk_purchase": "yes",
+        "name": "La Petite Boutique",
+        "opening_hours": "Jul-Aug Su-Fr 09:00-12:30, Mo,Tu,Th,Fr 16:00-19:00",
+        "shop": "convenience",
+        "wheelchair": "no"
+      },
+      "coordinateMatchMeters": 0.6
+    },
+    {
+      "originalLat": 44.40531,
+      "originalLon": 4.13256,
+      "originalName": "Commerce alimentaire à vérifier — E67",
+      "name": "Le Garde-Manger Bio — Les Vans",
+      "decision": "identified",
+      "sources": [
+        "https://www.cevennes-ardeche.com/commerce-service/le-garde-manger-bio-34477/",
+        "https://www.openstreetmap.org/node/5528062777"
+      ],
+      "osmTags": {
+        "name": "Le garde manger bio",
+        "opening_hours": "Tu-Fr 09:30-13:00, 15:00-19:00; Sa 08:30-13:30, 16:00-19:00",
+        "organic": "yes",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.5
+    },
+    {
+      "originalLat": 44.38124,
+      "originalLon": 4.27667,
+      "originalName": "Commerce alimentaire à vérifier — E68",
+      "name": "Ancien point alimentaire — Grospierres",
+      "decision": "excluded",
+      "sources": [
+        "https://www.openstreetmap.org/node/6468045814",
+        "https://www.openstreetmap.org/node/6468045814"
+      ],
+      "osmTags": {
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.2
+    },
+    {
+      "originalLat": 44.29408,
+      "originalLon": 4.56706,
+      "originalName": "Commerce alimentaire à vérifier — E70",
+      "name": "U Express — Saint-Julien-de-Peyrolas",
+      "decision": "identified",
+      "sources": [
+        "https://www.pagesjaunes.fr/annuaire/ardoise-l-30/location-d-automobiles-tourisme-et-utilitaires",
+        "https://www.openstreetmap.org/node/12780098978"
+      ],
+      "osmTags": {
+        "brand": "U Express",
+        "brand:wikidata": "Q2529029",
+        "name": "U Express",
+        "shop": "supermarket"
+      },
+      "coordinateMatchMeters": 0.2
+    },
+    {
+      "originalLat": 44.26253,
+      "originalLon": 4.59754,
+      "originalName": "Commerce alimentaire à vérifier — E70",
+      "name": "Proxi — Saint-Paulet-de-Caisson",
+      "decision": "identified",
+      "sources": [
+        "https://www.myproxi.fr/proxi-alimentation-generale-saint-paulet-de-caisson",
+        "https://www.openstreetmap.org/node/13031886701"
+      ],
+      "osmTags": {
+        "brand": "Proxi",
+        "brand:wikidata": "Q3408522",
+        "check_date": "2025-07-28",
+        "name": "Proxy",
+        "opening_hours": "Mo 09:00-13:00; Tu-Sa 08:30-13:00, 15:30-20:30; Su 09:00-13:00, 17:00-20:30",
+        "phone": "+33 9 54 51 77 94",
+        "shop": "convenience",
+        "website": "https://www.myproxi.fr/proxi-alimentation-generale-saint-paulet-de-caisson"
+      },
+      "coordinateMatchMeters": 0.5
+    },
+    {
+      "originalLat": 44.25842,
+      "originalLon": 4.64958,
+      "originalName": "Commerce alimentaire à vérifier — E70",
+      "name": "Bonjour — station TotalEnergies, Pont-Saint-Esprit",
+      "decision": "identified",
+      "sources": [
+        "https://services.totalenergies.fr",
+        "https://www.openstreetmap.org/node/7778217076"
+      ],
+      "osmTags": {
+        "addr:city": "Pont-Saint-Esprit",
+        "addr:postcode": "30130",
+        "addr:street": "Place du Plan",
+        "brand": "Bonjour",
+        "brand:wikidata": "Q110278299",
+        "name": "Bonjour",
+        "opening_hours": "06:00-21:00; Su 07:00-21:00",
+        "phone": "+33 4 66 39 13 06",
+        "shop": "convenience",
+        "website": "https://services.totalenergies.fr"
+      },
+      "coordinateMatchMeters": 0.3
+    },
+    {
+      "originalLat": 44.23479,
+      "originalLon": 4.71059,
+      "originalName": "Commerce alimentaire à vérifier — E70",
+      "name": "Carrefour Contact Mondragon — Mondragon",
+      "decision": "identified",
+      "sources": [
+        "https://www.carrefour.fr/magasin/contact-mondragon",
+        "https://www.openstreetmap.org/way/76309991"
+      ],
+      "osmTags": {
+        "brand": "Carrefour Contact",
+        "brand:wikidata": "Q2940188",
+        "brand:wikipedia": "fr:Carrefour Contact",
+        "building": "commercial",
+        "name": "Carrefour Contact Mondragon",
+        "opening_hours": "Mo-Sa 08:00-20:00; Su 08:00-12:30",
+        "operator": "Carrefour",
+        "phone": "+33 4 90 51 11 05",
+        "ref:FR:RNB": "GVKX4MPTVB76",
+        "roof:shape": "flat",
+        "shop": "supermarket",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010",
+        "website": "https://www.carrefour.fr/magasin/contact-mondragon",
+        "wheelchair": "yes"
+      },
+      "coordinateMatchMeters": 4.3
+    },
+    {
+      "originalLat": 44.2323,
+      "originalLon": 4.88234,
+      "originalName": "Commerce alimentaire à vérifier — E71",
+      "name": "U Express — Sainte-Cécile-les-Vignes",
+      "decision": "identified",
+      "sources": [
+        "https://www.magasins-u.com/magasin/uexpress-saintececilelesvignes.m91230",
+        "https://www.openstreetmap.org/node/8108636340"
+      ],
+      "osmTags": {
+        "brand": "U Express",
+        "brand:wikidata": "Q2529029",
+        "name": "U Express",
+        "opening_hours": "Mo-Sa 08:00-20:00; Su 08:30-13:00",
+        "shop": "convenience",
+        "website": "https://www.magasins-u.com/magasin/uexpress-saintececilelesvignes.m91230"
+      },
+      "coordinateMatchMeters": 0.6
+    },
+    {
+      "originalLat": 44.23035,
+      "originalLon": 4.93227,
+      "originalName": "Commerce alimentaire à vérifier — E71",
+      "name": "À la Petite Jeanette — Cairanne",
+      "decision": "identified",
+      "sources": [
+        "https://mapcarta.com/fr/N4319347729",
+        "https://www.openstreetmap.org/node/4319347729"
+      ],
+      "osmTags": {
+        "addr:housenumber": "55",
+        "addr:postcode": "84290",
+        "addr:street": "Route de Saint-Roman",
+        "name": "A La Petite Jeanette",
+        "operator": "Robert et Cuida Fornasier",
+        "phone": "+33 4 90 30 82 55",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.5
+    },
+    {
+      "originalLat": 44.2449,
+      "originalLon": 5.01846,
+      "originalName": "Commerce alimentaire à vérifier — E72",
+      "name": "Proxi — Rasteau",
+      "decision": "identified",
+      "sources": [
+        "https://www.pagesjaunes.fr/annuaire/rasteau-84/magasin-alimentaire",
+        "https://www.openstreetmap.org/way/79956665"
+      ],
+      "osmTags": {
+        "brand": "Proxi",
+        "brand:wikidata": "Q3408522",
+        "brand:wikipedia": "fr:Proxi",
+        "building": "retail",
+        "name": "Proxi",
+        "operator": "Proxi",
+        "ref:FR:RNB": "H313BZRKS4V1",
+        "shop": "supermarket",
+        "source": "cadastre-dgi-fr source : Direction Générale des Impôts - Cadastre. Mise à jour : 2010"
+      },
+      "coordinateMatchMeters": 5.7
+    },
+    {
+      "originalLat": 43.85806,
+      "originalLon": 5.59797,
+      "originalName": "Commerce alimentaire à vérifier — E78",
+      "name": "Utile — Céreste",
+      "decision": "merged",
+      "sources": [
+        "https://magasins.utile-upf.fr/55-utile-cereste",
+        "https://www.openstreetmap.org/node/7476393057"
+      ],
+      "osmTags": {
+        "addr:city": "Céreste",
+        "addr:housenumber": "47",
+        "addr:postcode": "04280",
+        "addr:street": "Avenue de la Gare",
+        "brand": "Utile",
+        "brand:wikidata": "Q2529029",
+        "brand:wikipedia": "en:Système U",
+        "name": "Utile",
+        "opening_hours": "Mo-Fr 08:00-12:30,15:30-19:30; Sa 08:00-19:30; Su 08:00-12:30",
+        "operator": "Système U",
+        "phone": "+33 4 92 72 08 98",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.4,
+      "mergedInto": "Utile — Céreste"
+    },
+    {
+      "originalLat": 43.8112,
+      "originalLon": 5.74986,
+      "originalName": "Commerce alimentaire à vérifier — E78",
+      "name": "Vival — Pierrevert",
+      "decision": "identified",
+      "sources": [
+        "https://vival.casino.fr/stores/e3399/pierrevert-place-du-19-mars-1962",
+        "https://www.openstreetmap.org/node/1822111755"
+      ],
+      "osmTags": {
+        "addr:housenumber": "19",
+        "brand": "Vival",
+        "brand:wikidata": "Q7937525",
+        "name": "Vival",
+        "opening_hours": "Mo-Sa 07:45-12:30,15:00-19:30; Su 08:00-12:30",
+        "operator": "Proxi",
+        "shop": "convenience",
+        "website": "https://vival.casino.fr/stores/e3399/pierrevert-place-du-19-mars-1962"
+      },
+      "coordinateMatchMeters": 0.4
+    },
+    {
+      "originalLat": 43.83027,
+      "originalLon": 5.78478,
+      "originalName": "Commerce alimentaire à vérifier — E79",
+      "name": "L’Enchanteur — Manosque",
+      "decision": "identified",
+      "sources": [
+        "https://www.paysdemanosque.com/manosque-1.html",
+        "https://www.openstreetmap.org/node/4014713689"
+      ],
+      "osmTags": {
+        "name": "L'Enchanteur",
+        "ref:FR:SIRET": "82346570300028",
+        "shop": "convenience",
+        "wheelchair": "yes"
+      },
+      "coordinateMatchMeters": 0.3
+    },
+    {
+      "originalLat": 43.75824,
+      "originalLon": 5.8879,
+      "originalName": "Commerce alimentaire à vérifier — E79",
+      "name": "CocciMarket — Gréoux-les-Bains",
+      "decision": "identified",
+      "sources": [
+        "https://www.coccinelle.fr/magasin/greoux-les-bains",
+        "https://www.openstreetmap.org/node/7816350203"
+      ],
+      "osmTags": {
+        "addr:city": "Gréoux-les-Bains",
+        "addr:housenumber": "16",
+        "addr:street": "Route de Valensole",
+        "brand": "CocciMarket",
+        "brand:wikidata": "Q90020480",
+        "name": "CocciMarket",
+        "phone": "+33 4 92 75 47 76",
+        "shop": "convenience",
+        "website": "https://www.coccinelle.fr/magasin/greoux-les-bains"
+      },
+      "coordinateMatchMeters": 0.6
+    },
+    {
+      "originalLat": 43.76983,
+      "originalLon": 5.94476,
+      "originalName": "Commerce alimentaire à vérifier — E80",
+      "name": "Épicerie La Fontaine — Saint-Martin-de-Brômes",
+      "decision": "identified",
+      "sources": [
+        "https://provence-alpes-cotedazur.com/sejourner/informations-pratiques/tous-les-services-pratiques/epicerie-la-fontaine-saint-martin-de-bromes-fr-3019990/",
+        "https://www.openstreetmap.org/node/5092289329"
+      ],
+      "osmTags": {
+        "name": "Épicerie La Fontaine",
+        "name:fr": "Épicerie La Fontaine",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.1
+    },
+    {
+      "originalLat": 43.73804,
+      "originalLon": 5.97093,
+      "originalName": "Commerce alimentaire à vérifier — E80",
+      "name": "Panier Sympa — Esparron-de-Verdon",
+      "decision": "identified",
+      "sources": [
+        "https://www.credit-agricole.fr/particulier/agence/provence-cote-d-azur/le-panier-sympa-12224.html",
+        "https://www.openstreetmap.org/node/5119984797"
+      ],
+      "osmTags": {
+        "name": "Panier Sympa",
+        "opening_hours": "Mo-Su 08:30-20:00",
+        "shop": "supermarket"
+      },
+      "coordinateMatchMeters": 0.7
+    },
+    {
+      "originalLat": 43.70206,
+      "originalLon": 6.03901,
+      "originalName": "Commerce alimentaire à vérifier — E81",
+      "name": "Proxi — Quinson",
+      "decision": "identified",
+      "sources": [
+        "https://www.paysdemanosque.com/quinson-1.html",
+        "https://www.openstreetmap.org/node/4811311637"
+      ],
+      "osmTags": {
+        "brand": "Proxi",
+        "brand:wikidata": "Q3408522",
+        "brand:wikipedia": "fr:Proxi",
+        "name": "Proxi",
+        "payment:visa": "yes",
+        "shop": "convenience",
+        "source": "survey"
+      },
+      "coordinateMatchMeters": 0.3
+    },
+    {
+      "originalLat": 43.78025,
+      "originalLon": 6.34165,
+      "originalName": "Commerce alimentaire à vérifier — E84",
+      "name": "Proxi La Boutique — La Palud-sur-Verdon",
+      "decision": "identified",
+      "sources": [
+        "https://www.verdontourisme.com/en/preparer-mon-sejour/discover-verdon/decouvrir-les-villages/la-palud-sur-verdon/shops-and-services-a-la-palud-sur-verdon/",
+        "https://www.openstreetmap.org/node/925373311"
+      ],
+      "osmTags": {
+        "addr:city": "La Palud-sur-Verdon",
+        "addr:postcode": "04120",
+        "addr:street": "Rue Principale",
+        "brand": "Proxi",
+        "brand:wikidata": "Q3408522",
+        "brand:wikipedia": "fr:Proxi",
+        "name": "Proxi",
+        "opening_hours": "Mo-Sa 08:00-12:30,15:00-18:45; Su off",
+        "operator": "Proxi",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.1
+    },
+    {
+      "originalLat": 43.79927,
+      "originalLon": 6.40147,
+      "originalName": "Commerce alimentaire à vérifier — E85",
+      "name": "La Terrasse — Rougon",
+      "decision": "identified",
+      "sources": [
+        "https://www.rougon.fr/commerces-et-adresses/commerces-artisanat-services/",
+        "https://www.openstreetmap.org/node/2920791254"
+      ],
+      "osmTags": {
+        "addr:city": "Rougon",
+        "addr:postcode": "04120",
+        "addr:street": "Place de la Terrasse",
+        "name": "La Terrasse",
+        "opening_hours": "Mo-Tu, Th-Fr 09:00-11:00, 17:00-19:00",
+        "outdoor_seating": "no",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.3
+    },
+    {
+      "originalLat": 43.69015,
+      "originalLon": 6.71359,
+      "originalName": "Commerce alimentaire à vérifier — E87",
+      "name": "Épicerie Monsoise — Le Comptoir des Saveurs",
+      "decision": "identified",
+      "sources": [
+        "https://cotedazurfrance.fr/offres/epicerie-monsoise-le-comptoir-des-saveurs-mons-fr-2997112/",
+        "https://www.openstreetmap.org/node/2744388725"
+      ],
+      "osmTags": {
+        "addr:postcode": "83440",
+        "addr:street": "Rue Jean Vadon",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.4
+    },
+    {
+      "originalLat": 43.65022,
+      "originalLon": 6.79467,
+      "originalName": "Commerce alimentaire à vérifier — E88",
+      "name": "Carrefour Contact — Saint-Cézaire-sur-Siagne",
+      "decision": "identified",
+      "sources": [
+        "https://www.carrefour.fr/magasin/contact-saint-cezaire",
+        "https://www.openstreetmap.org/way/278227531"
+      ],
+      "osmTags": {
+        "addr:housenumber": "2",
+        "addr:postcode": "06530",
+        "addr:street": "Boulevard Antoine Cresp",
+        "brand": "Carrefour Contact",
+        "brand:wikidata": "Q2940188",
+        "brand:wikipedia": "fr:Carrefour Contact",
+        "building": "retail",
+        "name": "Carrefour Contact",
+        "opening_hours": "Mo-Sa 08:00-20:00; Su 09:00-13:00",
+        "phone": "+33 9 67 30 48 25",
+        "ref:FR:NAF": "47.11D",
+        "ref:FR:SIREN": "981252802",
+        "ref:FR:SIRET": "98125280200013",
+        "shop": "supermarket",
+        "source": "INSEE - 2026-07",
+        "website": "https://www.carrefour.fr/magasin/contact-saint-cezaire"
+      },
+      "coordinateMatchMeters": 3.6
+    },
+    {
+      "originalLat": 43.52587,
+      "originalLon": 6.8139,
+      "originalName": "Commerce alimentaire à vérifier — E90",
+      "name": "Petit Casino — Les Adrets-de-l’Estérel",
+      "decision": "identified",
+      "sources": [
+        "https://www.lesadretsdelesterel.fr/annuaire/petit-casino/",
+        "https://www.openstreetmap.org/node/1485189859"
+      ],
+      "osmTags": {
+        "brand": "Petit Casino",
+        "brand:wikidata": "Q89029249",
+        "check_date": "2025-05-28",
+        "name": "Petit Casino",
+        "operator": "Casino",
+        "shop": "convenience"
+      },
+      "coordinateMatchMeters": 0.2
+    }
+  ]
+}

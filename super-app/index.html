@@ -10,11 +10,11 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.242 hors ligne</title>
+<title>Traversée 2027 · v1.243 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.242">
-<link rel="stylesheet" href="./reset.css?v=1.242">
+<link rel="stylesheet" href="./home.css?v=1.243">
+<link rel="stylesheet" href="./reset.css?v=1.243">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -1050,8 +1050,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.242"></script>
-<script src="./route-engine.js?v=1.242"></script>
+<script src="./route-data.js?v=1.243"></script>
+<script src="./route-engine.js?v=1.243"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1137,9 +1137,9 @@ function select(km,stage){
     }
     const required=daysNeededForStore(km,stage,nearest.km);
     return {
-      verdict:nearest.role==="CANDIDATE"?"À VÉRIFIER":"PLUS PROCHE",
+      verdict:"PLUS PROCHE",
       role:nearest.role,store:nearest,requiredDays:required,windowEnd:nearest.km,
-      endStage:stageFromKm(nearest.km),nearestMode:true,candidateTiming:nearest.role==="CANDIDATE"?"nearest":null
+      endStage:stageFromKm(nearest.km),nearestMode:true
     };
   }
 
@@ -1153,8 +1153,6 @@ function select(km,stage){
   const secours=usable.filter(s=>s.role==="SECOURS"&&onTargetDay(s)).sort((a,b)=>b.km-a.km)[0];
   if(secours) return {verdict:"OK",role:"SECOURS",store:secours,windowEnd,endStage};
 
-  const candidate=usable.filter(s=>s.role==="CANDIDATE"&&onTargetDay(s)).sort((a,b)=>b.km-a.km)[0];
-  if(candidate) return {verdict:"À VÉRIFIER",role:"CANDIDATE",store:candidate,requiredDays:autonomy,windowEnd,endStage,candidateTiming:"target"};
 
   const earlier=usable
     .filter(s=>s.role==="NORMAL"&&s.km>km&&daysNeededForStore(km,stage,s.km)<autonomy)
@@ -1172,13 +1170,6 @@ function select(km,stage){
     return {verdict:"PLUS TÔT",role:"SECOURS",store:earlierSecours,requiredDays:required,windowEnd,endStage};
   }
 
-  const earlierCandidate=usable
-    .filter(s=>s.role==="CANDIDATE"&&s.km>km&&daysNeededForStore(km,stage,s.km)<autonomy)
-    .sort((a,b)=>b.km-a.km)[0];
-  if(earlierCandidate){
-    const required=daysNeededForStore(km,stage,earlierCandidate.km);
-    return {verdict:"À VÉRIFIER",role:"CANDIDATE",store:earlierCandidate,requiredDays:required,windowEnd,endStage,candidateTiming:"earlier"};
-  }
 
   const next=usable
     .filter(s=>s.km>km&&daysNeededForStore(km,stage,s.km)>autonomy)
@@ -1200,7 +1191,7 @@ function ignoredStores(km,r){
     .filter(s => s.km > km && s.km <= displayUntil)
     .filter(s => {
       const isChosen=!!chosen&&s.name===chosen.name&&Math.abs(s.km-chosen.km)<0.001;
-      const chosenIsActuallyUsable=r.verdict==="OK"||r.verdict==="SECOURS"||r.verdict==="PLUS PROCHE"||r.verdict==="PLUS TÔT"||r.verdict==="À VÉRIFIER";
+      const chosenIsActuallyUsable=r.verdict==="OK"||r.verdict==="SECOURS"||r.verdict==="PLUS PROCHE"||r.verdict==="PLUS TÔT";
       return !isChosen||!chosenIsActuallyUsable;
     })
     .sort((a,b)=>a.km-b.km)
@@ -1224,8 +1215,7 @@ function ignoredStores(km,r){
         }
       } else if(s.role==="SECOURS"){
         reason = "Avant la cible";
-      } else if(s.role==="CANDIDATE"){
-        reason = "Commerce non vérifié";
+
       } else {
         reason = "Moins pertinent pour cette fenêtre";
       }
@@ -1307,22 +1297,21 @@ function show(km,stage,offRoute=null){
     return;
   }
 
-  badge.className="badge "+(r.verdict==="OK"||r.verdict==="PLUS PROCHE"?"ok":r.verdict==="SECOURS"||r.verdict==="PLUS TÔT"||r.verdict==="À VÉRIFIER"?"warn":r.verdict==="FIN"?"ok":"bad");
+  badge.className="badge "+(r.verdict==="OK"||r.verdict==="PLUS PROCHE"?"ok":r.verdict==="SECOURS"||r.verdict==="PLUS TÔT"?"warn":r.verdict==="FIN"?"ok":"bad");
   badge.textContent=r.verdict==="PLUS TÔT"?"RAVITO PLUS TÔT":r.verdict;
   if(storeEl)storeEl.textContent=r.store?r.store.name:"Arrivée";
   if(meta){
     if(r.store){
       const delta=Math.max(0,r.store.km-km);
-      const isEarlier=r.verdict==="PLUS TÔT"||r.candidateTiming==="earlier";
+      const isEarlier=r.verdict==="PLUS TÔT";
       const earlyBy=isEarlier?autonomy-r.requiredDays:0;
       const timingText=isEarlier
         ?storeWalkLabel(delta)+" · prévu en "+r.requiredDays+" jour"+(r.requiredDays>1?"s":"")+" · "+earlyBy+" jour"+(earlyBy>1?"s":"")+" avant J"+autonomy
         :storeWalkLabel(delta)+(r.nearestMode?"":(r.requiredDays?" · "+r.requiredDays+" jour"+(r.requiredDays>1?"s":"")+" nécessaire"+(r.requiredDays>1?"s":""):""));
-      const caution=r.role==="CANDIDATE"?" · existence et horaires à vérifier":"";
       const hours=r.store.hours?" · "+r.store.hours:"";
       const br=window.TraverseeRoutes;
       const estimate=!r.nearestMode&&br.id==='brenne'&&km>=br.branch.startKm&&km<br.branch.endKm?' · estimation à 25 km/jour':'';
-      const base=timingText+caution+hours+estimate;
+      const base=timingText+hours+estimate;
       meta.textContent=base;
       enrichStoreMeta(r.store,km,base,meta);
     }else meta.textContent="Fin de la Traversée";
@@ -1416,7 +1405,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.242';
+const GPX_WATER_URL='./water-points.json?v=1.243';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -1704,7 +1693,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.242"></script>
+<script src="./gas-points.js?v=1.243"></script>
 <script id="gas-search">
 (()=>{
   const rows=window.TRAVERSEE_GAS_POINTS;
@@ -3028,14 +3017,14 @@ clearPreparedResults();renderPrepState();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.242"></script>
+<script src="./home-bivouac.js?v=1.243"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./home-map.js?v=1.242"></script>
-<script src="./gas-tracker.js?v=1.242"></script>
-<script src="./reset-points.js?v=1.242"></script>
-<script src="./reset-engine.js?v=1.242"></script>
-<script src="./reset.js?v=1.242"></script>
-<script src="./home.js?v=1.242"></script>
+<script src="./home-map.js?v=1.243"></script>
+<script src="./gas-tracker.js?v=1.243"></script>
+<script src="./reset-points.js?v=1.243"></script>
+<script src="./reset-engine.js?v=1.243"></script>
+<script src="./reset.js?v=1.243"></script>
+<script src="./home.js?v=1.243"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>
