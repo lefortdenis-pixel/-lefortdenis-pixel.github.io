@@ -7,16 +7,17 @@
  const points=E.projectPoints(window.TRAVERSEE_RESET_POINTS,projectGps);
  function save(){if(safeStorageSet(KEY,JSON.stringify(state)))return true;q('resetMessage').textContent='Impossible d’enregistrer sur cet appareil.';return false}
  function pace(){return E.recentPace(state.samples)}
- function days(distance){const d=E.walkingDays(distance,pace());if(d.max<1)return 'moins d’un jour de marche';const lo=Math.max(1,Math.round(d.min)),hi=Math.max(lo,Math.round(d.max));return '≈ '+(d.recent||lo===hi?lo:lo+'–'+hi)+' jours de marche'}
+ function days(distance){const n=distance/(pace().kmPerDay||25);return n<1?'moins d’un jour de marche':'environ '+Math.round(n)+' jours de marche'}
+
  function at(km){const s=SEGMENTS.find(s=>km<=s.startKm+s.lengthKm)||SEGMENTS.at(-1),t=s.lengthKm?Math.max(0,Math.min(1,(km-s.startKm)/s.lengthKm)):0;return {lat:s.a[0]+(s.b[0]-s.a[0])*t,lon:s.a[1]+(s.b[1]-s.a[1])*t}}
  function eligible(p){return p.level==='complete'&&p.offRouteMeters<=5000}
  function next(km){return E.upcoming(points,km).find(p=>p.level!=='backup'&&p.offRouteMeters<=5000)||null}
- function distance(p){return position?'Dans '+fmt(Math.max(0,p.km-position.km))+' km sur la trace · '+days(Math.max(0,p.km-position.km)):'Km '+fmt(p.km)+' sur le parcours'}
- function access(p){return Number.isFinite(p.offRouteMeters)?'À '+(p.offRouteMeters/1000).toFixed(3).replace('.',',')+' km de la trace · à vol d’oiseau':''}
+ function distance(p){return position?days(Math.max(0,p.km-position.km))+' · '+Math.round(Math.max(0,p.km-position.km))+' km sur la trace':'Km '+Math.round(p.km)+' sur le parcours'}
+ function access(p){const m=p.offRouteMeters;if(!Number.isFinite(m))return '';return 'À '+(m<1000?Math.max(10,Math.round(m/10)*10)+' m':fmt(m/1000)+' km')+' de la trace · à vol d’oiseau'}
  const serviceIcons={shower:['Douche','🚿'],washer:['Lave-linge','<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="2" width="18" height="20" rx="3"/><path d="M3 7h18M6 4.5h3"/><circle cx="12" cy="14" r="5"/><path d="M8 14q2-2 4 0t4 0"/></svg>'],dryer:['Sèche-linge','<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="17" cy="6" r="3"/><path d="M17 1v1m0 8v1m-5-5h1m8 0h1M2 12h12q4 0 4 3t-4 3M2 16h7M2 20h10"/></svg>'],power:['Recharge','🔌'],sleep:['Camping','⛺']};
  function service(p){return Object.entries(serviceIcons).map(([k,[name,icon]])=>{const status=p.services[k]===true?'Confirmé':p.services[k]===false?'Absent':'À confirmer',label=name+' : '+status;return '<li class="resetService '+(p.services[k]===true?'yes':p.services[k]===false?'no':'unknown')+'" title="'+label+'" aria-label="'+label+'"><span aria-hidden="true">'+icon+'</span>'+(['washer','dryer'].includes(k)?'<small>'+(k==='washer'?'Lavage':'Séchage')+'</small>':'')+'<b aria-hidden="true">'+(p.services[k]===true?'✓':p.services[k]===false?'×':'?')+'</b></li>'}).join('')}
 
- function card(p,isNext){const nextComplete=position?E.upcoming(points,position.km).find(eligible):null;return '<article class="resetPlace" id="reset-place-'+p.id+'"><div class="resetPlaceHead"><span class="resetBadge '+p.level+'">'+labels[p.level]+'</span>'+(isNext?'<span class="resetPossible">Reset possible</span>':'')+'</div><h3>'+esc(p.name)+'</h3>'+(Number.isFinite(p.km)?'<p class="resetDistance">'+esc(distance(p))+'</p>':'<p>Position à confirmer</p>')+'<p class="resetAccess">'+esc(access(p))+'</p>'+(p.offRouteMeters>1000?'<p class="resetWarning">Détour important possible : au moins '+fmt(2*p.offRouteMeters/1000)+' km pour un aller-retour.</p>':'')+(nextComplete?.id===p.id?'<p class="resetOpportunity">Prochaine vraie opportunité</p>':'')+'<ul class="resetServices">'+service(p)+'</ul><p class="resetChecked">Vérifié le '+p.checkedAt.split('-').reverse().join('/')+'</p></article>'}
+ function card(p,isNext){const nextComplete=position?E.upcoming(points,position.km).find(eligible):null;return '<article class="resetPlace" id="reset-place-'+p.id+'"><div class="resetPlaceHead"><span class="resetBadge '+p.level+'">'+labels[p.level]+'</span>'+'</div><h3>'+esc(p.name)+'</h3>'+(Number.isFinite(p.km)?'<p class="resetDistance">'+esc(distance(p))+'</p>':'<p>Position à confirmer</p>')+'<p class="resetAccess">'+esc(access(p))+'</p>'+(p.offRouteMeters>1000?'<p class="resetWarning">Détour important possible : au moins '+fmt(2*p.offRouteMeters/1000)+' km pour un aller-retour.</p>':'')+(nextComplete?.id===p.id?'<p class="resetOpportunity">Prochaine vraie opportunité</p>':'')+'<ul class="resetServices">'+service(p)+'</ul><p class="resetChecked">Vérifié le '+p.checkedAt.split('-').reverse().join('/')+'</p></article>'}
  function render(){
   position=window.TraverseeHome?.getPosition()||position;
   const pp=pace(),current=position?.km??0,gs=E.groups(points,current),first=position?next(current):null;
@@ -24,9 +25,8 @@
   q('resetRouteChoice').value=DATA.routeId;
   q('resetStatus').textContent='';
   q('resetPace').textContent='';
-  const complete=E.upcoming(points,current).filter(eligible),following=first?complete.find(p=>p.zone!==first.zone&&p.km>first.km):null;
-  const gap=following&&first?following.km-first.km:null;
-  q('resetNext').innerHTML=!position?'':!first?'<strong>Aucune autre opportunité enregistrée devant toi.</strong>':'<span>Reset possible</span><h2>'+esc(first.zone)+'</h2><strong>'+esc(distance(first))+'</strong>'+(gap>5*(pp.kmPerDay||25)?'<p>Reset conseillé si tu en as besoin : '+days(gap)+' avant le prochain reset complet enregistré dans une autre zone.</p>':'')+(following?'<p>Alternative disponible plus loin : '+esc(following.zone)+' · dans '+fmt(following.km-current)+' km.</p>':'');
+  const following=first?E.upcoming(points,current).find(p=>p.zone!==first.zone&&p.km>first.km&&p.level!=='backup'&&p.offRouteMeters<=5000):null;
+  q('resetNext').innerHTML=!position?'':!first?'<strong>Aucun autre reset devant toi.</strong>':'<span>Prochain reset</span><h2>'+esc(first.zone)+'</h2><strong>'+esc(distance(first))+'</strong>'+(following?'<p>Reset suivant : '+esc(following.zone)+' · '+days(Math.max(0,following.km-current))+' depuis ta position actuelle.</p>':'');
   q('resetTracking').innerHTML='';
   q('resetList').innerHTML=gs.map(g=>'<section class="resetZone"><h2>'+esc(g.name)+'</h2>'+g.points.map(p=>card(p,first?.id===p.id)).join('')+'</section>').join('');
   updateMap();
