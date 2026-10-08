@@ -6,7 +6,7 @@
   const gps=q('homeGpsToggle'),panel=q('homeGpsPanel'),status=q('homeGpsStatus');
   const input=q('homeKmInput'),refresh=q('homeGpsRefresh'),message=q('homeMapMessage');
   const POSITION_KEY='traversee-home-position-v1';
-  const categories=[{id:'water',label:'Eau',icon:'💧',button:'openWaterBtn'},{id:'bivouac',label:'Bivouac',icon:'⛺',button:'openBivouacBtn'},{id:'store',label:'Magasin',icon:'🛒',button:'openStoreBtn'},{id:'gas',label:'Gaz',icon:'🔥',button:'openGasBtn'},{id:'reset',label:'Reset',icon:'🚿',button:'openResetBtn'}];
+  const categories=[{id:'water',label:'Eau',icon:'💧',button:'openWaterBtn'},{id:'bivouac',label:'Bivouac',icon:'⛺',button:'openBivouacBtn'},{id:'store',label:'Magasin',icon:'🛒',button:'openStoreBtn'},{id:'gas',label:'Gaz',icon:'<img class="gasIcon" src="./icons/gas-canister.svg" alt="" aria-hidden="true">',button:'openGasBtn'},{id:'reset',label:'Reset',icon:'🚿',button:'openResetBtn'}];
   const state={position:null,data:null,bivouac:null,selected:null,points:[],map:null,markers:new Map(),location:null,request:0,gpsBusy:false,lastGpsAttempt:0};
   window.TraverseeHome={getPosition:()=>state.position};
   let messageTimer=0,bivouacRequest=0;
@@ -162,7 +162,7 @@
   }
   async function loadPoints(){
     try{
-      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.238':'./home-pois.json?v=1.238');if(!response.ok)throw Error('points');
+      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.239':'./home-pois.json?v=1.239');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}

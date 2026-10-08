@@ -102,7 +102,7 @@
   }
   const banner=q('homeGasAlert');
   banner.classList.toggle('gasWarning',!!activeAlert||!!(d?.kind==='urgent'));
-  banner.innerHTML='<strong>🔥 '+esc(title)+'</strong>'+(detail?'<span>'+esc(detail)+'</span>':'');
+  banner.innerHTML='<strong><img class="gasIcon" src="./icons/gas-canister.svg" alt="" aria-hidden="true"> '+esc(title)+'</strong>'+(detail?'<span>'+esc(detail)+'</span>':'');
 
   const status=q('gasCartStatus');
   status.textContent=state.cart?state.cart.grams+' g · commencée le '+state.cart.started.split('-').reverse().join('/')+' · environ '+fmt(days)+' jours restants':'Aucune cartouche déclarée';

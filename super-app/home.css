@@ -85,3 +85,6 @@
 /* Plain distance and cartridge actions. */
 .gasTracker .gasEditCart{display:block;background:transparent;color:#685c50;font-size:13px;font-weight:650;padding:6px 0;margin-top:8px;text-decoration:underline;text-underline-offset:3px}
 .gasDirections{display:inline-flex;align-items:center;min-height:44px;border-radius:10px;background:#91430d;color:#fff;padding:8px 14px;text-decoration:none;font-weight:750;margin-top:10px}
+
+.gasIcon{display:inline-block;width:24px;height:24px;vertical-align:middle;flex-shrink:0}
+.homeGasAlert .gasIcon{width:18px;height:18px;margin-right:3px}
