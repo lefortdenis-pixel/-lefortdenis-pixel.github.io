@@ -121,13 +121,14 @@
   function setPosition(position,{center=true,persist=true}={}){
     if(!position||!Number.isFinite(position.km)||position.km<0||position.km>DATA.routeLengthKm)return;
     const coord=position.mode==='gps'&&Number.isFinite(position.lat)&&Number.isFinite(position.lon)?{lat:position.lat,lon:position.lon}:atKm(position.km);
-    state.position={km:position.km,...coord,mode:position.mode==='gps'?'gps':'km',updatedAt:Date.now(),routeId:DATA.routeId,routeVersion:DATA.version};
+    state.position={km:position.km,...coord,mode:position.mode==='gps'?'gps':'km',updatedAt:persist?Date.now():(position.updatedAt||Date.now()),routeId:DATA.routeId,routeVersion:DATA.version};
     if(persist)safeStorageSet(POSITION_KEY,JSON.stringify(state.position));
     input.value=position.km.toFixed(1);
     ['storeKmInput','waterKmInput','gasKmInput'].forEach(id=>{const el=q(id);if(el)el.value=position.km.toFixed(1)});
     lastShown={km:position.km,stage:stageFromKm(position.km),offRoute:position.mode==='gps'?projectGps(coord.lat,coord.lon)?.distanceMeters:0};
     status.textContent=(state.position.mode==='gps'?'GPS':'Position saisie')+' · km '+kmText(position.km);
     closeBubble();render();
+    window.dispatchEvent(new CustomEvent('traversee-home-position',{detail:state.position}));
     if(state.map){
       state.map.setPosition(state.position,center);
     }
@@ -160,7 +161,7 @@
   }
   async function loadPoints(){
     try{
-      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.222':'./home-pois.json?v=1.222');if(!response.ok)throw Error('points');
+      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.223':'./home-pois.json?v=1.223');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}
