@@ -24,18 +24,31 @@ assert.equal(JSON.parse(stored).plan.id,'a');
 vm.runInNewContext(source,c);
 assert.equal(JSON.parse(stored).plan.id,'a');
 position={km:420,updatedAt:Date.now()};events['traversee-home-position']({detail:position});
-assert.equal(JSON.parse(stored).alert.id,'b');assert(get('homeGasAlert').innerHTML.includes('À FAIRE'));
+assert.equal(JSON.parse(stored).alert.id,'b');assert(get('homeGasAlert').innerHTML.includes('Achète une cartouche de 450 g dans 30,0 km'));
 /* Passing the point or reopening the app must not silently clear a purchase alert. */
 position={km:460,updatedAt:Date.now()};events['traversee-home-position']({detail:position});
 vm.runInNewContext(source,c);
 assert.equal(JSON.parse(stored).alert.id,'b');
-assert(get('gasDecision').innerHTML.includes('point dépassé'));
+assert(get('gasDecision').innerHTML.includes('Tu as dépassé le magasin prévu'));
 get('gasCorrect').onclick();get('gasCartForm').onsubmit({preventDefault(){}});
 assert.equal(JSON.parse(stored).alert.id,'b');
 
 /* Starting a new cartridge clears the alert and does not create a pending cartridge. */
 get('gasNewCart').onclick();get('gasFormat').value='450';get('gasStarted').value=today;get('gasCartForm').onsubmit({preventDefault(){}});
 const next=JSON.parse(stored);assert.equal(next.cart.grams,450);assert(!next.alert);assert(!next.pending);
+/* The opening 100 g scenario explains distance, required format and the excluded alternative. */
+c.window.TRAVERSEE_GAS_POINTS=[{id:'a',name:'GAZ 14.8',lat:1,lon:14.8,status:'identified'},{id:'p',name:'GAZ 28',lat:1,lon:27.8,status:'probable'},{id:'b',name:'GAZ 333',lat:1,lon:331.3,status:'identified'}];
+c.window.gasPointLabel=p=>({a:'Magasin',p:'Weldom',b:'Decathlon'}[p.id]);
+stored=JSON.stringify({schema:2,rest:30});position={km:1,updatedAt:Date.now()};
+vm.runInNewContext(source,c);
+get('gasFormat').value='100';get('gasStarted').value=today;get('gasCartForm').onsubmit({preventDefault(){}});
+assert.equal(JSON.parse(stored).alert.id,'a');assert(!('rest' in JSON.parse(stored)));
+assert(get('gasDecision').innerHTML.includes('Achète une cartouche de 230 g dans 13,8 km'));
+assert(get('gasDecision').innerHTML.includes('Autre possibilité dans 26,8 km : Weldom'));
+assert(get('gasDecision').innerHTML.includes('Gaz compatible à vérifier'));
+assert(get('gasDecision').innerHTML.includes('316,5 km suivants'));
+assert(!get('gasTracker').innerHTML.includes('Réglages'));
+assert(!get('gasTracker').innerHTML.includes('Pas de gaz ici'));
 /* Unknown GPX labels must not leak into the user-facing names. */
 vm.runInNewContext(fs.readFileSync(path.join(base,'gas-points.js'),'utf8'),c);
 for(const point of c.window.TRAVERSEE_GAS_POINTS)assert(!/^GAZ\b/i.test(c.window.gasPointLabel(point)));
