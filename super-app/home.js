@@ -98,16 +98,15 @@
   function renderMapPois(){
     if(!state.map)return;
     const {width,height}=state.map.size();if(!width||!height)return;
-    const cells=new Set(),visible=new Map();
-    // Keep rare services readable; nearby water points separate as the map zooms in.
-    const candidates=allMapPois();
-    if(state.selectedPoi)candidates.unshift(state.selectedPoi);
+    const visible=new Map(),placed=[];
+    const candidates=allMapPois().map(item=>({...item,xy:state.map.screenPoint(item.point)}))
+      .filter(({xy})=>Number.isFinite(xy.x)&&Number.isFinite(xy.y)&&xy.x>=0&&xy.y>=0&&xy.x<=width&&xy.y<=height)
+      .sort((a,b)=>Math.hypot(a.xy.x-width/2,a.xy.y-height/2)-Math.hypot(b.xy.x-width/2,b.xy.y-height/2));
+    // A small number of individual pins, nearest to the view centre; no clusters.
+    if(state.selectedPoi){const xy=state.map.screenPoint(state.selectedPoi.point);if(xy.x>=0&&xy.y>=0&&xy.x<=width&&xy.y<=height)candidates.unshift({...state.selectedPoi,xy})}
     for(const item of candidates){
-      const p=item.point,xy=state.map.screenPoint(p);
-      if(!Number.isFinite(xy.x)||!Number.isFinite(xy.y)||xy.x<0||xy.y<0||xy.x>width||xy.y>height)continue;
-      const cell=Math.floor(xy.x/38)+':'+Math.floor(xy.y/38);
-      if(cells.has(cell)||visible.has(item.key))continue;
-      cells.add(cell);visible.set(item.key,item);if(visible.size>=180)break;
+      if(visible.has(item.key)||placed.some(xy=>Math.hypot(item.xy.x-xy.x,item.xy.y-xy.y)<44))continue;
+      placed.push(item.xy);visible.set(item.key,item);if(visible.size>=8)break;
     }
     state.markers.forEach((marker,key)=>{if(!visible.has(key)){marker.remove();state.markers.delete(key)}});
     visible.forEach((item,key)=>{
@@ -198,7 +197,7 @@
   }
   async function loadPoints(){
     try{
-      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.241':'./home-pois.json?v=1.241');if(!response.ok)throw Error('points');
+      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.242':'./home-pois.json?v=1.242');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}
