@@ -118,7 +118,7 @@
     updateMarkerStyles();
     if(p&&pan&&state.map)state.map.setView([p.lat,p.lon],Math.max(13,state.map.getZoom()),{animate:false});
   }
-  function setPosition(position,{center=true,persist=true}={}){
+  function setPosition(position,{center=true,persist=true,manualEntry=false}={}){
     if(!position||!Number.isFinite(position.km)||position.km<0||position.km>DATA.routeLengthKm)return;
     const coord=position.mode==='gps'&&Number.isFinite(position.lat)&&Number.isFinite(position.lon)?{lat:position.lat,lon:position.lon}:atKm(position.km);
     state.position={km:position.km,...coord,mode:position.mode==='gps'?'gps':'km',updatedAt:persist?Date.now():(position.updatedAt||Date.now()),routeId:DATA.routeId,routeVersion:DATA.version};
@@ -128,7 +128,7 @@
     lastShown={km:position.km,stage:stageFromKm(position.km),offRoute:position.mode==='gps'?projectGps(coord.lat,coord.lon)?.distanceMeters:0};
     status.textContent=(state.position.mode==='gps'?'GPS':'Position saisie')+' · km '+kmText(position.km);
     closeBubble();render();
-    window.dispatchEvent(new CustomEvent('traversee-home-position',{detail:state.position}));
+    window.dispatchEvent(new CustomEvent('traversee-home-position',{detail:{...state.position,manualEntry}}));
     if(state.map){
       state.map.setPosition(state.position,center);
     }
@@ -198,7 +198,7 @@
   routeChoice.addEventListener('change',()=>{if(window.TraverseeRoutes.choose(routeChoice.value)===false){routeChoice.value=DATA.routeId;status.textContent='Impossible de mémoriser le parcours.';}});
   q('homeKmForm').addEventListener('submit',event=>{
     event.preventDefault();if(!input.reportValidity())return;
-    ++state.request;gpsBusy(false);setPosition({km:Number(input.value),mode:'km'});closeGps();notice('');input.blur();
+    ++state.request;gpsBusy(false);setPosition({km:Number(input.value),mode:'km'},{manualEntry:true});closeGps();notice('');input.blur();
   });
   line.addEventListener('click',event=>{
     const button=event.target.closest('[data-category]');if(!button)return;
@@ -214,7 +214,7 @@
   });
   root.addEventListener('keydown',event=>{if(event.key==='Escape'){closeBubble();closeGps();gps.focus();}});
   window.addEventListener('traversee-position',event=>{
-    ++state.request;gpsBusy(false);setPosition(event.detail,{center:event.detail?.mode!=='gps'});
+    ++state.request;gpsBusy(false);setPosition(event.detail,{center:event.detail?.mode!=='gps',manualEntry:event.detail?.mode==='km'});
   });
   window.addEventListener('traversee-view',event=>{
     closeBubble();closeGps();const name=event.detail.name,p=state.position;

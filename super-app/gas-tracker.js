@@ -140,16 +140,25 @@
   q('gasFormTitle').textContent=state.correcting?'Corriger la cartouche en cours':state.cart?'Nouvelle cartouche commencée':'Cartouche actuelle';
   if(state.cart&&!state.edit){q('gasFormat').value=[100,230,450].includes(state.cart.grams)?String(state.cart.grams):'other';q('gasCustom').value=state.cart.grams;q('gasFormat').onchange();q('gasStarted').value=dateText();}
  }
- q('gasTracker').innerHTML='<div class="gasTrackerHead"><div class="gasEyebrow">CARTOUCHE EN COURS</div><div id="gasCartStatus" class="gasCartStatus"></div></div><div id="gasDecision" role="status" aria-live="polite"></div><div class="gasTrackerActions gasMainActions"><button type="button" id="gasNewCart">Je change de cartouche</button></div><form id="gasCartForm"><p id="gasFormTitle" class="gasFormIntro">'+(state.cart?'Nouvelle cartouche commencée':'Quelle cartouche utilises-tu ?')+'</p><label for="gasFormat">Contenance</label><select id="gasFormat"><option value="100">100 g</option><option value="230" selected>230 g</option><option value="450">450 g</option><option value="other">Autre format</option></select><input id="gasCustom" type="number" min="1" max="1000" placeholder="Poids en grammes" aria-label="Poids de gaz en grammes" hidden><label for="gasStarted">Date de début</label><input id="gasStarted" type="date" required><div class="gasTrackerActions"><button type="submit">Enregistrer</button><button type="button" id="gasCancel">Annuler</button></div></form><button type="button" id="gasCorrect" class="gasEditCart">Modifier ma cartouche</button><p id="gasTrackerMessage" role="status"></p>';
+ q('gasTracker').innerHTML='<div class="gasTrackerHead"><div class="gasEyebrow">CARTOUCHE EN COURS</div><div id="gasCartStatus" class="gasCartStatus"></div></div><div id="gasDecision" role="status" aria-live="polite"></div><div class="gasTrackerActions gasMainActions"><button type="button" id="gasNewCart">Je change de cartouche</button></div><form id="gasCartForm"><p id="gasFormTitle" class="gasFormIntro">'+(state.cart?'Nouvelle cartouche commencée':'Quelle cartouche utilises-tu ?')+'</p><label for="gasFormat">Contenance</label><select id="gasFormat" required><option value="" disabled selected>Choisis ta cartouche</option><option value="100">100 g</option><option value="230">230 g</option><option value="450">450 g</option><option value="other">Autre format</option></select><input id="gasCustom" type="number" min="1" max="1000" placeholder="Poids en grammes" aria-label="Poids de gaz en grammes" hidden><label for="gasStarted">Date de début</label><input id="gasStarted" type="date" required><div class="gasTrackerActions"><button type="submit">Enregistrer</button><button type="button" id="gasCancel">Annuler</button></div></form><button type="button" id="gasCorrect" class="gasEditCart">Modifier ma cartouche</button><p id="gasTrackerMessage" role="status"></p>';
  q('gasStarted').value=dateText();q('gasStarted').max=dateText();
  q('gasFormat').onchange=()=>{q('gasCustom').hidden=q('gasFormat').value!=='other';q('gasCustom').required=q('gasFormat').value==='other'};
  function grams(){const n=Number(q('gasFormat').value==='other'?q('gasCustom').value:q('gasFormat').value);return n>0&&n<=1000?n:null;}
- q('gasNewCart').onclick=()=>{state.edit=true;delete state.correcting;q('gasFormat').value='230';q('gasCustom').value='';q('gasFormat').onchange();q('gasStarted').value=dateText();update()};
+ q('gasNewCart').onclick=()=>{state.edit=true;delete state.correcting;q('gasFormat').value='';q('gasCustom').value='';q('gasFormat').onchange();q('gasStarted').value=dateText();update()};
  q('gasCancel').onclick=()=>{delete state.edit;delete state.correcting;update()};
  q('gasCorrect').onclick=()=>{state.edit=true;state.correcting=true;if(state.cart){q('gasFormat').value=[100,230,450].includes(state.cart.grams)?String(state.cart.grams):'other';q('gasCustom').value=state.cart.grams;q('gasFormat').onchange();q('gasStarted').value=state.cart.started}update()};
  q('gasCartForm').onsubmit=e=>{e.preventDefault();const n=grams(),started=q('gasStarted').value;if(!n||!started||startTime(started)>Date.now())return;state.cart={grams:n,started};if(!state.correcting){delete state.alert;delete state.plan;}delete state.edit;delete state.correcting;if(save())update()};
  q('homeGasAlert').onclick=()=>{q('openGasBtn').click();update()};
- window.addEventListener('traversee-home-position',e=>{position=e.detail;update()});
+ window.addEventListener('traversee-home-position',e=>{
+  position=e.detail;
+  if(e.detail?.manualEntry){
+   state={schema:2};
+   q('gasFormat').value='';q('gasCustom').value='';q('gasFormat').onchange();
+   q('gasStarted').value=dateText();q('gasTrackerMessage').textContent='';
+   save();
+  }
+  update();
+ });
  window.addEventListener('traversee-view',update);
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')update()});
  setInterval(()=>{if(document.visibilityState==='visible')update()},60000);update();

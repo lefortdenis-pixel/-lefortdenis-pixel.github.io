@@ -65,6 +65,22 @@ assert.equal(JSON.parse(stored).alert.id,'a');
 stored=JSON.stringify({schema:2,cart:cartBeforeMigration,alert:{id:'far',routeId:'principal'}});
 vm.runInNewContext(source,c);
 assert.equal(JSON.parse(stored).alert.id,'a');
+/* Each explicit manual entry starts a fresh scenario, including the same km again. */
+position={km:100,mode:'km',updatedAt:Date.now()};
+events['traversee-home-position']({detail:{...position,manualEntry:true}});
+assert(!JSON.parse(stored).cart);assert(!JSON.parse(stored).alert);assert(!JSON.parse(stored).plan);
+assert.equal(get('gasFormat').value,'');assert.equal(get('gasCartForm').hidden,false);
+get('gasFormat').value='100';get('gasStarted').value=today;get('gasCartForm').onsubmit({preventDefault(){}});
+const testCart=JSON.parse(stored).cart;
+/* GPS and restored manual positions update the calculation without discarding the cartridge. */
+position={km:110,mode:'gps',updatedAt:Date.now()};
+events['traversee-home-position']({detail:{...position,manualEntry:false}});
+assert.deepEqual(JSON.parse(stored).cart,testCart);
+events['traversee-home-position']({detail:{...position,mode:'km',manualEntry:false}});
+vm.runInNewContext(source,c);
+assert.deepEqual(JSON.parse(stored).cart,testCart);
+events['traversee-home-position']({detail:{...position,mode:'km',manualEntry:true}});
+assert(!JSON.parse(stored).cart);assert.equal(get('gasFormat').value,'');
 /* Unknown GPX labels must not leak into the user-facing names. */
 vm.runInNewContext(fs.readFileSync(path.join(base,'gas-points.js'),'utf8'),c);
 for(const point of c.window.TRAVERSEE_GAS_POINTS)assert(!/^GAZ\b/i.test(c.window.gasPointLabel(point)));
