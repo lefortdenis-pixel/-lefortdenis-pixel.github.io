@@ -629,13 +629,14 @@ html,body{height:100%;overflow:hidden}
 #menuSection.active #menuHost{background:transparent!important}
 </style>
 
-/* v1.227 — page Gaz réellement défilable */
+<style>/* v1.227 — page Gaz réellement défilable */
 #gasView.active{height:100%!important;max-height:100%!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
 #gasView.active .waterCard{height:auto!important;min-height:calc(100% - 2px);display:block!important;overflow:visible!important}
 #gasView.active .waterSearch,#gasView.active .gasTracker,#gasView.active .waterList{max-height:none!important;overflow:visible!important}
 #gasView.active .gasTracker{margin-bottom:18px}
 #gasView.active .waterList{display:grid!important;min-height:0;gap:12px;padding-bottom:40px}
 #gasView.active .waterItem{padding:16px 14px;min-height:112px}
+</style>
 </head>
 <body>
 <div class="wrap">
