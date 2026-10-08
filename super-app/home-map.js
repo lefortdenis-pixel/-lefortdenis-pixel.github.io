@@ -6,18 +6,34 @@
   const directionSvg='<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M16 12 L24 4 L32 12" fill="none" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 12 L24 4 L32 12" fill="none" stroke="#315ecb" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   function direction(p,atKm){const here=atKm(p.km),ahead=atKm(p.km+.08);return Math.abs(here.lat-ahead.lat)+Math.abs(here.lon-ahead.lon)>1e-8?bearing(here,ahead):null;}
   function create({tracks,inactive,start,atKm}){
+    const viewKey='traversee-home-map-view-v1';
+    let viewMode='pov',lastPosition=null,lastPovBearing=0;
+    try{if(localStorage.getItem(viewKey)==='north')viewMode='north'}catch(_){}
     if(!window.maplibregl)return leaflet({tracks,inactive,start,atKm});
     try{
       const sources={osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,maxzoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'},route:{type:'geojson',data:feature('MultiLineString',tracks.map(t=>t.map(p=>[p[1],p[0]])))},alternative:{type:'geojson',data:feature('LineString',inactive.map(p=>[p[1],p[0]]))},bivouac:{type:'geojson',data:empty()},position:{type:'geojson',data:empty()}};
       const map=new maplibregl.Map({container:'homeMap',center:[start.lon,start.lat],zoom:13,pitch:45,bearing:0,maxPitch:60,attributionControl:false,style:{version:8,sources,layers:[{id:'osm',type:'raster',source:'osm'},{id:'alternative',type:'line',source:'alternative',paint:{'line-color':'#7d8b7e','line-width':3,'line-dasharray':[2,2]}},{id:'route',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#315ecb','line-width':4}},{id:'bivouac-band',type:'line',source:'bivouac',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#ef9537','line-width':30,'line-opacity':.28}},{id:'bivouac-line',type:'line',source:'bivouac',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#e68b24','line-width':7,'line-opacity':.9}},{id:'position',type:'circle',source:'position',paint:{'circle-radius':8,'circle-color':'#315ecb','circle-stroke-color':'white','circle-stroke-width':3}}]}});
       map.addControl(new maplibregl.AttributionControl({compact:true}),'bottom-right');
       let zone=empty(),position=empty(),arrow;
+      const setViewMode=mode=>{
+        if(!['north','pov'].includes(mode))return;
+        if(mode==='north'&&viewMode==='pov')lastPovBearing=map.getBearing();
+        viewMode=mode;
+        const north=mode==='north';
+        if(north){map.dragRotate.disable();map.touchZoomRotate.disableRotation();map.touchPitch?.disable()}
+        else{map.dragRotate.enable();map.touchZoomRotate.enableRotation();map.touchPitch?.enable()}
+        const heading=lastPosition?bearing(lastPosition,atKm(lastPosition.km+.5)):lastPovBearing;
+        map.easeTo({pitch:north?0:45,bearing:north?0:heading,duration:300});
+        try{localStorage.setItem(viewKey,mode)}catch(_){}
+      };
+      setViewMode(viewMode);
       const arrowElement=document.createElement('div');arrowElement.innerHTML=directionSvg;arrowElement.style.cssText='width:48px;height:48px;pointer-events:none';arrowElement.setAttribute('aria-hidden','true');
       map.on('load',()=>{map.getSource('bivouac').setData(zone);map.getSource('position').setData(position)});
       const update=(id,data)=>{map.getSource(id)?.setData(data)};
       return {gl:true,on:(e,fn)=>map.on(e,fn),invalidateSize:()=>map.resize(),getZoom:()=>map.getZoom(),
+        getViewMode:()=>viewMode,setViewMode,
         setView(ll,z){map.jumpTo({center:[ll[1],ll[0]],zoom:z})},
-        setPosition(p,center){position=feature('Point',[p.lon,p.lat]);update('position',position);const heading=direction(p,atKm);if(heading===null){arrow?.remove();arrow=null}else{arrow??=new maplibregl.Marker({element:arrowElement,anchor:'center',rotationAlignment:'map',pitchAlignment:'map'}).setLngLat([p.lon,p.lat]).addTo(map);arrow.setLngLat([p.lon,p.lat]).setRotation(heading)}if(center){const ahead=atKm(p.km+.5);map.jumpTo({center:[p.lon,p.lat],zoom:14.5,pitch:45,bearing:bearing(p,ahead)});map.panBy([0,-Math.min(110,map.getContainer().clientHeight*.16)],{duration:0})}},
+        setPosition(p,center){lastPosition=p;position=feature('Point',[p.lon,p.lat]);update('position',position);const heading=direction(p,atKm);if(heading===null){arrow?.remove();arrow=null}else{arrow??=new maplibregl.Marker({element:arrowElement,anchor:'center',rotationAlignment:'map',pitchAlignment:'map'}).setLngLat([p.lon,p.lat]).addTo(map);arrow.setLngLat([p.lon,p.lat]).setRotation(heading)}if(center){const ahead=atKm(p.km+.5),north=viewMode==='north';map.jumpTo({center:[p.lon,p.lat],zoom:14.5,pitch:north?0:45,bearing:north?0:bearing(p,ahead)});if(!north)map.panBy([0,-Math.min(110,map.getContainer().clientHeight*.16)],{duration:0})}},
         setZone(coords){zone=coords?.length>1?feature('LineString',coords.map(p=>[p[1],p[0]])):empty();update('bivouac',zone)},
         addMarker(p,icon,title,click){const el=document.createElement('button');el.type='button';el.className='homeMapPin';el.innerHTML='<span>'+icon+'</span>';el.setAttribute('aria-label',title);el.addEventListener('click',e=>{e.stopPropagation();click()});return new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([p.lon,p.lat]).addTo(map)},
         selectMarker(marker,on){marker.getElement().classList.toggle('homeMapPinSelected',on)}

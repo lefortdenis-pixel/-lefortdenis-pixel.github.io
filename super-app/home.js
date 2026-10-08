@@ -134,9 +134,18 @@
       state.map.setPosition(state.position,center);
     }
   }
+  function syncCompass(){
+    const button=q('homeCompassToggle'),north=!state.map?.gl||state.map.getViewMode()==='north';
+    button.disabled=!state.map?.gl;
+    button.setAttribute('aria-pressed',String(north));
+    const label=!state.map?.gl?'Vue verticale, nord en haut · vue inclinée indisponible':north?'Revenir à la vue inclinée dans le sens de la marche':'Afficher la carte verticale, nord en haut';
+    button.setAttribute('aria-label',label);button.title=label;
+    q('homeCompassMode').textContent=north?'N':'3D';
+  }
   function initMap(){
     const start=state.position||atKm(0);
     state.map=window.TraverseeHomeMap.create({tracks:DATA.tracks,inactive:window.TraverseeRoutes.inactiveLeg,start,atKm});
+    syncCompass();
     if(!state.map){notice('Carte indisponible. Les outils restent accessibles.',0);return}
     if(state.position)setPosition(state.position,{persist:false});else render();
     state.map.on('click',()=>{closeBubble();closeGps()});
@@ -162,7 +171,7 @@
   }
   async function loadPoints(){
     try{
-      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.239':'./home-pois.json?v=1.239');if(!response.ok)throw Error('points');
+      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.240':'./home-pois.json?v=1.240');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}
@@ -195,6 +204,12 @@
   });
   gps.addEventListener('click',()=>panel.hidden?openGps():closeGps());
   refresh.addEventListener('click',locate);
+  q('homeCompassToggle').addEventListener('click',()=>{
+    if(!state.map?.gl)return;
+    closeGps();closeBubble();
+    state.map.setViewMode(state.map.getViewMode()==='north'?'pov':'north');
+    syncCompass();
+  });
   const routeChoice=q('homeRouteChoice');routeChoice.value=DATA.routeId;
   routeChoice.addEventListener('change',()=>{if(window.TraverseeRoutes.choose(routeChoice.value)===false){routeChoice.value=DATA.routeId;status.textContent='Impossible de mémoriser le parcours.';}});
   q('homeKmForm').addEventListener('submit',event=>{

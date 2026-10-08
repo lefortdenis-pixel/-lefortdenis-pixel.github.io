@@ -10,11 +10,11 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.239 hors ligne</title>
+<title>Traversée 2027 · v1.240 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.239">
-<link rel="stylesheet" href="./reset.css?v=1.239">
+<link rel="stylesheet" href="./home.css?v=1.240">
+<link rel="stylesheet" href="./reset.css?v=1.240">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -646,6 +646,7 @@ html,body{height:100%;overflow:hidden}
     <header class="homeMapTop">
       <div class="homePosition">
         <button type="button" id="homeGpsToggle" class="homeGpsToggle" aria-label="Position GPS et kilomètre" aria-expanded="false" aria-controls="homeGpsPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg></button>
+        <button type="button" id="homeCompassToggle" class="homeCompassToggle" aria-label="Afficher la carte verticale, nord en haut" aria-pressed="false" title="Vue verticale · nord en haut"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path class="compassNorth" d="M12 5 8 13l4-2z"/><path class="compassSouth" d="m12 19 4-8-4 2z"/></svg><span id="homeCompassMode" aria-hidden="true">3D</span></button>
         <div id="homeGpsPanel" class="homeGpsPanel" hidden>
           <button type="button" id="homeGpsRefresh" class="homeGpsRefresh">Actualiser ma position GPS</button>
           <label for="homeRouteChoice">Parcours</label>
@@ -1049,8 +1050,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.239"></script>
-<script src="./route-engine.js?v=1.239"></script>
+<script src="./route-data.js?v=1.240"></script>
+<script src="./route-engine.js?v=1.240"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1415,7 +1416,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.239';
+const GPX_WATER_URL='./water-points.json?v=1.240';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -1703,7 +1704,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.239"></script>
+<script src="./gas-points.js?v=1.240"></script>
 <script id="gas-search">
 (()=>{
   const rows=window.TRAVERSEE_GAS_POINTS;
@@ -3027,14 +3028,14 @@ clearPreparedResults();renderPrepState();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.239"></script>
+<script src="./home-bivouac.js?v=1.240"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./home-map.js?v=1.239"></script>
-<script src="./gas-tracker.js?v=1.239"></script>
-<script src="./reset-points.js?v=1.239"></script>
-<script src="./reset-engine.js?v=1.239"></script>
-<script src="./reset.js?v=1.239"></script>
-<script src="./home.js?v=1.239"></script>
+<script src="./home-map.js?v=1.240"></script>
+<script src="./gas-tracker.js?v=1.240"></script>
+<script src="./reset-points.js?v=1.240"></script>
+<script src="./reset-engine.js?v=1.240"></script>
+<script src="./reset.js?v=1.240"></script>
+<script src="./home.js?v=1.240"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>

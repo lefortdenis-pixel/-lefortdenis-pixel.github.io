@@ -88,3 +88,11 @@
 
 .gasIcon{display:inline-block;width:24px;height:24px;vertical-align:middle;flex-shrink:0}
 .homeGasAlert .gasIcon{width:18px;height:18px;margin-right:3px}
+
+.homeCompassToggle{position:absolute;top:58px;right:0;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;border:1px solid #e1e5dc;background:#fff;color:#182820;box-shadow:0 4px 16px #1828201a;padding:0}
+.homeCompassToggle svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.4}
+.homeCompassToggle .compassNorth{fill:#cf4d43;stroke:#cf4d43}.homeCompassToggle .compassSouth{fill:#53695b;stroke:#53695b}
+.homeCompassToggle span{position:absolute;right:-3px;bottom:-2px;min-width:19px;padding:2px 3px;border-radius:6px;background:#fff;color:#53695b;font-size:9px;font-weight:850;border:1px solid #dfe5e0}
+.homeCompassToggle[aria-pressed=true]{background:#edf2ff;color:#315ecb;border-color:#c9d8f2}
+.homeCompassToggle[aria-pressed=true] span{color:#315ecb}.homeCompassToggle:disabled{opacity:.65}
+.homeGpsPanel{z-index:2}
