@@ -1,14 +1,1 @@
-const vm=require('vm'),fs=require('fs'),assert=require('assert'),path=require('path');
-const base=path.join(__dirname,'..'),source=fs.readFileSync(path.join(base,'gas-tracker.js'),'utf8');
-const el=()=>({hidden:false,value:'',textContent:'',innerHTML:'',classList:{toggle(){}},click(){}}),elements=new Map(),events={};
-const get=id=>{if(!elements.has(id))elements.set(id,el());return elements.get(id)};let stored=null,position=null;
-const c={Date,Math,Number,String,Set,JSON,document:{getElementById:get,visibilityState:'visible',addEventListener(){}},window:{addEventListener:(n,f)=>events[n]=f,TRAVERSEE_GAS_POINTS:[{id:'a',name:'A',lat:1,lon:20,status:'identified'},{id:'p',name:'Probable',lat:1,lon:60,status:'probable'},{id:'b',name:'B',lat:1,lon:220,status:'identified'}],TraverseeHome:{getPosition:()=>position}},DATA:{routeId:'principal',routeLengthKm:300},projectGps:(lat,lon)=>({km:lon,distanceMeters:100}),escapeHtml:s=>s,parseJSON:s=>s?JSON.parse(s):null,safeStorageGet:()=>stored,safeStorageSet:(k,s)=>{stored=s;return true},setInterval(){}};
-vm.runInNewContext(source,c);const e=c.window.TraverseeGasTracker;
-assert(Math.abs(e.remaining({grams:100,started:'2026-10-01'},new Date('2026-10-04T00:00:00').getTime())-6.09)<.01);
-const points=[{id:'a',km:20,offRouteMeters:0,status:'identified'},{id:'p',km:60,offRouteMeters:0,status:'probable'},{id:'b',km:220,offRouteMeters:0,status:'identified'}];
-const d=e.assess({km:0,length:300,points,days:9});assert.equal(d.target.id,'a');assert.equal(d.next.id,'b');assert(d.gap>7);assert.equal(e.assess({km:0,length:300,points:[points[1]],days:9}).kind,'urgent');assert.equal(e.assess({km:290,length:300,points,days:3}).kind,'finish');assert.equal(e.assess({km:0,length:300,points,days:3,rest:1}).kind,'urgent');
-position={km:0,updatedAt:Date.now()};events['traversee-home-position']({detail:position});get('gasFormat').value='100';get('gasStarted').value=new Date().toLocaleDateString('en-CA');get('gasCartForm').onsubmit({preventDefault(){}});assert(get('homeGasAlert').innerHTML.includes('Acheter à A'));assert.equal(JSON.parse(stored).alert.id,'a');
-position={km:25,updatedAt:Date.now()};events['traversee-home-position']({detail:position});assert(get('homeGasAlert').innerHTML.includes('accès dépassé'));get('gasUnavailable').onclick();assert.equal(JSON.parse(stored).alert.id,'b');assert(get('homeGasAlert').innerHTML.includes('Gaz insuffisant'));
-// Reset to A and confirm the purchase: its alert must not recur.
-position={km:0,updatedAt:Date.now()};events['traversee-home-position']({detail:position});get('gasFormat').value='230';get('gasBuyLater').onclick();assert.equal(JSON.parse(stored).pending.grams,230);get('gasActivate').onclick();assert.equal(JSON.parse(stored).cart.grams,230);assert(!JSON.parse(stored).pending);
-console.log('PASS gas: consumption, probable excluded, reserve margin, 100 g gap, rest, missed seller, unavailable, overlap and activation');
+cat: super-app/scripts/verify-gas.cjs: No such file or directory
