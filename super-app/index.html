@@ -10,10 +10,10 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.227 hors ligne</title>
+<title>Traversée 2027 · v1.228 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.223">
+<link rel="stylesheet" href="./home.css?v=1.228">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -629,7 +629,7 @@ html,body{height:100%;overflow:hidden}
 #menuSection.active #menuHost{background:transparent!important}
 </style>
 
-<style>/* v1.227 — page Gaz réellement défilable */
+<style>/* v1.228 — page Gaz réellement défilable */
 #gasView.active{height:100%!important;max-height:100%!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
 #gasView.active .waterCard{height:auto!important;min-height:calc(100% - 2px);display:block!important;overflow:visible!important}
 #gasView.active .waterSearch,#gasView.active .gasTracker,#gasView.active .waterList{max-height:none!important;overflow:visible!important}
@@ -1030,8 +1030,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.223"></script>
-<script src="./route-engine.js?v=1.223"></script>
+<script src="./route-data.js?v=1.228"></script>
+<script src="./route-engine.js?v=1.228"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1394,7 +1394,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.223';
+const GPX_WATER_URL='./water-points.json?v=1.228';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -1682,7 +1682,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.223"></script>
+<script src="./gas-points.js?v=1.228"></script>
 <script id="gas-search">
 (()=>{
   const rows=window.TRAVERSEE_GAS_POINTS;
@@ -1713,7 +1713,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
       const routeDistance=Math.abs(point.delta)<0.05?'À ton niveau':(point.delta<0?formatKm(-point.delta)+' km en arrière':'Dans '+formatKm(point.delta)+' km');
       const offset=onTrace?'Sur la trace':(point.offRouteMeters>=1000?formatKm(point.offRouteMeters/1000)+' km':Math.round(point.offRouteMeters/10)*10+' m')+' hors trace';
       const map='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(point.lat+','+point.lon);
-      return '<article class="waterItem gasItem"><div class="waterDistance">'+escapeHtml(routeDistance)+'</div><div class="waterName">'+escapeHtml(point.name)+' <span class="gasBadge">'+(point.status==='identified'?'Identifié · stock non confirmé':'Vendeur probable')+'</span>'+(index===0?' <span class="gasBadge">Le plus proche</span>':'')+'</div><div class="waterDesc">km '+formatKm(point.km)+' · '+escapeHtml(offset)+'</div><a class="gasMapLink" href="'+map+'" target="_blank" rel="noopener noreferrer" aria-label="Ouvrir '+escapeHtml(point.name)+' sur la carte">Voir sur la carte</a></article>';
+      return '<article class="waterItem gasItem"><div class="waterDistance">'+escapeHtml(routeDistance)+'</div><div class="waterName">'+escapeHtml(point.name)+'</div><div class="waterDesc">km '+formatKm(point.km)+' · '+escapeHtml(offset)+(point.status==='probable'?' · vendeur probable':'')+'</div><a class="gasMapLink" href="'+map+'" target="_blank" rel="noopener noreferrer" aria-label="Ouvrir '+escapeHtml(point.name)+' sur la carte">Carte</a></article>';
     }).join(''):'<div class="waterEmpty">Aucun autre point gaz prévu jusqu’à l’arrivée.</div>';
     list.scrollTop=0;
   }
@@ -3004,11 +3004,11 @@ clearPreparedResults();renderPrepState();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.223"></script>
+<script src="./home-bivouac.js?v=1.228"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./home-map.js?v=1.223"></script>
-<script src="./gas-tracker.js?v=1.223"></script>
-<script src="./home.js?v=1.223"></script>
+<script src="./home-map.js?v=1.228"></script>
+<script src="./gas-tracker.js?v=1.228"></script>
+<script src="./home.js?v=1.228"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>
