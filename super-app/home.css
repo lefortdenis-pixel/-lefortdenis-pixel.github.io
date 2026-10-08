@@ -72,3 +72,14 @@
 .gasIntro{margin:-12px 0 16px;color:var(--muted);font-size:14px;line-height:1.35;font-weight:700;max-width:34ch}
 .gasTracker{background:#fff;border-color:#e8d8c7;border-radius:22px;padding:16px;box-shadow:0 8px 24px rgba(83,48,20,.08)}
 .gasTrackerHead{padding-bottom:4px}.gasEyebrow{font-size:10px;letter-spacing:.1em;font-weight:900;color:#91430d;margin-bottom:5px}.gasCartStatus{font-size:16px;line-height:1.35}.gasTracker #gasDecision{margin-top:12px;padding:13px;border-radius:15px;background:#fff7ed}.gasTracker #gasDecision strong{font-size:17px;line-height:1.2}.gasTracker #gasDecision p{margin:6px 0 0}.gasTrackerActions.gasMainActions{margin-top:12px}.gasMainActions button{min-height:48px}.gasTracker form{border-top:1px solid #eddfd1;margin-top:14px;padding-top:14px}.gasFormIntro{font-size:16px;font-weight:850;margin:0 0 10px}.gasTracker form label{font-size:12px;font-weight:800;color:#685c50}.gasTracker form .gasTrackerActions{display:grid;grid-template-columns:1fr;gap:8px}.gasTracker form .gasTrackerActions button:last-child{background:#fff;color:#91430d;border:1px solid #d9bfa5}.gasTracker details{margin-top:13px;border-top:1px solid #eddfd1;padding-top:12px}.gasTracker details summary{font-size:12px;font-weight:800;color:#685c50}.gasTracker .gasRisk{background:#fff0e7;border-radius:11px;padding:9px;color:#8a2f16}.gasTracker .gasFine{font-size:11px;line-height:1.35}.gasTrackerMessage{font-size:12px;color:#91430d;font-weight:700}.homeGasAlert strong{font-size:14px}.homeGasAlert span{font-size:12px}
+
+/* v1.229 — actions and names stay explicit on small screens */
+.gasTracker .gasFollow{font-size:13px;color:#685c50}
+.gasTracker .gasReliability{color:#91430d;font-weight:750}
+.gasTracker .gasMainActions{display:grid;grid-template-columns:1fr}
+.gasTracker .gasMainActions button{width:100%;font-size:16px}
+.gasTracker form .gasTrackerActions button[type="submit"]{font-size:15px}
+#gasUnavailable{background:#fff;color:#91430d;border:1px solid #d9bfa5;font-size:14px}
+#gasView .gasReliability{color:#91430d}
+.gasTracker form label,.gasTracker details summary{font-size:14px}
+.gasTracker input[type=date]{min-width:0;max-width:100%;box-sizing:border-box}

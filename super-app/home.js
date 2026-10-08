@@ -84,7 +84,7 @@
       state.points.forEach(item=>{
         if(!item.point)return;
         const p=item.point;
-        const title=(p.routeAnchor?'Accès sur la trace · ':'')+(item.id==='water'?cleanWaterName(p):p.name);
+        const title=(p.routeAnchor?'Accès sur la trace · ':'')+(item.id==='water'?cleanWaterName(p):item.id==='gas'?window.gasPointLabel(p,p.km):p.name);
         if(item.id==='bivouac'&&p.type!=='camping')return;
         const marker=state.map.addMarker(p,item.icon,title,()=>showBubble(item.id,false));
         state.markers.set(item.id,marker);
@@ -107,8 +107,8 @@
     const item=state.points.find(p=>p.id===id);if(!item)return;
     closeGps();state.selected=id;
     const p=item.point;
-    const name=p?(id==='water'?cleanWaterName(p):p.name):id==='bivouac'?'Choisir un bivouac':item.label;
-    const extra=p?[offsetText(p),p.note||'',p.hours||'',p.routeAnchor?'Repère d’accès sur la trace':'',p.role==='CANDIDATE'?'Commerce à vérifier':''].filter(Boolean).join(' · '):(!state.position?'Choisis ta position avec le bouton GPS.':id==='bivouac'?'Ouvre le module pour préparer ce soir.':'Aucun autre point disponible.');
+    const name=p?(id==='water'?cleanWaterName(p):id==='gas'?window.gasPointLabel(p,p.km):p.name):id==='bivouac'?'Choisir un bivouac':item.label;
+    const extra=p?[offsetText(p),id==='gas'?'':p.note||'',p.hours||'',p.routeAnchor?'Repère d’accès sur la trace':'',p.role==='CANDIDATE'?'Commerce à vérifier':''].filter(Boolean).join(' · '):(!state.position?'Choisis ta position avec le bouton GPS.':id==='bivouac'?'Ouvre le module pour préparer ce soir.':'Aucun autre point disponible.');
     bubble.innerHTML='<button type="button" class="homePoiClose" aria-label="Fermer la bulle">×</button><button type="button" class="homePoiTitle" data-open-tool="'+item.button+'"><span>'+escape(name)+'</span><em aria-hidden="true">↗</em></button>'+(p?'<div class="homePoiDistance">'+escape(distanceText(p))+'</div>':'')+'<div class="homePoiExtra">'+escape(extra)+'</div>';
     if(p?.sourceUrl)bubble.innerHTML+='<a class="homePoiSource" href="'+escape(p.sourceUrl)+'" target="_blank" rel="noopener">Infos du site ↗</a>';
     bubble.hidden=false;

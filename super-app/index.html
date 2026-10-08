@@ -10,10 +10,10 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.228 hors ligne</title>
+<title>Traversée 2027 · v1.229 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.228">
+<link rel="stylesheet" href="./home.css?v=1.229">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -610,7 +610,6 @@ html,body{height:100%;overflow:hidden}
 #gasView .waterDistance{font-size:15px;color:#91430d;line-height:1.35}
 #gasView .waterName{font-size:17px;line-height:1.4}
 #gasView .waterDesc{font-size:14px;line-height:1.4}
-.gasBadge{display:inline-block;padding:3px 7px;border-radius:7px;background:#fff0df;color:#91430d;font-size:12px;vertical-align:middle}
 .gasMapLink{display:inline-block;margin-top:10px;padding:10px 12px;border-radius:11px;background:#12130f;color:#fff;font-size:14px;font-weight:750;text-decoration:none}
 #gasView .waterSim label{font-size:14px;line-height:1.35}
 #gasView .waterEmpty{font-size:15px;line-height:1.45}
@@ -740,7 +739,7 @@ html,body{height:100%;overflow:hidden}
   <section class="appView waterView" id="gasView">
     <div class="waterCard">
       <button class="storeHomeInline" data-home aria-label="Retour à l’accueil">⌂</button>
-      <h1>Suivi du gaz</h1><p class="gasIntro">L’app te dira quand acheter, selon ta position et les vendeurs identifiés.</p>
+      <h1>Suivi du gaz</h1><p class="gasIntro">Déclare ta cartouche. L’app te dira quand acheter la suivante.</p>
       <div class="waterSearch">
         <button class="waterGpsBtn" id="gasGpsBtn">⌖ Utiliser ma position GPS</button>
         <div class="waterStatus" id="gasStatus" role="status" aria-live="polite"></div>
@@ -1030,8 +1029,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.228"></script>
-<script src="./route-engine.js?v=1.228"></script>
+<script src="./route-data.js?v=1.229"></script>
+<script src="./route-engine.js?v=1.229"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1394,7 +1393,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.228';
+const GPX_WATER_URL='./water-points.json?v=1.229';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -1682,7 +1681,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.228"></script>
+<script src="./gas-points.js?v=1.229"></script>
 <script id="gas-search">
 (()=>{
   const rows=window.TRAVERSEE_GAS_POINTS;
@@ -1713,7 +1712,9 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
       const routeDistance=Math.abs(point.delta)<0.05?'À ton niveau':(point.delta<0?formatKm(-point.delta)+' km en arrière':'Dans '+formatKm(point.delta)+' km');
       const offset=onTrace?'Sur la trace':(point.offRouteMeters>=1000?formatKm(point.offRouteMeters/1000)+' km':Math.round(point.offRouteMeters/10)*10+' m')+' hors trace';
       const map='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(point.lat+','+point.lon);
-      return '<article class="waterItem gasItem"><div class="waterDistance">'+escapeHtml(routeDistance)+'</div><div class="waterName">'+escapeHtml(point.name)+'</div><div class="waterDesc">km '+formatKm(point.km)+' · '+escapeHtml(offset)+(point.status==='probable'?' · vendeur probable':'')+'</div><a class="gasMapLink" href="'+map+'" target="_blank" rel="noopener noreferrer" aria-label="Ouvrir '+escapeHtml(point.name)+' sur la carte">Carte</a></article>';
+      const displayName=window.gasPointLabel?window.gasPointLabel(point,point.km):('Point de ravitaillement · km '+formatKm(point.km));
+      const reliability=point.status==='probable'?'<div class="waterDesc gasReliability">Point à confirmer</div>':'';
+      return '<article class="waterItem gasItem"><div class="waterDistance">'+escapeHtml(routeDistance)+'</div><div class="waterName">'+escapeHtml(displayName)+'</div><div class="waterDesc">km '+formatKm(point.km)+' · '+escapeHtml(offset)+'</div>'+reliability+'<a class="gasMapLink" href="'+map+'" target="_blank" rel="noopener noreferrer" aria-label="Ouvrir '+escapeHtml(displayName)+' sur la carte">Voir la carte</a></article>';
     }).join(''):'<div class="waterEmpty">Aucun autre point gaz prévu jusqu’à l’arrivée.</div>';
     list.scrollTop=0;
   }
@@ -3004,11 +3005,11 @@ clearPreparedResults();renderPrepState();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.228"></script>
+<script src="./home-bivouac.js?v=1.229"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./home-map.js?v=1.228"></script>
-<script src="./gas-tracker.js?v=1.228"></script>
-<script src="./home.js?v=1.228"></script>
+<script src="./home-map.js?v=1.229"></script>
+<script src="./gas-tracker.js?v=1.229"></script>
+<script src="./home.js?v=1.229"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>
