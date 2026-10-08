@@ -6,7 +6,7 @@
   const gps=q('homeGpsToggle'),panel=q('homeGpsPanel'),status=q('homeGpsStatus');
   const input=q('homeKmInput'),refresh=q('homeGpsRefresh'),message=q('homeMapMessage');
   const POSITION_KEY='traversee-home-position-v1';
-  const categories=[{id:'water',label:'Eau',icon:'💧',button:'openWaterBtn'},{id:'bivouac',label:'Bivouac',icon:'⛺',button:'openBivouacBtn'},{id:'store',label:'Magasin',icon:'🛒',button:'openStoreBtn'},{id:'gas',label:'Gaz',icon:'🔥',button:'openGasBtn'}];
+  const categories=[{id:'water',label:'Eau',icon:'💧',button:'openWaterBtn'},{id:'bivouac',label:'Bivouac',icon:'⛺',button:'openBivouacBtn'},{id:'store',label:'Magasin',icon:'🛒',button:'openStoreBtn'},{id:'gas',label:'Gaz',icon:'🔥',button:'openGasBtn'},{id:'reset',label:'Reset',icon:'🚿',button:'openResetBtn'}];
   const state={position:null,data:null,bivouac:null,selected:null,points:[],map:null,markers:new Map(),location:null,request:0,gpsBusy:false,lastGpsAttempt:0};
   window.TraverseeHome={getPosition:()=>state.position};
   let messageTimer=0,bivouacRequest=0;
@@ -65,6 +65,7 @@
       if(Number.isFinite(km)){
         if(category.id==='water')point=nextProjected(state.data?.water,km);
         if(category.id==='gas')point=nextProjected(state.data?.gas,km);
+        if(category.id==='reset'){const p=window.TraverseeResets?.next(km);if(p)point={...p,delta:p.km-km}}
         if(category.id==='store')point=nextStore(km);
         if(category.id==='bivouac'&&!state.bivouac)point=nextProjected(state.data?.camping,km);
       }
@@ -113,7 +114,7 @@
     if(p?.sourceUrl)bubble.innerHTML+='<a class="homePoiSource" href="'+escape(p.sourceUrl)+'" target="_blank" rel="noopener">Infos du site ↗</a>';
     bubble.hidden=false;
     const index=state.points.findIndex(p=>p.id===id);
-    bubble.style.setProperty('--bubble-arrow',Math.max(8,Math.min(90,12.5+index*25))+'%');
+    bubble.style.setProperty('--bubble-arrow',Math.max(8,Math.min(90,(index+.5)*100/state.points.length))+'%');
     line.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-expanded',String(b.dataset.category===id)));
     updateMarkerStyles();
     if(p&&pan&&state.map)state.map.setView([p.lat,p.lon],Math.max(13,state.map.getZoom()),{animate:false});
@@ -121,7 +122,7 @@
   function setPosition(position,{center=true,persist=true,manualEntry=false}={}){
     if(!position||!Number.isFinite(position.km)||position.km<0||position.km>DATA.routeLengthKm)return;
     const coord=position.mode==='gps'&&Number.isFinite(position.lat)&&Number.isFinite(position.lon)?{lat:position.lat,lon:position.lon}:atKm(position.km);
-    state.position={km:position.km,...coord,mode:position.mode==='gps'?'gps':'km',updatedAt:persist?Date.now():(position.updatedAt||Date.now()),routeId:DATA.routeId,routeVersion:DATA.version};
+    state.position={km:position.km,...coord,mode:position.mode==='gps'?'gps':'km',updatedAt:persist?Date.now():(position.updatedAt||Date.now()),accuracy:position.accuracy,offRouteMeters:position.offRouteMeters,routeId:DATA.routeId,routeVersion:DATA.version};
     if(persist)safeStorageSet(POSITION_KEY,JSON.stringify(state.position));
     input.value=position.km.toFixed(1);
     ['storeKmInput','waterKmInput','gasKmInput'].forEach(id=>{const el=q(id);if(el)el.value=position.km.toFixed(1)});
@@ -153,7 +154,7 @@
       if(!Number.isFinite(accuracy)||accuracy>150){status.textContent='GPS imprécis. Réessaie ou saisis ton km.';notice(status.textContent);return;}
       const projection=projectGps(lat,lon);
       if(!projection||projection.distanceMeters>750){status.textContent='GPS hors du parcours. Saisis ton km.';notice(status.textContent);return;}
-      setPosition({km:projection.km,lat,lon,mode:'gps'});closeGps();notice('');
+      setPosition({km:projection.km,lat,lon,mode:'gps',accuracy,offRouteMeters:projection.distanceMeters});closeGps();notice('');
     },error=>{
       if(request!==state.request)return;
       gpsBusy(false);status.textContent=error?.code===1?'GPS refusé. Saisis ton km.':'GPS indisponible. Réessaie ou saisis ton km.';notice(status.textContent);
@@ -161,7 +162,7 @@
   }
   async function loadPoints(){
     try{
-      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.223':'./home-pois.json?v=1.223');if(!response.ok)throw Error('points');
+      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.234':'./home-pois.json?v=1.234');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}
@@ -230,10 +231,10 @@
   document.addEventListener('visibilitychange',()=>{
     if(document.visibilityState==='visible'&&root.classList.contains('active')){
       refreshBivouac();requestAnimationFrame(()=>state.map?.invalidateSize({pan:false}));
-      if(Date.now()-state.lastGpsAttempt>30000)locate();
+      if(state.position?.mode!=='km'&&Date.now()-state.lastGpsAttempt>30000)locate();
     }
   });
-  window.addEventListener('pageshow',event=>{if(event.persisted&&root.classList.contains('active')){state.map?.invalidateSize({pan:false});locate();}});
+  window.addEventListener('pageshow',event=>{if(event.persisted&&root.classList.contains('active')){state.map?.invalidateSize({pan:false});if(state.position?.mode!=='km')locate();}});
   const saved=parseJSON(safeStorageGet(POSITION_KEY));
   if(saved&&Number.isFinite(saved.km)){
     if(saved.routeId===DATA.routeId&&saved.routeVersion===DATA.version)setPosition(saved,{persist:false});
@@ -243,6 +244,6 @@
       else {status.textContent='Choisis ta position sur ce parcours.';openGps();}
     }
   }
-  render();initMap();loadPoints();refreshBivouac();locate();
+  render();initMap();loadPoints();refreshBivouac();if(state.position?.mode!=='km')locate();
 })();
 

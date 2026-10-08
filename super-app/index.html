@@ -10,10 +10,11 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.233 hors ligne</title>
+<title>Traversée 2027 · v1.234 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.233">
+<link rel="stylesheet" href="./home.css?v=1.234">
+<link rel="stylesheet" href="./reset.css?v=1.234">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -666,6 +667,7 @@ html,body{height:100%;overflow:hidden}
       <button type="button" id="openWaterBtn"><span class="homeToolIcon" aria-hidden="true">💧</span><span>Eau</span></button>
       <button type="button" id="openStoreBtn"><span class="homeToolIcon" aria-hidden="true">🛒</span><span>Magasin</span></button>
       <button type="button" id="openGasBtn"><span class="homeToolIcon" aria-hidden="true">🔥</span><span>Gaz</span></button>
+      <button type="button" id="openResetBtn"><span class="homeToolIcon" aria-hidden="true">🚿</span><span>Reset</span></button>
       <button type="button" id="openBivouacBtn"><span class="homeToolIcon" aria-hidden="true">⛺</span><span>Bivouac</span></button>
     </nav>
   </section>
@@ -758,6 +760,23 @@ html,body{height:100%;overflow:hidden}
     </div>
   </section>
 
+  <section class="appView resetView" id="resetView">
+    <div class="resetCard">
+      <button class="storeHomeInline" data-home aria-label="Retour à l’accueil">⌂</button>
+      <h1>Trouver un reset</h1>
+      <button type="button" class="resetGps" id="resetGpsBtn">⌖ Utiliser ma position GPS</button>
+      <div class="resetPosition"><label for="resetRouteChoice">Parcours</label><select id="resetRouteChoice"><option value="principal">Principal</option><option value="brenne">Brenne</option></select>
+      <form id="resetKmForm"><label for="resetKmInput">Mon km</label><div class="resetKmRow"><input id="resetKmInput" type="number" inputmode="decimal" min="0" step="0.1" placeholder="Ex. 450" required><button type="submit">Afficher</button></div></form></div>
+      <p id="resetStatus" role="status"></p><p id="resetPace" class="resetMeta"></p>
+      <p id="resetMessage" role="status" aria-live="polite"></p>
+      <div id="resetNext" class="resetNext"></div>
+      <div id="resetTracking" class="resetTracking"></div>
+      <div id="resetMap" role="region" aria-label="Carte des resets"></div>
+      <p class="resetLegend"><span class="complete">● Complet</span><span class="usable">● Utilisable</span><span class="backup">● Secours</span></p>
+      <div id="resetList"></div>
+    </div>
+  </section>
+
   <section class="appView bivouacView" id="bivouacView">
     <iframe id="bivouacHost" title="Bivouac Scout" data-src="./bivouac/index.html"></iframe>
   </section>
@@ -782,6 +801,7 @@ const appViews = {
   store: document.getElementById("storeView"),
   water: document.getElementById("waterView"),
   gas: document.getElementById("gasView"),
+  reset: document.getElementById("resetView"),
   bivouac: document.getElementById("bivouacView"),
   menu: document.getElementById("menuSection")
 };
@@ -1029,8 +1049,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.233"></script>
-<script src="./route-engine.js?v=1.233"></script>
+<script src="./route-data.js?v=1.234"></script>
+<script src="./route-engine.js?v=1.234"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1063,16 +1083,18 @@ window.TraverseeRoutes.project=projectGps;
 ["homeKmInput","storeKmInput","waterKmInput","gasKmInput"].forEach(id=>{const input=document.getElementById(id);if(input)input.max=DATA.routeLengthKm;});
 
 function projectGps(lat,lon){
-  const lat0=rad(lat); let best=null;
+  const lat0=rad(lat); let best=null;const candidates=[];
   for(const s of SEGMENTS){
     const ax=rad(s.a[1]-lon)*Math.cos(lat0)*R, ay=rad(s.a[0]-lat)*R;
     const bx=rad(s.b[1]-lon)*Math.cos(lat0)*R, by=rad(s.b[0]-lat)*R;
     const vx=bx-ax, vy=by-ay, den=vx*vx+vy*vy;
     const t=den===0?0:Math.max(0,Math.min(1,-(ax*vx+ay*vy)/den));
     const x=ax+t*vx, y=ay+t*vy, dist=Math.hypot(x,y);
-    if(!best || dist<best.distanceMeters)
-      best={stage:s.stage,km:s.startKm+t*s.lengthKm,distanceMeters:dist};
+    const candidate={stage:s.stage,km:s.startKm+t*s.lengthKm,distanceMeters:dist};candidates.push(candidate);
+    if(!best || dist<best.distanceMeters)best=candidate;
   }
+  const prior=window.TraverseeHome?.getPosition(),age=prior?(Date.now()-prior.updatedAt)/3600000:Infinity;
+  if(best&&prior?.mode==='gps'&&prior.routeId===DATA.routeId&&age>=0&&age<12){const plausible=candidates.filter(p=>p.distanceMeters<=best.distanceMeters+30&&Math.abs(p.km-prior.km)<=Math.max(1,age*7));if(plausible.length)best=plausible.sort((a,b)=>Math.abs(a.km-prior.km)-Math.abs(b.km-prior.km))[0];}
   return best;
 }
 
@@ -1361,7 +1383,7 @@ document.getElementById("gpsBtn").addEventListener("click",()=>{
       const offset=p.distanceMeters>150?" · "+Math.round(p.distanceMeters)+" m de la trace":"";
       status.textContent=quality+"Position : E"+p.stage+" · km "+p.km.toFixed(2)+offset;
       show(p.km,p.stage,p.distanceMeters);
-      window.dispatchEvent(new CustomEvent('traversee-position',{detail:{km:p.km,lat,lon,mode:'gps'}}));
+      window.dispatchEvent(new CustomEvent('traversee-position',{detail:{km:p.km,lat,lon,mode:'gps',accuracy,offRouteMeters:p.distanceMeters}}));
     },20);
   },err=>{button.disabled=false;status.textContent=gpsErrorMessage(err)},{enableHighAccuracy:true,timeout:12000,maximumAge:15000});
 });
@@ -1393,7 +1415,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.233';
+const GPX_WATER_URL='./water-points.json?v=1.234';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -1646,7 +1668,7 @@ function locateWater(){
   navigator.geolocation.getCurrentPosition(position=>{
     const accuracy=Number(position.coords.accuracy)||9999;
     const route=projectGps(position.coords.latitude,position.coords.longitude);
-    if(accuracy<=150&&route&&route.distanceMeters<=750)window.dispatchEvent(new CustomEvent('traversee-position',{detail:{km:route.km,lat:position.coords.latitude,lon:position.coords.longitude,mode:'gps'}}));
+    if(accuracy<=150&&route&&route.distanceMeters<=750)window.dispatchEvent(new CustomEvent('traversee-position',{detail:{km:route.km,lat:position.coords.latitude,lon:position.coords.longitude,mode:'gps',accuracy,offRouteMeters:route.distanceMeters}}));
     const context=accuracy>150?'GPS imprécis ±'+Math.round(accuracy)+' m · ':accuracy>60?'GPS ±'+Math.round(accuracy)+' m · ':'';
     searchWater({lat:position.coords.latitude,lon:position.coords.longitude},context,null);
   },err=>{
@@ -1681,7 +1703,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.233"></script>
+<script src="./gas-points.js?v=1.234"></script>
 <script id="gas-search">
 (()=>{
   const rows=window.TRAVERSEE_GAS_POINTS;
@@ -1739,7 +1761,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
       const p=projectGps(position.coords.latitude,position.coords.longitude);
       if(!p||p.distanceMeters>750){status.textContent='Tu es trop loin de la trace pour déterminer ton avancement. Saisis ton km.';return;}
       input.value=p.km.toFixed(1);render(p.km);
-      window.dispatchEvent(new CustomEvent('traversee-position',{detail:{km:p.km,lat:position.coords.latitude,lon:position.coords.longitude,mode:'gps'}}));
+      window.dispatchEvent(new CustomEvent('traversee-position',{detail:{km:p.km,lat:position.coords.latitude,lon:position.coords.longitude,mode:'gps',accuracy,offRouteMeters:p.distanceMeters}}));
       gps.textContent='⌖ Actualiser ma position';
     },error=>{busy(false);status.textContent=gpsErrorMessage(error);},{enableHighAccuracy:true,timeout:12000,maximumAge:15000});
   });
@@ -3005,11 +3027,14 @@ clearPreparedResults();renderPrepState();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.233"></script>
+<script src="./home-bivouac.js?v=1.234"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./home-map.js?v=1.233"></script>
-<script src="./gas-tracker.js?v=1.233"></script>
-<script src="./home.js?v=1.233"></script>
+<script src="./home-map.js?v=1.234"></script>
+<script src="./gas-tracker.js?v=1.234"></script>
+<script src="./reset-points.js?v=1.234"></script>
+<script src="./reset-engine.js?v=1.234"></script>
+<script src="./reset.js?v=1.234"></script>
+<script src="./home.js?v=1.234"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>
