@@ -26,6 +26,11 @@
  let migrating=state.schema!==2;
  if(migrating){delete state.pending;delete state.alert;delete state.plan;delete state.edit;state.schema=2;}
  if('rest' in state){delete state.rest;migrating=true;}
+ /* The removed "Pas de gaz ici" button used to persist exclusions indefinitely. */
+ if('unavailable' in state){
+  if(Array.isArray(state.unavailable)&&state.unavailable.length){delete state.alert;delete state.plan;}
+  delete state.unavailable;migrating=true;
+ }
  if(state.cart&&(!Number.isFinite(state.cart.grams)||state.cart.grams<=0||!Number.isFinite(startTime(state.cart.started))))state={};
  function save(){
   const {edit,correcting,...persisted}=state;
@@ -43,7 +48,7 @@
   return assess({
    km:position.km,
    length:DATA.routeLengthKm,
-   points:getPoints().filter(p=>!(state.unavailable||[]).includes(p.id)),
+   points:getPoints(),
    days:remaining(state.cart)
   });
  }
@@ -58,6 +63,12 @@
   if(state.plan&&state.plan.routeId!==DATA.routeId)delete state.plan;
   const days=remaining(state.cart),d=decision();
   let target=currentTarget();
+  if(state.alert&&!target)delete state.alert;
+  /* Keep a purchase warning, but never skip an earlier useful seller for a stale target. */
+  if(target&&position&&target.km>=position.km-.05&&d?.target&&d.target.km<target.km-.1){
+   state.alert={id:d.target.id,routeId:DATA.routeId};target=d.target;
+   state.plan={id:d.target.id,routeId:DATA.routeId};
+  }
   const previousPlan=state.plan?.routeId===DATA.routeId?getPoints().find(p=>p.id===state.plan.id):null;
   if(!state.alert&&previousPlan&&d?.kind==='urgent'&&position&&position.km>previousPlan.km+.1)state.alert={id:previousPlan.id,routeId:DATA.routeId};
   /* Store the useful point before the alert window, so a later app opening can still warn. */
@@ -74,7 +85,7 @@
   const label=target?pointLabel(target,target.km):'';
   const distance=target&&position?fmt(Math.max(0,target.km-position.km)):'';
   const place=/^Point de ravitaillement/.test(label)?'Magasin au km '+fmt(target.km):label;
-  const next=target?getPoints().filter(p=>p.status==='identified'&&p.offRouteMeters<=5000&&p.km>target.km+.05&&!(state.unavailable||[]).includes(p.id)).sort((a,b)=>a.km-b.km)[0]:null;
+  const next=target?getPoints().filter(p=>p.status==='identified'&&p.offRouteMeters<=5000&&p.km>target.km+.05).sort((a,b)=>a.km-b.km)[0]:null;
   const gapKm=target?Math.max(0,(next?.km??DATA.routeLengthKm)-target.km):0;
   const gapDays=target?(gapKm+2*(next?.offRouteMeters||0)/1000)/PACE:0;
   const format=[100,230,450].find(grams=>grams/RATE>=gapDays+MARGIN);
@@ -106,7 +117,7 @@
    if(!missed){
     result.innerHTML+='<p>'+(outOfRange?'Le prochain vendeur enregistré est dans '+distance+' km, trop loin pour ton autonomie restante.':next?'Ta cartouche ne suffira pas pour atteindre le vendeur identifié suivant.':'Ta cartouche ne suffira pas pour terminer le parcours.')+'</p>';
     if(gapDays>14)result.innerHTML+='<p class="gasRisk">'+esc(next?'Aucun autre vendeur identifié enregistré sur les '+fmt(gapKm)+' km suivants.':'Aucun autre vendeur identifié enregistré jusqu’à l’arrivée.')+'</p>';
-    result.innerHTML+='<a class="gasDirections" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(target.lat+','+target.lon)+'" target="_blank" rel="noopener">Y aller ↗</a>';
+    if(!outOfRange)result.innerHTML+='<a class="gasDirections" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(target.lat+','+target.lon)+'" target="_blank" rel="noopener">Y aller ↗</a>';
    }
    if(alternative&&!missed)result.innerHTML+='<p class="gasFollow">Autre possibilité dans '+fmt(alternative.km-position.km)+' km : '+esc(pointLabel(alternative,alternative.km))+'. Gaz compatible à vérifier.</p>';
    result.innerHTML+='<p class="gasFollow">Continue à utiliser ta cartouche actuelle. Quand tu la remplaces, appuie sur « Je change de cartouche ».</p>';

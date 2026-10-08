@@ -1,6 +1,6 @@
-const CACHE='traversee-v1-230-gas';
+const CACHE='traversee-v1-231-gas';
 const TILE_CACHE='traversee-map-tiles-v1';
-const ASSETS=['./','./index.html','./home.css?v=1.230','./home.js?v=1.230','./home-bivouac.js?v=1.230','./home-pois.json?v=1.230','./home-pois-brenne.json?v=1.230','./route-data.js?v=1.230','./route-engine.js?v=1.230','./gas-points.js?v=1.230','./gas-tracker.js?v=1.230','./store-points.js','./water-points.json?v=1.230','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./bivouac/index.html','./home-map.js?v=1.230','./vendor/maplibre-gl.js','./vendor/maplibre-gl.css','./vendor/leaflet.css','./vendor/leaflet.js','./vendor/leaflet.sync.js'];
+const ASSETS=['./','./index.html','./home.css?v=1.231','./home.js?v=1.231','./home-bivouac.js?v=1.231','./home-pois.json?v=1.231','./home-pois-brenne.json?v=1.231','./route-data.js?v=1.231','./route-engine.js?v=1.231','./gas-points.js?v=1.231','./gas-tracker.js?v=1.231','./store-points.js','./water-points.json?v=1.231','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/apple-touch-icon.png','./bivouac/index.html','./home-map.js?v=1.231','./vendor/maplibre-gl.js','./vendor/maplibre-gl.css','./vendor/leaflet.css','./vendor/leaflet.js','./vendor/leaflet.sync.js'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()));

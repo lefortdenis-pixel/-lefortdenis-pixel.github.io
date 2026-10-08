@@ -49,6 +49,22 @@ assert(get('gasDecision').innerHTML.includes('Gaz compatible à vérifier'));
 assert(get('gasDecision').innerHTML.includes('316,5 km suivants'));
 assert(!get('gasTracker').innerHTML.includes('Réglages'));
 assert(!get('gasTracker').innerHTML.includes('Pas de gaz ici'));
+/* Legacy exclusions from the removed button must not hide the nearby sellers. */
+c.window.TRAVERSEE_GAS_POINTS.push({id:'far',name:'Intersport',lat:1,lon:674.2,status:'identified'});
+const cartBeforeMigration=JSON.parse(stored).cart;
+stored=JSON.stringify({schema:2,cart:cartBeforeMigration,unavailable:['a','b'],alert:{id:'far',routeId:'principal'}});
+vm.runInNewContext(source,c);
+assert.equal(JSON.parse(stored).alert.id,'a');
+assert.deepEqual(JSON.parse(stored).cart,cartBeforeMigration);
+assert(!('unavailable' in JSON.parse(stored)));
+assert(get('gasDecision').innerHTML.includes('dans 13,8 km'));
+assert(!get('gasDecision').innerHTML.includes('673,2 km'));
+vm.runInNewContext(source,c);
+assert.equal(JSON.parse(stored).alert.id,'a');
+/* A stale alert for a distant seller must also give way to an earlier useful seller. */
+stored=JSON.stringify({schema:2,cart:cartBeforeMigration,alert:{id:'far',routeId:'principal'}});
+vm.runInNewContext(source,c);
+assert.equal(JSON.parse(stored).alert.id,'a');
 /* Unknown GPX labels must not leak into the user-facing names. */
 vm.runInNewContext(fs.readFileSync(path.join(base,'gas-points.js'),'utf8'),c);
 for(const point of c.window.TRAVERSEE_GAS_POINTS)assert(!/^GAZ\b/i.test(c.window.gasPointLabel(point)));
