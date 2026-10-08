@@ -10,3 +10,11 @@
 .resetServices{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0;padding:0;list-style:none}.resetService{padding:9px 10px;background:#f5f7f5;border-radius:10px;font-size:14px;line-height:1.4}.resetService b{display:block;font-size:12px;font-weight:650;color:#627268}.resetService.yes b{color:#206b4c}.resetService.unknown b{color:#965b0d}.resetService.no{opacity:.65}.resetPlace details{font-size:14px;line-height:1.5;margin-top:14px}.resetPlace summary{cursor:pointer;min-height:44px;padding:10px 0}.resetPlace a{color:#315ecb}.resetActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.resetActions .resetDone{background:#203b30!important;color:#fff!important;flex:1}.resetConfirm{display:grid;gap:8px;margin-top:14px;font-size:14px}.resetSelected{border:2px solid #315ecb}
 .homeBottomBar button{font-size:11px}.homeMetroStop b{font-size:15px}.homeMetroLine:before{left:10%;right:10%}
 @media(max-width:350px){#resetView{padding:8px}#resetView .resetCard{padding:18px 12px}.resetPosition{grid-template-columns:1fr}.resetPosition form{grid-column:1;grid-row:3}.resetServices{grid-template-columns:1fr}.homeBottomBar .homeToolIcon{font-size:20px}}
+
+#resetStatus:empty,#resetPace:empty{display:none}
+.resetServices{display:flex;gap:10px;flex-wrap:wrap}
+.resetService{position:relative;width:42px;height:42px;display:flex;align-items:center;justify-content:center;padding:0;font-size:25px}
+.resetService svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round}
+.resetService b{position:absolute;right:-3px;bottom:-3px;border-radius:50%;background:#fff;width:17px;height:17px;text-align:center;line-height:17px;font-size:13px}
+#resetView .resetChecked{font-size:12px;color:#627268}
+.resetMapIcon{background:none;border:0}.resetMapIcon span{display:flex;align-items:center;justify-content:center;width:40px;height:40px;background:var(--reset-color);border:3px solid #fff;border-radius:50% 50% 50% 8px;box-shadow:0 3px 10px #0005;font-size:24px}
