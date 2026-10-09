@@ -11,8 +11,9 @@
     try{if(localStorage.getItem(viewKey)==='north')viewMode='north'}catch(_){}
     if(!window.maplibregl)return leaflet({tracks,inactive,start,atKm});
     try{
-      const sources={osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,maxzoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'},route:{type:'geojson',data:feature('MultiLineString',tracks.map(t=>t.map(p=>[p[1],p[0]])))},alternative:{type:'geojson',data:feature('LineString',inactive.map(p=>[p[1],p[0]]))},bivouac:{type:'geojson',data:empty()},position:{type:'geojson',data:empty()}};
+      const sources={osm:{type:'raster',tiles:[TraverseeOfflineCore.TILE_URL],tileSize:256,maxzoom:19,attribution:'© IGN · Plan IGN'},route:{type:'geojson',data:feature('MultiLineString',tracks.map(t=>t.map(p=>[p[1],p[0]])))},alternative:{type:'geojson',data:feature('LineString',inactive.map(p=>[p[1],p[0]]))},bivouac:{type:'geojson',data:empty()},position:{type:'geojson',data:empty()}};
       const map=new maplibregl.Map({container:'homeMap',center:[start.lon,start.lat],zoom:13,pitch:45,bearing:0,maxPitch:60,attributionControl:false,style:{version:8,sources,layers:[{id:'osm',type:'raster',source:'osm'},{id:'alternative',type:'line',source:'alternative',paint:{'line-color':'#7d8b7e','line-width':3,'line-dasharray':[2,2]}},{id:'route',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#315ecb','line-width':4}},{id:'bivouac-band',type:'line',source:'bivouac',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#ef9537','line-width':30,'line-opacity':.28}},{id:'bivouac-line',type:'line',source:'bivouac',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#e68b24','line-width':7,'line-opacity':.9}},{id:'position',type:'circle',source:'position',paint:{'circle-radius':8,'circle-color':'#315ecb','circle-stroke-color':'white','circle-stroke-width':3}}]}});
+      const offlineZoom=()=>map.setMaxZoom(navigator.onLine?19:15);offlineZoom();window.addEventListener('offline',offlineZoom);window.addEventListener('online',offlineZoom);
       map.addControl(new maplibregl.AttributionControl({compact:false}),'bottom-right');
       let zone=empty(),position=empty(),arrow;
       const setViewMode=mode=>{
@@ -44,7 +45,8 @@
   function leaflet({tracks,inactive,start,atKm}){
     if(!window.L)return null;
     const map=L.map('homeMap',{zoomControl:false,preferCanvas:true});
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);
+    L.tileLayer(TraverseeOfflineCore.TILE_URL,{maxZoom:19,attribution:'© IGN · Plan IGN'}).addTo(map);
+    const offlineZoom=()=>map.setMaxZoom(navigator.onLine?19:15);offlineZoom();window.addEventListener('offline',offlineZoom);window.addEventListener('online',offlineZoom);
     L.polyline(inactive,{color:'#7d8b7e',weight:3,dashArray:'7 7',interactive:false}).addTo(map);
     tracks.forEach(t=>L.polyline(t,{color:'#315ecb',weight:4,interactive:false}).addTo(map));map.setView([start.lat,start.lon],13);
     let pos,arrow,zone=[];

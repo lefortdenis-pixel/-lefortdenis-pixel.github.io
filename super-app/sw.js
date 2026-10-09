@@ -1,72 +1,46 @@
-const CACHE='traversee-v1-273-gas-names';
-const TILE_CACHE='traversee-map-tiles-v1';
-const ASSETS=[...Array.from({length:49},(_,i)=>'./images/meals/meal-'+String(i).padStart(2,'0')+'.webp'),'./soleil-font.css?v=1.273','./soleil.css?v=1.273','./soleil-menu.css?v=1.273','./soleil-bivouac.css?v=1.273','./icons/gas-canister.svg','./reset.css?v=1.273','./reset-points.js?v=1.273','./reset-engine.js?v=1.273','./reset.js?v=1.273','./','./index.html','./home.css?v=1.273','./home.js?v=1.273','./home-bivouac.js?v=1.273','./home-pois.json?v=1.273','./home-pois-brenne.json?v=1.273','./route-data.js?v=1.273','./route-engine.js?v=1.273','./gas-points.js?v=1.273','./gas-tracker.js?v=1.273','./store-points.js','./water-points.json?v=1.273','./manifest.webmanifest','./icons/icon-192-soleil-v3.png','./icons/icon-512-soleil-v3.png','./icons/apple-touch-icon-soleil-v3.png','./bivouac/index.html','./home-map.js?v=1.273','./vendor/maplibre-gl.js','./vendor/maplibre-gl.css','./vendor/leaflet.css','./vendor/leaflet.js','./vendor/leaflet.sync.js'];
-
-self.addEventListener('install',event=>{
-  event.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()));
-});
-
-self.addEventListener('activate',event=>{
-  event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE&&k!==TILE_CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
-});
-
-function isMapTile(url){
-  const h=url.hostname;
-  return h==='server.arcgisonline.com'||h==='data.geopf.fr'||h==='tile.waymarkedtrails.org'||
-    h==='tile.openstreetmap.org'||h.endsWith('.tile.openstreetmap.org')||h.endsWith('.tile.opentopomap.org')||
-    h.endsWith('.basemaps.cartocdn.com');
-}
-async function trimTileCache(max=1200){
-  const cache=await caches.open(TILE_CACHE),keys=await cache.keys();
-  if(keys.length<=max)return;
-  await Promise.all(keys.slice(0,keys.length-max).map(k=>cache.delete(k)));
-}
-
+importScripts('./offline-core.js?v=1.274','./offline-assets.js');
+const A=TraverseeOfflineAssets,C=TraverseeOfflineCore,CACHE='traversee-app-'+A.version,TILE_CACHE='traversee-map-tiles-v1';
+const absolute=p=>new URL(p,self.registration.scope).href;
+async function fetchGood(request,timeout=20000){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);try{const r=await fetch(request,{signal:controller.signal,cache:'no-cache'});if(!r.ok)throw Error('HTTP '+r.status);return r}finally{clearTimeout(timer)}}
+self.addEventListener('install',event=>event.waitUntil((async()=>{
+ const cache=await caches.open(CACHE);
+ // Activation happens only after every essential file is safely written.
+ for(const path of A.essential){const url=absolute(path);await cache.put(url,await fetchGood(url));}
+ await cache.put(absolute('./offline-installed'),new Response(JSON.stringify({version:A.version,at:Date.now()})));
+ await self.skipWaiting();
+})()));
+self.addEventListener('activate',event=>event.waitUntil((async()=>{
+ // Retain the previous shell for tabs still running its scripts. Never erase packs.
+ const keys=await caches.keys(),appKeys=keys.filter(k=>k.startsWith('traversee-app-')&&k!==CACHE);
+ for(const key of appKeys.slice(0,-1))await caches.delete(key);
+ await self.clients.claim();
+})()));
+function isMapTile(u){return u.hostname==='data.geopf.fr'&&u.pathname==='/wmts'||u.hostname==='server.arcgisonline.com'||u.hostname==='tile.waymarkedtrails.org'||u.hostname==='tile.openstreetmap.org'||u.hostname.endsWith('.tile.openstreetmap.org')||u.hostname.endsWith('.tile.opentopomap.org')||u.hostname.endsWith('.basemaps.cartocdn.com')}
+function ignCanonical(u){if(u.hostname!=='data.geopf.fr'||u.pathname!=='/wmts')return null;const p=Object.fromEntries([...u.searchParams].map(([k,v])=>[k.toLowerCase(),v]));return p.layer==='GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2'?C.tileUrl(p.tilematrix,p.tilecol,p.tilerow):null;}
 self.addEventListener('fetch',event=>{
-  if(event.request.method!=='GET') return;
-  const url=new URL(event.request.url);
-
-  if(url.origin===self.location.origin){
-    const htmlRequest=event.request.mode==='navigate'||url.pathname.endsWith('/index.html');
-    if(htmlRequest){
-      const fallback=url.pathname.includes('/bivouac')?'./bivouac/index.html':'./index.html';
-      event.respondWith(
-        fetch(event.request).then(resp=>{
-          const copy=resp.clone();
-          caches.open(CACHE).then(c=>c.put(event.request,copy));
-          return resp;
-        }).catch(()=>caches.match(event.request).then(cached=>cached||caches.match(fallback)))
-      );
-    }else{
-      event.respondWith(
-        caches.match(event.request).then(cached=>cached||fetch(event.request).then(resp=>{
-          const copy=resp.clone();
-          caches.open(CACHE).then(c=>c.put(event.request,copy));
-          return resp;
-        }))
-      );
-    }
-    return;
-  }
-
-  if(isMapTile(url)){
-    event.respondWith(
-      caches.open(TILE_CACHE).then(async cache=>{
-        const cached=await cache.match(event.request);
-        // Leaflet image requests cache opaque responses. WebGL fetches require
-        // readable CORS responses, so upgrade only incompatible cached tiles.
-        if(cached&&(event.request.mode==='no-cors'||cached.type!=='opaque'))return cached;
-        try{
-          const resp=await fetch(event.request);
-          if(resp.ok||resp.type==='opaque'){
-            cache.put(event.request,resp.clone()).then(()=>trimTileCache());
-          }
-          return resp;
-        }catch(_){
-          return new Response('',{status:504,statusText:'Offline tile unavailable'});
-        }
-      })
-    );
-  }
+ if(event.request.method!=='GET')return;const url=new URL(event.request.url);
+ if(url.origin===self.location.origin){
+  event.respondWith((async()=>{
+   const cache=await caches.open(CACHE);
+   if(event.request.mode==='navigate'||url.pathname.endsWith('/index.html')){
+    const path=url.pathname.includes('/bivouac')?'./bivouac/index.html':'./index.html';
+    // Serve the shell belonging to this worker: no mixture of deployment versions.
+    const saved=await cache.match(absolute(path));if(saved)return saved;
+    try{return await fetchGood(event.request,4000)}catch(_){return await caches.match(absolute(path))||new Response('Rouvre l’application avec du réseau pour la préparer.',{status:503})}
+   }
+   const saved=await cache.match(event.request)||await caches.match(event.request);if(saved)return saved;
+   try{const response=await fetchGood(event.request,10000);await cache.put(event.request,response.clone());return response}catch(_){return new Response('',{status:504})}
+  })());return;
+ }
+ if(isMapTile(url))event.respondWith((async()=>{
+  const canonical=ignCanonical(url),pinned=await caches.open(C.MAP_CACHE);
+  if(canonical){const saved=await pinned.match(canonical);if(saved)return saved;}
+  const cache=await caches.open(TILE_CACHE),saved=await cache.match(event.request);
+  if(saved&&(event.request.mode==='no-cors'||saved.type!=='opaque'))return saved;
+  try{const r=await fetch(event.request);if(r.ok||r.type==='opaque')event.waitUntil((async()=>{await cache.put(event.request,r.clone());const keys=await cache.keys();for(const k of keys.slice(0,Math.max(0,keys.length-1200)))await cache.delete(k)})());return r}catch(_){return new Response('',{status:504})}
+ })());
 });
-
+self.addEventListener('message',event=>{
+ if(event.data?.type!=='VERIFY_OFFLINE')return;
+ event.waitUntil((async()=>{const cache=await caches.open(CACHE),missing=[];for(const p of A.essential)if(!(await cache.match(absolute(p))))missing.push(p);event.ports[0]?.postMessage({version:A.version,missing,total:A.essential.length});})());
+});
