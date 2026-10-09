@@ -1,7 +1,7 @@
 /* Shared offline geometry and storage contract. No external dependency. */
 (function(root){
  'use strict';
- const VERSION='1.274', MAP_CACHE='traversee-offline-planign-v1', META_CACHE='traversee-offline-packs-v1', RELIEF_CACHE='traversee-offline-relief-v1';
+ const VERSION='1.275', MAP_CACHE='traversee-offline-planign-v1', META_CACHE='traversee-offline-packs-v1', RELIEF_CACHE='traversee-offline-relief-v1';
  const TILE_URL='https://data.geopf.fr/wmts?service=WMTS&request=GetTile&version=1.0.0&layer=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&style=normal&format=image/png&tilematrixset=PM&tilematrix={z}&tilerow={y}&tilecol={x}';
  const hav=(a,b)=>{const r=Math.PI/180;return 12742.0176*Math.asin(Math.min(1,Math.sqrt(Math.sin((b[0]-a[0])*r/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin((b[1]-a[1])*r/2)**2)))};
  function geometry(points){const cum=[0];for(let i=1;i<points.length;i++)cum.push(cum[i-1]+hav(points[i-1],points[i]));function at(km){km=Math.max(0,Math.min(cum.at(-1),km));let lo=1,hi=points.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(cum[mid]<km)lo=mid+1;else hi=mid}const a=points[lo-1],b=points[lo],t=(km-cum[lo-1])/(cum[lo]-cum[lo-1]||1);return {lat:a[0]+(b[0]-a[0])*t,lng:a[1]+(b[1]-a[1])*t,ele:a[2]+(b[2]-a[2])*t}}return {cum,at};}
