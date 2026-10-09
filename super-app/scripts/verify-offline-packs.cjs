@@ -14,7 +14,7 @@ const env={console,URL,Request,Response,Blob,AbortController,DOMException,Messag
  const file=path.join(base,new URL(url).pathname.slice(1));return new Response(fs.existsSync(file)?fs.readFileSync(file):'image');
 }};env.TraverseeRoutes=route;vm.runInNewContext(fs.readFileSync(path.join(base,'offline.js'),'utf8'),env);
 (async()=>{
- await q('offlinePrepare').onclick();assert(q('offlineStatus').textContent.includes('incomplet'));let packs=await env.window.TraverseeOffline.readPacks();assert.equal(packs.length,1);assert(!packs[0].complete);const firstCalls=tileCalls;
+ await q('offlinePrepare').onclick();assert(q('offlineStatus').textContent.includes('incomplet'));let packs=await env.window.TraverseeOffline.readPacks();assert.equal(packs.length,1);assert(!packs[0].complete);assert.equal(q('offlineShell').textContent,'Téléchargement incomplet');assert.equal(q('offlinePrepare').textContent,'Reprendre');const firstCalls=tileCalls;
  failOne=false;await q('offlinePrepare').onclick();packs=await env.window.TraverseeOffline.readPacks();assert(packs[0].complete);assert(packs[0].reliefComplete);assert.equal(tileCalls-firstCalls,1,'Resume must request only the missing tile');assert(q('offlineStatus').textContent.startsWith('✓'));
  env.navigator.onLine=false;const z=await env.window.TraverseeOffline.relief([1,1.1,1.2]);assert.deepEqual(Array.from(z),Array(9).fill(100));const useful=await (await (await caches.open(C.MAP_CACHE)).match(failedUrl)).arrayBuffer();assert(useful.byteLength>50);
  env.navigator.onLine=true;route.pace.windowEnd=()=>4;abortOnTile=true;await q('offlinePrepare').onclick();assert(q('offlineStatus').textContent.includes('interrompu'));assert((await env.window.TraverseeOffline.readPacks()).some(p=>p.complete),'Previous pack preserved');abortOnTile=false;
@@ -26,6 +26,6 @@ const env={console,URL,Request,Response,Blob,AbortController,DOMException,Messag
  await (await caches.open('traversee-map-tiles-v1')).put(scope+'tile',new Response('tile'));
  await q('offlineDeleteAll').onclick();assert.equal((await env.window.TraverseeOffline.readPacks()).length,0);
  for(const name of [C.MAP_CACHE,C.META_CACHE,C.RELIEF_CACHE,'traversee-map-tiles-v1'])assert.equal((await (await caches.open(name)).keys()).length,0);
- assert(await shell.match(scope+'index.html'),'Deleting maps must preserve the offline application');assert(q('offlineDeleteAll').hidden);
+ assert(await shell.match(scope+'index.html'),'Deleting maps must preserve the offline application');assert(q('offlineDeleteAll').hidden);assert.equal(q('offlineShell').textContent,'Aucune carte hors ligne');assert.equal(q('offlineStatus').textContent,'');assert.equal(q('offlinePrepare').textContent,'Télécharger');
  console.log('PASS: incomplete download never marked ready; retries resume only missing tiles; offline relief restored; cancellation preserves previous pack; individual/all map removal preserves shared tiles and app.');
 })().catch(e=>{console.error(e);process.exit(1)});
