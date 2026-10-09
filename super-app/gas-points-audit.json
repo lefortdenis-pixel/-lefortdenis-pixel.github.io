@@ -1,0 +1,233 @@
+{
+  "checkedAt": "2026-10-09",
+  "excluded": [
+    {
+      "id": "gas-49.168901--0.319095",
+      "name": "Intersport Outlet · Mondeville",
+      "lat": 49.168901,
+      "lon": -0.319095,
+      "note": "E01 - 01/04/2027 vers Saint-André-sur-Orne | km 14.8 | 2108 m de la trace | sources : Gaz | E01 - 01/04/2027 | km 14.8 | 2111 m de la trace | Tel +33 2 31 78 78 41 | Mo-Sa 10:00-19:00.",
+      "source": "Gaz",
+      "status": "probable",
+      "stockConfirmed": false,
+      "sourceUrl": "https://www.intersport.fr/Calvados-14/MONDEVILLE-14120/Intersport-OutletMONDEVILLE/00144_000/",
+      "identityCheckedAt": "2026-10-09",
+      "gasEvidence": "Outlet identifié ; aucune preuve de cartouches filetées dans cet établissement.",
+      "phone": "+33 2 31 78 78 41",
+      "excludedReason": "Outlet textile sans preuve de vente de cartouches filetées"
+    },
+    {
+      "id": "gas-43.819238-5.798349",
+      "name": "Hyper U · Manosque",
+      "lat": 43.819238,
+      "lon": 5.798349,
+      "note": "E79 - 27/06/2027 vers Gréoux-les-Bains | km 1826.4 | 710 m de la trace | sources : Reseau_gaz_v4_verifie+Reseau_secours_gaz_v3 | E79 - 27/06/2027 | km 1834.1 | 0.71 km de la trace. Tel 04 92 52 11 14.  Source : ChatGPT v3. STOCK A CONFIRMER PAR TELEPHONE. Point fort avant Verdon et Esterel. Intersport et Weldom au meme endroit.",
+      "source": "Reseau_gaz_v4_verifie+Reseau_secours_gaz_v3",
+      "status": "probable",
+      "stockConfirmed": false,
+      "phone": "+33 4 92 70 70 30",
+      "sourceUrl": "https://www.magasins-u.com/magasin/hyperu-manosque.m90440",
+      "identityCheckedAt": "2026-10-09",
+      "coordinateSource": "https://www.openstreetmap.org/way/167488821",
+      "excludedReason": "Point de bouteilles de gaz domestique, téléphone Decathlon copié par erreur"
+    }
+  ],
+  "identityEvidence": [
+    {
+      "id": "gas-49.289754--0.285281",
+      "name": "Bricomarché · Colleville-Montgomery",
+      "sourceUrl": "https://www.bricomarche.com/magasin/colleville-montgomery/20219"
+    },
+    {
+      "id": "gas-49.192691--0.296294",
+      "name": "Tecnomat · Caen / Colombelles",
+      "sourceUrl": "https://www.tecnomat.fr/magasins/caen-colombelles.html"
+    },
+    {
+      "id": "gas-49.113075--0.376511",
+      "name": "Weldom · Saint-Martin-de-Fontenay",
+      "sourceUrl": "https://www.weldom.fr/m/weldom-saint-martin-de-fontenay"
+    },
+    {
+      "id": "gas-48.004793-0.248306",
+      "name": "Tecnomat · Le Mans / Yvré",
+      "sourceUrl": "https://www.tecnomat.fr/magasins/mans-yvre.html"
+    },
+    {
+      "id": "gas-47.639448-0.150314",
+      "name": "Bricomarché · Le Lude",
+      "sourceUrl": "https://www.bricomarche.com/magasins/pays-de-la-loire/sarthe/72"
+    },
+    {
+      "id": "gas-47.278493--0.06431",
+      "name": "Bricomarché · Saumur",
+      "sourceUrl": "https://www.bricomarche.com/magasin/saumur/01241"
+    },
+    {
+      "id": "gas-47.263692--0.092882",
+      "name": "Decathlon · Saumur",
+      "sourceUrl": "https://www.ot-saumur.fr/fiches/decathlon-5384731/"
+    },
+    {
+      "id": "gas-47.181192-0.266428",
+      "name": "Intersport · Chinon",
+      "sourceUrl": "https://www.intersport.fr/Indre-et-Loire-37/CHINON-37500/INTERSPORT-CHINON/00263_000/"
+    },
+    {
+      "id": "gas-47.180053-0.261283",
+      "name": "Bricomarché · Chinon",
+      "sourceUrl": "https://www.bricomarche.com/magasin/chinon/20170"
+    },
+    {
+      "id": "gas-47.379624-0.714207",
+      "name": "Intersport · Tours / Saint-Pierre-des-Corps",
+      "sourceUrl": "https://www.intersport.fr/Indre-et-Loire-37/Saint-Pierre-des-Corps-37700/INTERSPORT-TOURS/04928_000/"
+    },
+    {
+      "id": "gas-47.329911-0.706668",
+      "name": "Decathlon · Chambray-lès-Tours",
+      "sourceUrl": "https://www.decathlon.fr/store-view/magasin-de-sports-chambray-les-tours-0070002500025",
+      "coordinateSource": "https://www.openstreetmap.org/way/68775005"
+    },
+    {
+      "id": "gas-47.136963-0.984623",
+      "name": "Bricomarché · Loches",
+      "sourceUrl": "https://www.bricomarche.com/magasin/loches/07346"
+    },
+    {
+      "id": "gas-46.987026-1.167096",
+      "name": "Bricomarché · Châtillon-sur-Indre",
+      "sourceUrl": "https://www.bricomarche.com/magasin/chatillon-sur-indre/20370"
+    },
+    {
+      "id": "gas-46.775497-1.645285",
+      "name": "Decathlon · Châteauroux / Saint-Maur",
+      "sourceUrl": "https://www.decathlon.fr/store-view/magasin-de-sports-chateauroux-saint-maur-0070025400254"
+    },
+    {
+      "id": "gas-46.781981-1.655303",
+      "name": "Intersport · Châteauroux / Saint-Maur",
+      "sourceUrl": "https://www.intersport.fr/Indre-36/SAINTMAUR-36250/INTERSPORT-SAINTMAUR/00278_000/",
+      "coordinateSource": "https://www.openstreetmap.org/way/89041810"
+    },
+    {
+      "id": "gas-46.80889-1.68222",
+      "name": "Bonnin Outdoor · Châteauroux",
+      "sourceUrl": "https://mapcarta.com/fr/N2032219111"
+    },
+    {
+      "id": "gas-46.79441-1.738541",
+      "name": "Leroy Merlin · Le Poinçonnet",
+      "sourceUrl": "https://www.ville-lepoinconnet.fr/les-commerces-du-forum.html"
+    },
+    {
+      "id": "gas-46.575141-1.975482",
+      "name": "Bricomarché · Le Magny / La Châtre",
+      "sourceUrl": "https://www.bricomarche.com/magasins/centre-val-de-loire/cvl"
+    },
+    {
+      "id": "gas-45.573551-2.809866",
+      "name": "Intersport · Le Mont-Dore / Meynadier",
+      "sourceUrl": "https://www.intersport.fr/Puy-de-Dôme-63/LEMONTDORE-63240/INTERSPORTMONTAGNE-LEMONTDORE/00540_001/",
+      "coordinateSource": "https://www.openstreetmap.org/node/4225951692"
+    },
+    {
+      "id": "gas-45.570645-2.81235",
+      "name": "Ullskadi Sports de Montagne · Le Mont-Dore",
+      "sourceUrl": "https://www.skimium.fr/station/mont-dore/magasin/Ullsakdi-sports-de-montagne"
+    },
+    {
+      "id": "gas-45.51181-2.855211",
+      "name": "Intersport · Super-Besse",
+      "sourceUrl": "https://www.openstreetmap.org/node/3179300168"
+    },
+    {
+      "id": "gas-45.506725-2.853273",
+      "name": "Intersport · Super-Besse / Madalet",
+      "sourceUrl": "https://www.intersport.fr/Puy-de-Dôme-63/SUPER-BESSE-63610/INTERSPORTMONTAGNE-FRONTDENEIGE-MADALET/04825_001/",
+      "coordinateSource": "https://www.openstreetmap.org/node/6079123582"
+    },
+    {
+      "id": "gas-45.088061-2.743896",
+      "name": "Intersport · Le Lioran / Font d’Alagnon",
+      "sourceUrl": "https://www.intersport.fr/Cantal-15/LELIORAN-15300/INTERSPORTMONTAGNE-LELIORAN/00519_002/",
+      "coordinateSource": "https://www.openstreetmap.org/node/3178457461"
+    },
+    {
+      "id": "gas-45.082501-2.74972",
+      "name": "Intersport · Le Lioran / Prairie des Sagnes",
+      "sourceUrl": "https://www.intersport.fr/",
+      "coordinateSource": "https://www.openstreetmap.org/node/9094679965"
+    },
+    {
+      "id": "gas-45.038123-3.061439",
+      "name": "Intersport · Saint-Flour / Andelat",
+      "sourceUrl": "https://www.intersport.fr/Cantal-15/SAINTFLOUR-15100/INTERSPORT-SAINTFLOUR/00763_000/"
+    },
+    {
+      "id": "gas-44.722672-3.286028",
+      "name": "Aubrac Rando · Aumont-Aubrac",
+      "sourceUrl": "https://user-vwknsfp.cld.bz/TopoGuide-Tour-des-Monts-d-Aubrac/10/"
+    },
+    {
+      "id": "gas-44.40611-4.13361",
+      "name": "Tardieu Sports · Les Vans",
+      "sourceUrl": "https://www.cevennes-ardeche.com/commerce-service/magasin-de-sport-tardieusports-106742/",
+      "coordinateSource": "https://www.openstreetmap.org/node/5817786454"
+    },
+    {
+      "id": "gas-44.240123-4.639142",
+      "name": "Sport 2000 · Pont-Saint-Esprit",
+      "sourceUrl": "https://www.sport2000.fr/magasins/fiche/300511-sport-2000-pont-saint-esprit",
+      "coordinateSource": "https://www.openstreetmap.org/way/73761265"
+    },
+    {
+      "id": "gas-44.261077-4.706398",
+      "name": "Ateliers Provence Loisirs · Mondragon",
+      "sourceUrl": "https://apl84.com/carte-ateliers-provence-loisirs/"
+    },
+    {
+      "id": "gas-43.818669-5.795409",
+      "name": "Decathlon · Manosque",
+      "sourceUrl": "https://www.decathlon.fr/store-view/magasin-de-sports-manosque-0070240402404"
+    },
+    {
+      "id": "gas-43.78167-6.34194",
+      "name": "Le Perroquet Vert · La Palud-sur-Verdon",
+      "sourceUrl": "https://www.verdontourisme.com/informations/commerce-et-service/le-perroquet-vert-567825id/"
+    },
+    {
+      "id": "gas-43.604999-6.753372",
+      "name": "Intersport · Callian",
+      "sourceUrl": "https://www.intersport.fr/Var-83/Callian-83440/INTERSPORT-CALLIAN/04211_000/"
+    },
+    {
+      "id": "gas-contact-alpes-mancelles",
+      "name": "Camping des Alpes Mancelles",
+      "sourceUrl": "https://www.saintleonarddesbois.fr/camping-municipal-communal"
+    },
+    {
+      "id": "gas-lamaison-sille",
+      "name": "LaMaison.fr — Sillé-le-Guillaume",
+      "sourceUrl": "https://www.lamaison.fr/stores/sille-le-guillaume-lamaison-fr"
+    },
+    {
+      "id": "gas-briconautes-beaumont",
+      "name": "Briconautes — Beaumont-sur-Sarthe",
+      "sourceUrl": "https://magasin.leclub-bricolage.fr/237-briconautes-beaumont-sur-sarthe",
+      "coordinateSource": "https://data.geopf.fr/geocodage/search?q=2%20rue%20du%20Champ%20Soreau%20Beaumont%20sur%20Sarthe&limit=1"
+    },
+    {
+      "id": "gas-monbrico-pontaumur",
+      "name": "Monbrico — Pontaumur",
+      "sourceUrl": "https://www.pagesjaunes.fr/pros/56957641",
+      "coordinateSource": "https://data.geopf.fr/geocodage/search?q=8%20rue%20de%20Paroueix%2063380%20Pontaumur&limit=1"
+    },
+    {
+      "id": "gas-mrbricolage-les-vans",
+      "name": "Mr.Bricolage · Les Vans / Maison Rouvière",
+      "sourceUrl": "https://magasin.mr-bricolage.fr/403-mr-bricolage-les-vans-maison-rouviere",
+      "coordinateSource": "https://www.openstreetmap.org/node/5548872973"
+    }
+  ]
+}

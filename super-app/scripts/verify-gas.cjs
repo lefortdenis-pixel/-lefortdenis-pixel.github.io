@@ -50,8 +50,8 @@ get('gasFormat').value='100';get('gasStarted').value=today;get('gasCartForm').on
 assert.equal(JSON.parse(stored).alert.id,'a');assert(!('rest' in JSON.parse(stored)));
 assert(get('gasDecision').innerHTML.includes('Achète une cartouche de 230 g dans 13,8 km'));
 assert(get('gasDecision').innerHTML.includes('Autre possibilité dans 26,8 km : Weldom'));
-assert(get('gasDecision').innerHTML.includes('Gaz compatible à vérifier'));
-assert(get('gasDecision').innerHTML.includes('316,5 km suivants'));
+assert(!get('gasDecision').innerHTML.includes('Gaz compatible à vérifier'));
+assert(!get('gasDecision').innerHTML.includes('316,5 km suivants'));
 assert(!get('gasTracker').innerHTML.includes('Réglages'));
 assert(!get('gasTracker').innerHTML.includes('Pas de gaz ici'));
 /* Legacy exclusions from the removed button must not hide the nearby sellers. */
@@ -88,7 +88,7 @@ events['traversee-home-position']({detail:{...position,mode:'km',manualEntry:tru
 assert(!JSON.parse(stored).cart);assert.equal(get('gasFormat').value,'');
 /* Unknown GPX labels must not leak into the user-facing names. */
 vm.runInNewContext(fs.readFileSync(path.join(base,'gas-points.js'),'utf8'),c);
-for(const point of c.window.TRAVERSEE_GAS_POINTS)assert(!/^GAZ\b/i.test(c.window.gasPointLabel(point)));
+for(const point of c.window.TRAVERSEE_GAS_POINTS){assert(!/^GAZ\b/i.test(point.name));assert(point.sourceUrl);assert(!/^GAZ\b/i.test(c.window.gasPointLabel(point)));}
 console.log('PASS gas: autonomy, probable exclusion, margin, no-position declaration, saved plan, persistent alert, correction, new cartridge, human names');
 
 /* An unnamed imported point still needs a visible destination. */
@@ -97,7 +97,7 @@ c.window.TRAVERSEE_GAS_POINTS=[{id:'unnamed',name:'GAZ 726.6',lat:1,lon:715,stat
 c.window.gasPointLabel=(p,km)=>'Point de ravitaillement · km '+km;
 position={km:375,updatedAt:Date.now()};stored=JSON.stringify({schema:2,cart:{grams:230,started:today}});
 vm.runInNewContext(source,c);
-assert(get('gasDecision').innerHTML.includes('enseigne non renseignée'));
+assert(!get('gasDecision').innerHTML.includes('enseigne non renseignée'));
 assert(get('gasDecision').innerHTML.includes('Voir ce point sur la carte'));
 assert(!get('gasCartStatus').textContent.includes('restants'));
 assert(!/\d+,\d+ jours/.test(get('gasCartStatus').textContent));
