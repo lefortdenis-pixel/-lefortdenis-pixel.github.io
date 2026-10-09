@@ -27,6 +27,6 @@ for(const routeId of ['principal','brenne']){
  const greoux=ps.find(p=>p.id==='pinede').km;if(routeId==='principal')principalKm=greoux;else assert.ok(greoux-principalKm>50&&greoux-principalKm<55);
  assert.equal(E.groups(ps,700)[0].name,'La Châtre');console.log(routeId,gs.map(g=>g.name+': '+g.km.toFixed(1)).join(' | '));
 }
-const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');const assets=vm.runInNewContext(sw.match(/const ASSETS=(\[[^;]*\])/)[1]);for(const url of assets){assert.ok(fs.existsSync(path.join(root,url.split('?')[0])),url)}for(const f of ['reset.js','reset-engine.js','reset-points.js','reset.css'])assert.ok(assets.includes('./'+f+'?v=1.259'));
+const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');const assets=vm.runInNewContext(sw.match(/const ASSETS=(\[[^;]*\])/)[1]);for(const url of assets){assert.ok(fs.existsSync(path.join(root,url.split('?')[0])),url)}for(const f of ['reset.js','reset-engine.js','reset-points.js','reset.css'])assert.ok(assets.includes('./'+f+'?v=1.260'));
 for(const match of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(match[1]);
 console.log('PASS: service categories, fallback/recent pace, manual exclusions, stale data, reset anchors, both routes, inline syntax and offline assets');

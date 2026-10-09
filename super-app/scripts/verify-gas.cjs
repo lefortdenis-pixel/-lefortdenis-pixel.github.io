@@ -6,6 +6,10 @@ const today=new Date().toLocaleDateString('en-CA');
 const c={Date,Math,Number,String,Set,JSON,document:{getElementById:get,visibilityState:'visible',addEventListener(){}},window:{addEventListener:(n,f)=>events[n]=f,TRAVERSEE_GAS_POINTS:[{id:'a',name:'GAZ 100',lat:1,lon:100,status:'identified'},{id:'p',name:'GAZ 200',lat:1,lon:200,status:'probable'},{id:'b',name:'GAZ 450',lat:1,lon:450,status:'identified'}],gasPointLabel:(p)=>p.id==='a'?'Bricomarché':p.name,TraverseeHome:{getPosition:()=>position}},DATA:{routeId:'principal',routeLengthKm:850},projectGps:(lat,lon)=>({km:lon,distanceMeters:100}),escapeHtml:s=>s,parseJSON:s=>s?JSON.parse(s):null,safeStorageGet:()=>stored,safeStorageSet:(k,s)=>{stored=s;return true},setInterval(){}};
 vm.runInNewContext(source,c);
 const e=c.window.TraverseeGasTracker;
+assert.equal(e.durationText(8.6),'environ 9 jours');
+assert.equal(e.durationText(20.4),'environ 20 jours');
+assert.equal(e.durationText(.4),'moins d’un jour');
+assert.equal(e.durationText(0),'0 jour');
 assert(Math.abs(e.remaining({grams:100,started:'2026-10-01'},new Date('2026-10-04T00:00:00').getTime())-6.09)<.01);
 const points=[{id:'a',km:100,offRouteMeters:0,status:'identified'},{id:'p',km:200,offRouteMeters:0,status:'probable'},{id:'b',km:450,offRouteMeters:0,status:'identified'}];
 const d=e.assess({km:0,length:700,points,days:21});assert.equal(d.target.id,'a');assert.equal(d.next.id,'b');assert(d.gap>7);
@@ -85,3 +89,15 @@ assert(!JSON.parse(stored).cart);assert.equal(get('gasFormat').value,'');
 vm.runInNewContext(fs.readFileSync(path.join(base,'gas-points.js'),'utf8'),c);
 for(const point of c.window.TRAVERSEE_GAS_POINTS)assert(!/^GAZ\b/i.test(c.window.gasPointLabel(point)));
 console.log('PASS gas: autonomy, probable exclusion, margin, no-position declaration, saved plan, persistent alert, correction, new cartridge, human names');
+
+/* An unnamed imported point still needs a visible destination. */
+c.DATA.routeLengthKm=2034;
+c.window.TRAVERSEE_GAS_POINTS=[{id:'unnamed',name:'GAZ 726.6',lat:1,lon:715,status:'identified'}];
+c.window.gasPointLabel=(p,km)=>'Point de ravitaillement · km '+km;
+position={km:375,updatedAt:Date.now()};stored=JSON.stringify({schema:2,cart:{grams:230,started:today}});
+vm.runInNewContext(source,c);
+assert(get('gasDecision').innerHTML.includes('enseigne non renseignée'));
+assert(get('gasDecision').innerHTML.includes('Voir ce point sur la carte'));
+assert(!get('gasCartStatus').textContent.includes('restants'));
+assert(!/\d+,\d+ jours/.test(get('gasCartStatus').textContent));
+console.log('PASS gas presentation: rounded days, no remaining label, unnamed destination and map link');
