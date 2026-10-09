@@ -8,8 +8,24 @@ for(const id of ['principal','brenne']){
  const pois=JSON.parse(fs.readFileSync(path.join(base,id==='brenne'?'home-pois-brenne.json':'home-pois.json')));assert.equal(pois.routeId,id);assert(Math.abs(pois.routeLengthKm-d.routeLengthKm)<1e-8);assert.equal(pois.water.length,3522);assert.equal(pois.gas.length,34);assert(pois.water.every(p=>p.km<=d.routeLengthKm));
  if(id==='brenne'){
   assert.equal(d.stores.filter(s=>s.routeOnly==='brenne').length,3);assert(d.stores.filter(s=>s.routeOnly==='brenne').every(s=>s.offRouteMeters<50));assert(!d.stores.some(s=>/Clion|Châtillon/i.test(s.name)));
-  const km=730;assert.equal(e.autonomyWindowEnd(km,e.stageFromKm(km),2),780);assert.equal(e.daysNeededForStore(km,e.stageFromKm(km),769.6),2);assert(pois.camping[0].offRouteMeters<100);
+  const km=730;assert(Math.abs(e.autonomyWindowEnd(km,e.stageFromKm(km),2)-(km+2*route.pace.averages.flat))<1e-6);assert(pois.camping[0].offRouteMeters<100);
  }else assert(!d.stores.some(s=>s.routeOnly==='brenne'));
  results[id]={d,e,route};console.log(id,'PASS',d.routeLengthKm.toFixed(3),'km',route.points.length,'vertices');
 }
 const point=results.principal.route.points.at(-2000),a=results.principal.e.projectGps(...point),b=results.brenne.e.projectGps(...point);assert(Math.abs(b.km-a.km-52.37865965736)<1e-6);assert(b.distanceMeters<.001);console.log('PASS downstream position migration: +52.379 km, same physical coordinates');
+
+// Day budgets are continuous across stage ends and terrain changes.
+for(const {d,e,route} of Object.values(results)){
+ const pace=route.pace;assert(pace.reference.length===90);assert(pace.profiles.length===90);
+ for(const kind of ['flat','mountain']){const group=pace.reference.filter(s=>s.kind===kind);assert(group.length>0);assert(Math.abs(pace.averages[kind]-group.reduce((sum,s)=>sum+s.lengthKm,0)/group.length)<1e-9);}
+ for(const start of [0,10,225,700,1100,1500,d.routeLengthKm-10]){
+  for(const days of [1,2,3,4]){const end=pace.windowEnd(start,days);assert(end>=start&&end<=d.routeLengthKm);if(end<d.routeLengthKm-1e-6){assert(Math.abs(pace.travelDays(start,end)-days)<1e-8);assert.equal(e.daysNeededForStore(start,e.stageFromKm(start),end),days);}}
+ }
+ const same=pace.profiles.find((s,i)=>pace.profiles[i+1]?.kind===s.kind&&s.lengthKm>2);
+ const start=same.endKm-1,days=2/pace.averages[same.kind];assert(Math.abs(pace.windowEnd(start,days)-(start+2))<1e-8);
+ const change=pace.profiles.find((s,i)=>pace.profiles[i+1]&&pace.profiles[i+1].kind!==s.kind&&s.lengthKm>2);
+ const next=pace.profiles[pace.profiles.indexOf(change)+1];assert(Math.abs(pace.windowEnd(change.endKm-1,1/pace.averages[change.kind]+1/pace.averages[next.kind])-(change.endKm+1))<1e-8);
+ assert.equal(pace.windowEnd(d.routeLengthKm-1,4),d.routeLengthKm);
+ console.log(route.id,'pace:',JSON.stringify(pace.averages),'reference stages:',pace.reference.filter(s=>s.kind==='flat').length,'flat /',pace.reference.filter(s=>s.kind==='mountain').length,'mountain');
+}
+console.log('PASS terrain pace: reference means, mid-stage continuity, mixed relief, day inverse and arrival clamp');

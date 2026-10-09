@@ -10,11 +10,11 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.247 hors ligne</title>
+<title>Traversée 2027 · v1.248 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.247">
-<link rel="stylesheet" href="./reset.css?v=1.247">
+<link rel="stylesheet" href="./home.css?v=1.248">
+<link rel="stylesheet" href="./reset.css?v=1.248">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -22,6 +22,7 @@
   --red:#d95738; --ok:#3f7d3c; --warn:#a86f08;
 }
 *{box-sizing:border-box}
+.paceInfo{font-size:12px;color:var(--muted);margin:6px 0 10px}.paceInfo summary{cursor:pointer}.paceInfo p{line-height:1.4}
 html{background:#fff}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial,sans-serif}
 button,input{font:inherit;touch-action:manipulation}
@@ -679,6 +680,7 @@ html,body{height:100%;overflow:hidden}
 
       <div class="block">
         <div class="blockLabel"><b>Autonomie</b><span>jusqu’au prochain magasin</span></div>
+        <details class="paceInfo"><summary>Rythme estimé</summary><p id="storePaceInfo"></p></details>
         <div class="days" id="days">
           <button class="day nearestStoreBtn" id="nearestStoreBtn" type="button">Magasin le plus proche</button>
           <button class="day" data-d="1">1 j</button>
@@ -1050,8 +1052,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.247"></script>
-<script src="./route-engine.js?v=1.247"></script>
+<script src="./route-data.js?v=1.248"></script>
+<script src="./route-engine.js?v=1.248"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1080,6 +1082,9 @@ function buildSegments(){
   return segs;
 }
 const SEGMENTS = buildSegments();
+const paceInfo=document.getElementById('storePaceInfo');
+if(paceInfo){const a=window.TraverseeRoutes.pace.averages;paceInfo.textContent='Moyennes des 90 étapes : '+a.flat.toFixed(1).replace('.',',')+' km/j sur terrain peu vallonné, '+a.mountain.toFixed(1).replace('.',',')+' km/j avec fort dénivelé. Le calcul suit le relief depuis ta position, indépendamment des fins d’étapes.';}
+
 window.TraverseeRoutes.project=projectGps;
 ["homeKmInput","storeKmInput","waterKmInput","gasKmInput"].forEach(id=>{const input=document.getElementById(id);if(input)input.max=DATA.routeLengthKm;});
 
@@ -1109,24 +1114,12 @@ function plannedStageLength(stage){
   const start=stage<=1?0:DATA.stageEndsKm[Math.max(0,Math.min(88,stage-2))];
   return Math.max(1,end-start);
 }
-function plannedDayLength(km){
-  const route=window.TraverseeRoutes;
-  if(route.id==='brenne'&&km>=route.branch.startKm&&km<route.branch.endKm)return 25;
-  return plannedStageLength(stageFromKm(km));
-}
 function autonomyWindowEnd(km,stage,days){
-  let end=km;
-  for(let n=0;n<days;n++)end=Math.min(DATA.routeLengthKm,end+plannedDayLength(end));
-  return end;
+  return window.TraverseeRoutes.pace.windowEnd(km,days);
 }
 function daysNeededForStore(km,stage,storeKm){
   if(storeKm<=km)return 0;
-  let distance=0;
-  for(let days=1;days<=90;days++){
-    distance+=plannedDayLength(km+distance);
-    if(km+distance>=storeKm)return days;
-  }
-  return 90;
+  return Math.max(1,Math.ceil(window.TraverseeRoutes.pace.travelDays(km,storeKm)-1e-9));
 }
 function select(km,stage){
   const usable=ALL_STORES.filter(s=>s.role!=="EXCLU" && s.role!=="A_QUALIFIER");
@@ -1291,7 +1284,7 @@ function show(km,stage,offRoute=null){
     if(storeEl)storeEl.textContent="Aucun magasin prévu pour J"+autonomy;
     if(meta&&r.store){
       const delta=Math.max(0,r.store.km-km);
-      meta.textContent=r.store.name+" · dans "+delta.toFixed(1).replace(".",",")+" km · atteignable en "+r.requiredDays+" jour"+(r.requiredDays>1?"s":"");
+      meta.textContent=r.store.name+" · dans "+delta.toFixed(1).replace(".",",")+" km · estimé à "+r.requiredDays+" jour"+(r.requiredDays>1?"s":"");
     }
     ignoredStores(km,r);
     return;
@@ -1306,12 +1299,10 @@ function show(km,stage,offRoute=null){
       const isEarlier=r.verdict==="PLUS TÔT";
       const earlyBy=isEarlier?autonomy-r.requiredDays:0;
       const timingText=isEarlier
-        ?storeWalkLabel(delta)+" · prévu en "+r.requiredDays+" jour"+(r.requiredDays>1?"s":"")+" · "+earlyBy+" jour"+(earlyBy>1?"s":"")+" avant J"+autonomy
+        ?storeWalkLabel(delta)+" · estimé en "+r.requiredDays+" jour"+(r.requiredDays>1?"s":"")+" · "+earlyBy+" jour"+(earlyBy>1?"s":"")+" avant J"+autonomy
         :storeWalkLabel(delta)+(r.nearestMode?"":(r.requiredDays?" · "+r.requiredDays+" jour"+(r.requiredDays>1?"s":"")+" nécessaire"+(r.requiredDays>1?"s":""):""));
       const hours=r.store.hours?" · "+r.store.hours:"";
-      const br=window.TraverseeRoutes;
-      const estimate=!r.nearestMode&&br.id==='brenne'&&km>=br.branch.startKm&&km<br.branch.endKm?' · estimation à 25 km/jour':'';
-      const base=timingText+hours+estimate;
+      const base=timingText+hours;
       meta.textContent=base;
       enrichStoreMeta(r.store,km,base,meta);
     }else meta.textContent="Fin de la Traversée";
@@ -1405,7 +1396,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.247';
+const GPX_WATER_URL='./water-points.json?v=1.248';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -1693,7 +1684,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.247"></script>
+<script src="./gas-points.js?v=1.248"></script>
 <script id="gas-search">
 (()=>{
   const rows=window.TRAVERSEE_GAS_POINTS;
@@ -1773,7 +1764,8 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
   shadow.innerHTML=`<style>:host{display:block;width:100%;min-height:0;}
 
 :host{--bg:#f0f0ec;--ink:#12130f;--muted:#73756d;--line:#d9dad2;--card:#fff;--orange:#ff7a1a;--green:#dff36a;--blue:#a9d8ff;--panel:#f8f8f4;--red:#d95738}
-*{box-sizing:border-box}.menu-body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial,sans-serif}button,input{font:inherit}button{touch-action:manipulation}.hide{display:none!important}
+*{box-sizing:border-box}
+.paceInfo{font-size:12px;color:var(--muted);margin:6px 0 10px}.paceInfo summary{cursor:pointer}.paceInfo p{line-height:1.4}.menu-body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial,sans-serif}button,input{font:inherit}button{touch-action:manipulation}.hide{display:none!important}
 .menu-body{padding:8px 14px 104px;min-height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch}.screen{max-width:520px;margin:0 auto}.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.brand{font-weight:900;letter-spacing:.14em;font-size:12px}.counter{font-size:12px;color:var(--muted);font-weight:800}.resetTop{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:7px 10px;font-weight:800;font-size:11px}
 #prepCard{max-width:520px;margin:0 auto;background:var(--card);border:1px solid #e7e7e0;border-radius:28px;padding:22px 20px;box-shadow:0 12px 30px rgba(0,0,0,.09);min-height:0}.prepTag{display:inline-flex;background:var(--ink);color:white;padding:7px 11px;border-radius:999px;font-size:11px;font-weight:900}.prepTitle{font-size:39px;line-height:.95;letter-spacing:-.045em;margin:8px 54px 7px 0}.prepSub{color:var(--muted);font-size:13px;line-height:1.35;font-weight:650;max-width:30ch;margin:0 0 18px}.days{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:0}.daybtn{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:16px 3px;font-weight:900;color:var(--ink)}.daybtn.active{background:var(--green);border-color:var(--green)}.reuseBtn{width:100%;margin-top:10px;min-height:54px;padding:8px 10px 8px 13px;border:1px solid var(--line);border-radius:15px;background:var(--panel);color:var(--ink);display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left}.reuseBtn span{min-width:0}.reuseBtn b{display:block;font-size:13px;line-height:1.15}.reuseBtn small{display:block;margin-top:2px;color:var(--muted);font-size:10.5px;font-weight:700}.reuseBtn strong{flex:0 0 auto;min-width:48px;padding:8px 9px;border-radius:11px;background:#e7e7e1;text-align:center;font-size:12px}.reuseBtn.active strong{background:var(--green)}.prepActions{margin-top:18px;display:grid;gap:9px}.primary{border:0;background:#ff4f8b;color:white;border-radius:16px;padding:16px;font-weight:900;box-shadow:0 7px 18px rgba(255,79,139,.16)}.secondary{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:14px;padding:12px;font-weight:850}.resetLink{border:0;background:transparent;color:var(--muted);padding:8px;font-size:12px;font-weight:800}.summaryWeight{margin-top:20px;background:var(--ink);color:white;border-radius:18px;padding:14px 16px}.summaryWeight span{font-size:11px;color:#b8b9b3;font-weight:900}.summaryWeight #planSummary{font-size:30px;font-weight:950;margin-top:2px}
 #menus{max-width:520px;margin:0 auto}.heroLine{margin-bottom:10px}.blockMeta{font-size:12px;color:var(--muted);font-weight:800}.deck{position:relative;height:625px}.daycard{position:absolute;inset:0;background:var(--card);border-radius:30px;padding:20px;box-shadow:0 16px 34px rgba(0,0,0,.10);border:1px solid #ecece6;transition:.25s transform,.25s opacity;overflow:hidden}.daycard.back1{transform:translateY(10px) scale(.97);opacity:.48;z-index:1}.daycard.back2{transform:translateY(20px) scale(.94);opacity:.16;z-index:0}.daycard.front{z-index:3}.daytag,.cardSub{display:none}.daycard h1{font-size:50px;line-height:.9;font-weight:900;margin:10px 0 12px;letter-spacing:-.055em}.meals{display:grid;gap:8px;margin-top:16px}.meal{border-radius:21px;padding:16px 15px;border:1px solid var(--line);display:grid;grid-template-columns:54px 1fr;gap:14px;align-items:center}.mealIcon{width:54px;height:54px;border-radius:17px;display:grid;place-items:center;font-size:27px}.mealIcon.morning{background:#fff3ba}.mealIcon.lunch{background:#dff5e8}.mealIcon.dinner{background:#e9e2ff}.meal small,.snackMini small{display:block;letter-spacing:.1em;color:var(--muted);font-size:10px;font-weight:900;margin-bottom:3px}.meal b{font-size:18px;display:block;line-height:1.18}.meal span{display:block;color:var(--muted);font-size:12px;line-height:1.28;margin-top:4px}.snackMini{display:flex;align-items:center;gap:10px;margin-top:10px;padding:11px 13px;background:#fff4df;border-radius:17px;font-size:19px}.snackMini b{font-size:13px;display:block}.weightBox{margin-top:9px;background:var(--ink);color:#fff;border-radius:17px;padding:11px 13px;display:flex;justify-content:space-between;align-items:end}.weightBox span{font-size:9px;color:#b9bbb4;font-weight:900;letter-spacing:.07em}.weightBox b{font-size:23px}.cardActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.changeDayBtn,.newProposalBtn{border-radius:14px;padding:10px 7px;font-weight:900;font-size:11px;min-height:40px}.changeDayBtn{border:1px dashed #bbbdb4;background:#fafaf7;color:var(--ink)}.newProposalBtn{border:0;background:var(--orange);color:#fff}.topActions{display:flex;gap:8px}.topActions button{border:1px solid var(--line);background:transparent;border-radius:999px;padding:7px 9px;font-size:10px;font-weight:900;color:var(--muted)}
@@ -3017,14 +3009,14 @@ clearPreparedResults();renderPrepState();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.247"></script>
+<script src="./home-bivouac.js?v=1.248"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./home-map.js?v=1.247"></script>
-<script src="./gas-tracker.js?v=1.247"></script>
-<script src="./reset-points.js?v=1.247"></script>
-<script src="./reset-engine.js?v=1.247"></script>
-<script src="./reset.js?v=1.247"></script>
-<script src="./home.js?v=1.247"></script>
+<script src="./home-map.js?v=1.248"></script>
+<script src="./gas-tracker.js?v=1.248"></script>
+<script src="./reset-points.js?v=1.248"></script>
+<script src="./reset-engine.js?v=1.248"></script>
+<script src="./reset.js?v=1.248"></script>
+<script src="./home.js?v=1.248"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>
