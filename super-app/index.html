@@ -10,11 +10,11 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.257 hors ligne</title>
+<title>Traversée 2027 · v1.258 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.257">
-<link rel="stylesheet" href="./reset.css?v=1.257">
+<link rel="stylesheet" href="./home.css?v=1.258">
+<link rel="stylesheet" href="./reset.css?v=1.258">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -638,7 +638,7 @@ html,body{height:100%;overflow:hidden}
 #gasView.active .waterList{display:grid!important;min-height:0;gap:12px;padding-bottom:40px}
 #gasView.active .waterItem{padding:16px 14px;min-height:112px}
 </style>
-<link rel="stylesheet" href="./soleil-font.css?v=1.257"><link rel="stylesheet" href="./soleil.css?v=1.257">
+<link rel="stylesheet" href="./soleil-font.css?v=1.258"><link rel="stylesheet" href="./soleil.css?v=1.258">
 </head>
 <body>
 <div class="wrap">
@@ -1056,8 +1056,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.257"></script>
-<script src="./route-engine.js?v=1.257"></script>
+<script src="./route-data.js?v=1.258"></script>
+<script src="./route-engine.js?v=1.258"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1398,7 +1398,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.257';
+const GPX_WATER_URL='./water-points.json?v=1.258';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -1688,7 +1688,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.257"></script>
+<script src="./gas-points.js?v=1.258"></script>
 <script id="gas-search">
 (()=>{
   const rows=window.TRAVERSEE_GAS_POINTS;
@@ -2100,7 +2100,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 }
 .allDaysMode #validation{display:none!important}
 
-</style><link rel="stylesheet" href="./soleil-menu.css?v=1.257"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
+</style><link rel="stylesheet" href="./soleil-menu.css?v=1.258"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
 <div id="prepCard">
       <h1 id="prepTitle" class="prepTitle">Bien manger.<br><em>Bien marcher.</em></h1>
       <p id="prepSubtitle" class="prepSub">Combien de jours d’autonomie ?</p>
@@ -2319,7 +2319,7 @@ for(const b of BREAKFAST_CATALOG){
 const SNACK_PACKS=[['cho','pfruit'],['pea','bars'],['almond','sab'],['carrot','cho'],['pfruit','pea'],['bars','almond'],['sab','carrot'],['dryfruit','snickers'],['trailmix','mms'],['pb','dryfruit']];
 const SNACK_TARGET_PER_DAY=165;
 let d=2,plan=null,rotationCursor=0,proposalStart=0,proposalSerial=0,ravitoCount=0,validatedMealMemory=[],settingsOpen=false,checkedShop={},resolvedEquivalent={},replacementMeals={},replacementProducts={},singleSnackToggle=Array(SNACK_PACKS.length).fill(0),snackOverride=null,pendingUnavailable=null,currentDayIndex=0,currentView='prep',shopScrollTop=0,savedMode=false,archivedMode=false,savedNextState=null,loadedSavedId=null;
-let unavailableOptions=[],unavailableOptionIndex=0,unavailableProductId=null,unavailableBox=null;
+let unavailableOptions=[],unavailableOptionIndex=0,unavailableProductId=null,unavailableBox=null,unavailableProducts=[];
 const menuRoot=document.getElementById('menuHost').shadowRoot;
 const menuApp=menuRoot.getElementById('menuApp');
 const $=id=>menuRoot.getElementById(id);
@@ -2334,7 +2334,7 @@ function clone(o){try{return typeof structuredClone==='function'?structuredClone
 let draftTimer=0;
 function makeDraftSnapshot(){
   if(savedMode||archivedMode||!plan||!plan.length)return null;
-  return {version:13,updatedAt:Date.now(),savedMode:false,d,plan:clone(plan),rotationCursor,proposalStart,proposalSerial,ravitoCount,validatedMealMemory:clone(validatedMealMemory),checkedShop:clone(checkedShop),resolvedEquivalent:clone(resolvedEquivalent),replacementMeals:clone(replacementMeals),replacementProducts:clone(replacementProducts),singleSnackToggle:clone(singleSnackToggle),snackOverride,currentDayIndex,currentView:currentView==='shop'?'shop':'menus',shopScrollTop:Math.max(0,shopScrollTop||0)};
+  return {version:13,updatedAt:Date.now(),savedMode:false,d,plan:clone(plan),rotationCursor,proposalStart,proposalSerial,ravitoCount,validatedMealMemory:clone(validatedMealMemory),checkedShop:clone(checkedShop),resolvedEquivalent:clone(resolvedEquivalent),replacementMeals:clone(replacementMeals),replacementProducts:clone(replacementProducts),unavailableProducts:unavailableProducts.slice(),singleSnackToggle:clone(singleSnackToggle),snackOverride,currentDayIndex,currentView:currentView==='shop'?'shop':'menus',shopScrollTop:Math.max(0,shopScrollTop||0)};
 }
 function scheduleDraftSave(immediate=false){
   if(savedMode||archivedMode||!plan||!plan.length)return;
@@ -2350,6 +2350,7 @@ function restoreDraft(data){
   setSavedMode(false);archivedMode=false;savedNextState=null;loadedSavedId=null;
   d=Math.max(1,Math.min(4,Number(data.d)||data.plan.length));plan=clone(data.plan);rotationCursor=Number(data.rotationCursor)||0;proposalStart=Number(data.proposalStart)||rotationCursor;proposalSerial=Number(data.proposalSerial)||0;ravitoCount=Number(data.ravitoCount)||0;validatedMealMemory=normalizeMealMemory(data.validatedMealMemory);
   checkedShop=clone(data.checkedShop||{});resolvedEquivalent=clone(data.resolvedEquivalent||{});replacementMeals=clone(data.replacementMeals||{});replacementProducts=clone(data.replacementProducts||{});
+  unavailableProducts=Array.isArray(data.unavailableProducts)?data.unavailableProducts.filter(id=>PRODUCTS[id]):[];
   singleSnackToggle=clone(data.singleSnackToggle||Array(SNACK_PACKS.length).fill(0));snackOverride=data.snackOverride==null?null:data.snackOverride;currentDayIndex=Math.max(0,Math.min(plan.length-1,Number(data.currentDayIndex)||0));currentView=data.currentView==='shop'?'shop':'menus';shopScrollTop=Math.max(0,Number(data.shopScrollTop)||0);settingsOpen=false;pendingUnavailable=null;
   render();if(currentView==='shop')showShopView(true);else showMenuView();
 }
@@ -2525,7 +2526,7 @@ function ravitoOrdinal(n){return n===1?'1er':n+'e'}
 function checkedCount(){return Object.values(checkedShop).filter(Boolean).length}
 function confirmRebuild(what){const n=checkedCount();if(!n)return true;return confirm('Tu as déjà coché '+n+' article'+(n>1?'s':'')+' dans ton panier. '+what+' va recalculer la liste de courses. Continuer ?')}
 function clearReplacementMarks(){replacementMeals={};replacementProducts={}}
-function clearShoppingState(){checkedShop={};resolvedEquivalent={};clearReplacementMarks();closeUnavailable()}
+function clearShoppingState(){unavailableProducts=[];checkedShop={};resolvedEquivalent={};clearReplacementMarks();closeUnavailable()}
 function selectDays(n,fromParent=false){const next=Math.max(1,Math.min(4,Number(n)||2));if(next===d){renderPrepState();return}if(plan&&!confirmRebuild('Modifier la durée')){renderPrepState();return}d=next;if(plan){clearShoppingState();clearDraftAutosave();clearPreparedResults();toast('Durée modifiée. Génère à nouveau les menus.')}if(!fromParent)window.postMessage({type:'ravito-menu-days-change',days:d},'*');renderPrepState()}
 function toggleSettings(){settingsOpen=false;$('prepCard').classList.add('hide');renderPrepState();if(plan)showMenuView()}
 function renderPrepState(){
@@ -2763,7 +2764,7 @@ function unavailableGroups(id){
 function unavailableCandidateMeals(group,id,days){
   const out=[];
   for(const meal of MEAL_CATALOGS[group.slot]){
-    if(meal.title===group.title||meal.parts?.[id])continue;
+    if(meal.title===group.title||[id,...unavailableProducts].some(x=>meal.parts?.[x]))continue;
     let ok=true;
     for(const dayIndex of group.days){
       const candidate=clone(days[dayIndex]);
@@ -2790,11 +2791,12 @@ function unavailableScore(days,nextSnack,id){
 function snackAlternativesWithout(id){
   const current=snackOverride==null?ravitoCount%SNACK_PACKS.length:Number(snackOverride);
   const currentIds=snackIdsForOverride(current);
-  if(!currentIds.includes(id))return [snackOverride];
+  const excluded=new Set([id,...unavailableProducts]);
+  if(!currentIds.some(x=>excluded.has(x)))return [snackOverride];
   const out=[],seen=new Set();
   for(let off=1;off<=SNACK_PACKS.length;off++){
     const idx=(current+off)%SNACK_PACKS.length,ids=snackIdsForOverride(idx);
-    if(ids.includes(id))continue;
+    if(ids.some(x=>excluded.has(x)))continue;
     const key=ids.slice().sort().join('|');
     if(seen.has(key))continue;
     seen.add(key);out.push(idx)
@@ -2831,14 +2833,14 @@ function buildUnavailableAlternatives(id){
   for(const state of states){
     for(const nextSnack of snackChoices){
       const next=state.plan;
-      if(mergeNeeds(next)[id]||snackIdsForOverride(nextSnack).includes(id)||!planAllowed(next))continue;
+      if([id,...unavailableProducts].some(x=>mergeNeeds(next)[x]||snackIdsForOverride(nextSnack).includes(x))||!planAllowed(next))continue;
       const changes=state.changes.slice();
       const beforeSnack=snackIdsForOverride(snackOverride);
       const afterSnack=snackIdsForOverride(nextSnack);
       if(beforeSnack.join('|')!==afterSnack.join('|')){
         changes.push('Grignotage : '+beforeSnack.map(x=>PRODUCTS[x].name).join(' + ')+' → '+afterSnack.map(x=>PRODUCTS[x].name).join(' + '));
       }
-      const key=mealPlanSignature(next)+'§'+afterSnack.slice().sort().join('|');
+      const key=changes.join('§');
       if(seen.has(key))continue;
       seen.add(key);
       const nextSim=simulateWithSnackOverride(next,nextSnack);
@@ -2854,7 +2856,7 @@ function formatUnavailableChanges(changes){return changes.map(x=>{const sep=x.in
 function renderUnavailableChoice(){if(!unavailableBox||!unavailableProductId)return;const p=PRODUCTS[unavailableProductId],preview=unavailableOptions[unavailableOptionIndex]||null,total=unavailableOptions.length;pendingUnavailable=preview;let html='<button class="ua-close" onclick="closeUnavailable()" aria-label="Fermer">×</button><h3>'+p.name+' introuvable</h3>';if(preview){html+='<div class="ua-impact"><strong>Proposition '+(unavailableOptionIndex+1)+' / '+total+'</strong>'+formatUnavailableChanges(preview.changes)+'<div class="ua-note">La liste de courses sera mise à jour automatiquement.</div></div>'}else{html+='<div class="ua-impact"><div class="ua-note">Aucune nouvelle proposition simple ne permet de retirer complètement ce produit.</div></div>'}html+='<div class="ua-actions">'+(preview?'<button class="ua-primary" onclick="applyUnavailableChange()">Accepter la nouvelle proposition</button>':'')+(total>1?'<button class="ua-cycle" onclick="cycleUnavailable()">↻ Voir une autre proposition</button>':'')+'<button class="ua-secondary" onclick="markEquivalent(\''+unavailableProductId+'\')">Ou prendre un produit similaire</button></div>';unavailableBox.innerHTML=html;unavailableBox.classList.remove('hide')}
 function openUnavailable(id){closeUnavailable();const p=PRODUCTS[id],box=menuRoot.querySelector('.inlineUnavailable[data-unavailable-id="'+id+'"]')||$('unavailablePanel');if(!p||!box)return;unavailableProductId=id;unavailableBox=box;unavailableOptions=buildUnavailableAlternatives(id);unavailableOptionIndex=0;renderUnavailableChoice()}
 function cycleUnavailable(){if(unavailableOptions.length<2)return;unavailableOptionIndex=(unavailableOptionIndex+1)%unavailableOptions.length;renderUnavailableChoice()}
-function applyUnavailableChange(){if(!pendingUnavailable)return;const beforePlan=clone(plan),beforeSnack=snackOverride,beforeSnackIds=snackIdsForOverride(beforeSnack),beforeSim=simulate(plan),nextSim=pendingUnavailable.nextSim||simulateWithSnackOverride(pendingUnavailable.plan,pendingUnavailable.snackOverride);const nextPlan=pendingUnavailable.plan,nextSnack=pendingUnavailable.snackOverride;for(let i=0;i<nextPlan.length;i++){for(const slot of ['b','l','d']){const beforeMeal=beforePlan[i]?.[slot],afterMeal=nextPlan[i]?.[slot];if(beforeMeal&&afterMeal&&beforeMeal.title!==afterMeal.title){replacementMeals[i+'-'+slot]=true;const beforeParts=beforeMeal.parts||{},afterParts=afterMeal.parts||{};for(const id of Object.keys(afterParts)){if((afterParts[id]||0)>(beforeParts[id]||0))replacementProducts[id]=true}}}}const afterSnackIds=snackIdsForOverride(nextSnack);for(const id of afterSnackIds){if(!beforeSnackIds.includes(id))replacementProducts[id]=true}plan=nextPlan;snackOverride=nextSnack;const kept={};for(const [id,on] of Object.entries(checkedShop)){const before=beforeSim.purchases[id]?.count||0,after=nextSim.purchases[id]?.count||0;if(on&&before===after&&after>0)kept[id]=true}checkedShop=kept;for(const id of Object.keys(resolvedEquivalent)){const before=beforeSim.purchases[id]?.count||0,after=nextSim.purchases[id]?.count||0;if(before!==after||!after)delete resolvedEquivalent[id]}closeUnavailable();menuNeedsRender=true;const s=document.scrollingElement||document.documentElement,keepY=s.scrollTop;renderShoppingOnly();s.scrollTop=Math.min(keepY,Math.max(0,s.scrollHeight-s.clientHeight));scheduleDraftSave();toast('')}
+function applyUnavailableChange(){if(!pendingUnavailable)return;unavailableProducts=[...new Set([...unavailableProducts,pendingUnavailable.id])];const beforePlan=clone(plan),beforeSnack=snackOverride,beforeSnackIds=snackIdsForOverride(beforeSnack),beforeSim=simulate(plan),nextSim=pendingUnavailable.nextSim||simulateWithSnackOverride(pendingUnavailable.plan,pendingUnavailable.snackOverride);const nextPlan=pendingUnavailable.plan,nextSnack=pendingUnavailable.snackOverride;for(let i=0;i<nextPlan.length;i++){for(const slot of ['b','l','d']){const beforeMeal=beforePlan[i]?.[slot],afterMeal=nextPlan[i]?.[slot];if(beforeMeal&&afterMeal&&beforeMeal.title!==afterMeal.title){replacementMeals[i+'-'+slot]=true;const beforeParts=beforeMeal.parts||{},afterParts=afterMeal.parts||{};for(const id of Object.keys(afterParts)){if((afterParts[id]||0)>(beforeParts[id]||0))replacementProducts[id]=true}}}}const afterSnackIds=snackIdsForOverride(nextSnack);for(const id of afterSnackIds){if(!beforeSnackIds.includes(id))replacementProducts[id]=true}plan=nextPlan;snackOverride=nextSnack;const kept={};for(const [id,on] of Object.entries(checkedShop)){const before=beforeSim.purchases[id]?.count||0,after=nextSim.purchases[id]?.count||0;if(on&&before===after&&after>0)kept[id]=true}checkedShop=kept;for(const id of Object.keys(resolvedEquivalent)){const before=beforeSim.purchases[id]?.count||0,after=nextSim.purchases[id]?.count||0;if(before!==after||!after)delete resolvedEquivalent[id]}closeUnavailable();menuNeedsRender=true;const s=document.scrollingElement||document.documentElement,keepY=s.scrollTop;renderShoppingOnly();s.scrollTop=Math.min(keepY,Math.max(0,s.scrollHeight-s.clientHeight));scheduleDraftSave();toast('')}
 function markEquivalent(id){resolvedEquivalent[id]=true;checkedShop[id]=true;closeUnavailable();renderShoppingOnly();scheduleDraftSave();toast('')}
 function mealIcon(slot){
   const paths={morning:'<path d="M4 16h16M6 16a6 6 0 0 1 12 0M12 3v3M4 7l2 2M20 7l-2 2M2 12h2M20 12h2M4 20h16"/>',lunch:'<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="4"/><path d="M2 3v6M4 3v6M3 9v12M22 3v18"/>',dinner:'<path d="M20 15.5A9 9 0 0 1 8.5 4 9 9 0 1 0 20 15.5Z"/>'};
@@ -2935,7 +2937,7 @@ function render(){
 function renderShop(sim){
   const purchases=Object.values(sim.purchases).sort((a,b)=>(PRODUCTS[a.id].staple?1:0)-(PRODUCTS[b.id].staple?1:0)||PRODUCTS[a.id].name.localeCompare(PRODUCTS[b.id].name)),regular=purchases;
   $('buyTitle').textContent='Liste de courses';
-  $('bl').innerHTML=regular.length?regular.map(x=>{const p=PRODUCTS[x.id],checked=!!checkedShop[x.id],eq=!!resolvedEquivalent[x.id],repl=!!replacementProducts[x.id];return '<div class="shop '+(checked?'checked':'')+'" data-shop-id="'+x.id+'" role="checkbox" tabindex="0" aria-checked="'+checked+'" onclick="if(event.target.closest(\'.bad,.inlineUnavailable\'))return;toggleShopRow(\''+x.id+'\')" onkeydown="if((event.key===\'Enter\'||event.key===\' \')&&event.target===this){event.preventDefault();toggleShopRow(\''+x.id+'\')}"><div class="checkWrap"><span>✓</span></div><div class="shopText"><div class="shopTap"><b>'+p.name+(repl?'<em class="replacementTag">AJOUTÉ APRÈS MODIFICATION</em>':'')+(eq?'<em>ÉQUIVALENT</em>':'')+'</b><small>'+formatBuy(x)+'</small></div><button class="bad" aria-label="Alternatives pour '+p.name+'" title="Trouver une alternative" onclick="openUnavailable(\''+x.id+'\')">Remplacer</button></div><div class="unavailable inlineUnavailable hide" data-unavailable-id="'+x.id+'"></div></div>'}).join(''):'<div class="empty-shop">Aucun achat principal supplémentaire.</div>';
+  $('bl').innerHTML=regular.length?regular.map(x=>{const p=PRODUCTS[x.id],checked=!!checkedShop[x.id],eq=!!resolvedEquivalent[x.id],repl=!!replacementProducts[x.id];return '<div class="shop '+(checked?'checked':'')+'" data-shop-id="'+x.id+'" role="checkbox" tabindex="0" aria-checked="'+checked+'" onclick="if(event.target.closest(\'.bad,.inlineUnavailable\'))return;toggleShopRow(\''+x.id+'\')" onkeydown="if((event.key===\'Enter\'||event.key===\' \')&&event.target===this){event.preventDefault();toggleShopRow(\''+x.id+'\')}"><div class="checkWrap"><span>✓</span></div><div class="shopText"><div class="shopTap"><b>'+p.name+(repl?'<em class="replacementTag">AJOUTÉ APRÈS MODIFICATION</em>':'')+(eq?'<em>ÉQUIVALENT</em>':'')+'</b><small>'+formatBuy(x)+'</small></div><button class="bad" aria-label="Alternatives pour '+p.name+'" title="Trouver une alternative" onclick="openUnavailable(\''+x.id+'\')"><svg class="swapIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16m-4-4 4 4-4 4M20 17H4m4-4-4 4 4 4"/></svg></button></div><div class="unavailable inlineUnavailable hide" data-unavailable-id="'+x.id+'"></div></div>'}).join(''):'<div class="empty-shop">Aucun achat principal supplémentaire.</div>';
   const rows=Array.from($('bl').querySelectorAll('.shop'));rows.forEach((row,i)=>row.dataset.shopOrder=i);
   if(rows.length){
     const pending=document.createElement('div');pending.id='shopPending';
@@ -2954,7 +2956,7 @@ function renderShop(sim){
   if($('shopBottomStatus')) $('shopBottomStatus').textContent=left?'Reste '+left:'Terminé';
 }
 function clearPreparedResults(){
-  closeUnavailable();plan=null;settingsOpen=false;currentDayIndex=0;currentView='prep';
+  closeUnavailable();unavailableProducts=[];plan=null;settingsOpen=false;currentDayIndex=0;currentView='prep';
   menuApp.classList.remove('allDaysMode');
   $('menus').classList.add('hide');$('buy').classList.add('hide');$('validation').classList.add('hide');$('bottomNav').classList.add('hide');$('prepCard').classList.remove('hide');
   $('planSummary').innerHTML='';$('summaryWrap').classList.add('hide');$('ml').innerHTML='';$('bl').innerHTML='';$('verifyBox').innerHTML='';$('shopProgress').innerHTML='';$('validationHint').textContent='';renderPrepState();scrollTopAll()
@@ -3034,14 +3036,14 @@ clearPreparedResults();renderPrepState();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.257"></script>
+<script src="./home-bivouac.js?v=1.258"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./home-map.js?v=1.257"></script>
-<script src="./gas-tracker.js?v=1.257"></script>
-<script src="./reset-points.js?v=1.257"></script>
-<script src="./reset-engine.js?v=1.257"></script>
-<script src="./reset.js?v=1.257"></script>
-<script src="./home.js?v=1.257"></script>
+<script src="./home-map.js?v=1.258"></script>
+<script src="./gas-tracker.js?v=1.258"></script>
+<script src="./reset-points.js?v=1.258"></script>
+<script src="./reset-engine.js?v=1.258"></script>
+<script src="./reset.js?v=1.258"></script>
+<script src="./home.js?v=1.258"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>
