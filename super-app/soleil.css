@@ -37,3 +37,18 @@ html,body{background:#fff4af;color:#211238}body{font-family:Arial,Helvetica,sans
 #homeView:not(.has-next-card) .homePoiBubble{bottom:calc(100px + env(safe-area-inset-bottom))}
 
 #gasDecision .gasEstimate{font-size:12px;color:#726278;margin-top:12px}.gasItem .gasEyebrow{margin-bottom:8px}
+
+/* Back and title share the top row. */
+.soleilModuleHeader{position:relative;margin:0 0 24px}
+#storeView .soleilModuleHeader h1,#waterView .soleilModuleHeader h1,#gasView .soleilModuleHeader h1,#resetView .soleilModuleHeader h1{margin:0;line-height:1.04}
+.soleilTitleLead{display:block;padding-right:85px}.soleilModuleHeader h1 em{display:block}
+#storeView .soleilModuleHeader>.storeHomeInline,#waterView .soleilModuleHeader>.storeHomeInline,#gasView .soleilModuleHeader>.storeHomeInline,#resetView .soleilModuleHeader>.storeHomeInline{position:absolute!important;top:0!important;left:auto!important;right:0!important;display:inline-flex!important;align-items:center;justify-content:center;min-height:40px!important;padding:0 9px!important;white-space:nowrap;background:#fffbea!important;border-radius:20px;z-index:5}
+/* Water: close points first, compact cards, details on demand. */
+#waterView #waterList{display:grid!important;gap:10px;padding-top:0!important}
+#waterView #waterList .waterItem{background:#fffbea;border:0;border-radius:20px;padding:15px 17px;margin:0}
+#waterList .waterName{margin:0 0 6px;font-size:18px;line-height:1.2;font-weight:800}
+#waterList .waterDistance{font-size:13px;line-height:1.4;font-weight:700}
+#waterList .soleilWaterInfo{margin-top:5px}
+#waterList .soleilWaterInfo summary{min-height:30px;color:#726278;font-size:11px}
+#waterList .soleilWaterInfo:not([open])>.waterDesc{display:none!important}
+#waterList .soleilWaterInfo[open]>.waterDesc{margin-top:4px;font-size:12px;line-height:1.4}

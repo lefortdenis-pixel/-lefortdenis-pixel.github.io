@@ -39,3 +39,22 @@
 #menuApp #menuNav{grid-template-columns:1fr 1.4fr!important}
 
 #menuApp .swapIcon{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* Return beside each menu page title. */
+#menuApp #prepCard{position:relative;padding-top:0!important}
+#menuApp .shopHeader{position:relative;display:block!important;padding-right:85px}
+#menuApp .shopHeader h2{margin-top:0!important;font-size:32px!important}
+#menuApp .shopStatus{display:block;margin-top:8px}
+#menuApp #prepCard>.innerHome,#menuApp .shopHeader>.innerHome,#menuApp .daycard>.innerHome{position:absolute!important;top:0!important;right:0!important;left:auto!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;min-width:76px!important;height:40px!important;min-height:40px!important;padding:0 9px!important;border-radius:20px!important;background:#fffbea!important;white-space:nowrap!important;font-size:0!important;z-index:5}
+#menuApp .daycard>.innerHome{top:13px!important;right:13px!important;background:#fff4af!important}
+#menuApp .daycard h1{padding-right:80px!important}
+#menuApp .prepTitle{font-size:32px!important;padding-right:80px!important}
+#menuApp .menuToolbar:has(.topWeight:empty):has(.innerReset.hide){display:none!important}
+
+#menuApp:not(.allDaysMode) .menuToolbar:has(.topWeight:empty){display:none!important}
+#menuApp .shopHeader>.innerReset{position:absolute!important;top:43px!important;right:0!important;min-height:28px!important;height:28px!important;padding:0 9px!important;font-size:11px!important;background:transparent!important}
+#menuApp #prepCard>.innerReset{position:absolute!important;top:84px!important;right:0!important;min-height:28px!important;height:28px!important;padding:0 9px!important;font-size:11px!important;background:transparent!important}
+@media(max-width:350px){#menuApp .prepTitle{font-size:26px!important}#menuApp .shopHeader h2{font-size:28px!important}}
+
+#menuApp:has(#buy:not(.hide)) .menuToolbar{display:none!important}
+#menuApp #buy{padding-top:0!important}

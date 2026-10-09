@@ -10,11 +10,11 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.263 hors ligne</title>
+<title>Traversée 2027 · v1.264 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.263">
-<link rel="stylesheet" href="./reset.css?v=1.263">
+<link rel="stylesheet" href="./home.css?v=1.264">
+<link rel="stylesheet" href="./reset.css?v=1.264">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -638,7 +638,7 @@ html,body{height:100%;overflow:hidden}
 #gasView.active .waterList{display:grid!important;min-height:0;gap:12px;padding-bottom:40px}
 #gasView.active .waterItem{padding:16px 14px;min-height:112px}
 </style>
-<link rel="stylesheet" href="./soleil-font.css?v=1.263"><link rel="stylesheet" href="./soleil.css?v=1.263">
+<link rel="stylesheet" href="./soleil-font.css?v=1.264"><link rel="stylesheet" href="./soleil.css?v=1.264">
 </head>
 <body>
 <div class="wrap">
@@ -677,8 +677,7 @@ html,body{height:100%;overflow:hidden}
 
   <section class="appView" id="storeView">
     <section class="storeDeck" id="storeDecision">
-    <div class="storeCard"><button class="storeHomeInline" data-home aria-label="Retour à l’accueil">⌂</button>
-            <h1>Le prochain<br><em>ravitaillement.</em></h1>
+    <div class="storeCard"><header class="soleilModuleHeader"><button class="storeHomeInline" data-home aria-label="Retour à l’accueil">⌂</button><h1><span class="soleilTitleLead">Le prochain</span><em>ravitaillement.</em></h1></header>
 
       <div class="block">
         <div class="blockLabel"><b>Autonomie</b><span>jusqu’au prochain magasin</span></div>
@@ -723,8 +722,7 @@ html,body{height:100%;overflow:hidden}
 
   <section class="appView waterView" id="waterView">
     <div class="waterCard">
-      <button class="storeHomeInline" data-home aria-label="Retour à l’accueil">⌂</button>
-      <h1>De l’eau.<br><em>Et ça repart.</em></h1>
+      <header class="soleilModuleHeader"><button class="storeHomeInline" data-home aria-label="Retour à l’accueil">⌂</button><h1><span class="soleilTitleLead">De l’eau.</span><em>Et ça repart.</em></h1></header>
       <details class="soleilPosition"><summary>Ma position</summary><div class="waterSearch">
         <button class="waterGpsBtn" id="waterGpsBtn">⌖ Utiliser ma position GPS</button>
         <div class="waterStatus" id="waterStatus" role="status" aria-live="polite"></div>
@@ -745,8 +743,7 @@ html,body{height:100%;overflow:hidden}
 
   <section class="appView waterView" id="gasView">
     <div class="waterCard">
-      <button class="storeHomeInline" data-home aria-label="Retour à l’accueil">⌂</button>
-      <h1>De quoi<br><em>faire chauffer.</em></h1>
+      <header class="soleilModuleHeader"><button class="storeHomeInline" data-home aria-label="Retour à l’accueil">⌂</button><h1><span class="soleilTitleLead">De quoi</span><em>faire chauffer.</em></h1></header>
       <details class="soleilPosition"><summary>Ma position</summary><div class="waterSearch">
         <button class="waterGpsBtn" id="gasGpsBtn">⌖ Utiliser ma position GPS</button>
         <div class="waterStatus" id="gasStatus" role="status" aria-live="polite"></div>
@@ -768,9 +765,7 @@ html,body{height:100%;overflow:hidden}
 
   <section class="appView resetView" id="resetView">
     <div class="resetCard">
-      <button class="storeHomeInline" data-home aria-label="Retour à l’accueil">⌂</button>
-      <h1>Un peu<br><em>de fraîcheur.</em></h1>
-      <p class="resetMeta">Douche · lessive · recharge</p>
+      <header class="soleilModuleHeader"><button class="storeHomeInline" data-home aria-label="Retour à l’accueil">⌂</button><h1><span class="soleilTitleLead">Un peu</span><em>de fraîcheur.</em></h1></header>
       <details class="soleilPosition"><summary>Ma position et parcours</summary><button type="button" class="resetGps" id="resetGpsBtn">⌖ Utiliser ma position GPS</button>
       <div class="resetPosition"><label for="resetRouteChoice">Parcours</label><select id="resetRouteChoice"><option value="principal">Principal</option><option value="brenne">Brenne</option></select>
       <form id="resetKmForm"><label for="resetKmInput">Mon km</label><div class="resetKmRow"><input id="resetKmInput" type="number" inputmode="decimal" min="0" step="0.1" placeholder="Ex. 450" required><button type="submit">Afficher</button></div></form></div>
@@ -1056,8 +1051,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.263"></script>
-<script src="./route-engine.js?v=1.263"></script>
+<script src="./route-data.js?v=1.264"></script>
+<script src="./route-engine.js?v=1.264"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1398,7 +1393,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.263';
+const GPX_WATER_URL='./water-points.json?v=1.264';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -1608,14 +1603,9 @@ function renderWater(points){
     const name=cleanWaterName(point.name);
     const desc=waterPointDescription(point);
     const description=desc?'<details class="soleilWaterInfo"><summary>Infos du point</summary><div class="waterDesc">'+waterEscape(desc)+'</div></details>':'';
-    return '<article class="waterItem"><div class="waterItemText"><div class="waterDistance">'+waterEscape(waterRouteLabel(point))+'</div><div class="waterName">'+waterEscape(name)+'</div>'+description+'</div></article>';
+    return '<article class="waterItem"><div class="waterItemText"><div class="waterName">'+waterEscape(name)+'</div><div class="waterDistance">'+waterEscape(waterRouteLabel(point))+'</div>'+description+'</div></article>';
   }).join('');
-  const onRoute=points.filter(point=>Number.isFinite(point.offRouteMeters)&&point.offRouteMeters<=40);
-  const offRoute=points.filter(point=>!Number.isFinite(point.offRouteMeters)||point.offRouteMeters>40);
-  const groups=[];
-  if(onRoute.length)groups.push('<section class="waterGroup"><h2 class="waterGroupTitle">Sur la trace · '+onRoute.length+'</h2>'+renderItems(onRoute)+'</section>');
-  if(offRoute.length)groups.push('<section class="waterGroup"><h2 class="waterGroupTitle">Hors trace · '+offRoute.length+'</h2>'+renderItems(offRoute)+'</section>');
-  waterList.innerHTML=groups.join('');
+  waterList.innerHTML=renderItems(points);
 }
 async function searchWater(origin,context='',originKm=null){
   waterGpsBtn.disabled=true;
@@ -1688,7 +1678,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.263"></script>
+<script src="./gas-points.js?v=1.264"></script>
 <script id="gas-search">
 (()=>{
   const rows=window.TRAVERSEE_GAS_POINTS;
@@ -2100,7 +2090,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 }
 .allDaysMode #validation{display:none!important}
 
-</style><link rel="stylesheet" href="./soleil-menu.css?v=1.263"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
+</style><link rel="stylesheet" href="./soleil-menu.css?v=1.264"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
 <div id="prepCard">
       <h1 id="prepTitle" class="prepTitle">Bien manger.<br><em>Bien marcher.</em></h1>
       <p id="prepSubtitle" class="prepSub">Combien de jours d’autonomie ?</p>
@@ -2473,7 +2463,15 @@ function startNewRavito(days,state=null){
   if(!next)validatedMealMemory=[];
   setSavedMode(false);savedNextState=null;loadedSavedId=null;plan=null;proposalSerial=0;snackOverride=null;replacementMeals={};replacementProducts={};checkedShop={};resolvedEquivalent={};pendingUnavailable=null;currentDayIndex=0;settingsOpen=false;currentView='prep';
   d=Math.max(1,Math.min(4,Number(days)||2));
-  clearPreparedResults();renderPrepState();window.postMessage({type:'ravito-menu-ready'},'*');scrollTopAll();
+  const menuBack=menuApp.querySelector('.innerHome'),menuReset=$('innerReset'),menuToolbar=menuApp.querySelector('.menuToolbar');
+function alignMenuBack(){
+ const host=!$('prepCard').classList.contains('hide')?$('prepCard'):!$('buy').classList.contains('hide')?menuApp.querySelector('.shopHeader'):menuApp.querySelector('#ml .daycard');
+ if(host&&menuBack.parentElement!==host)host.appendChild(menuBack);
+ const resetHost=host?.classList.contains('daycard')?menuToolbar:host;
+ if(resetHost&&menuReset.parentElement!==resetHost)resetHost.appendChild(menuReset);
+}
+new MutationObserver(alignMenuBack).observe(menuApp,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
+clearPreparedResults();renderPrepState();alignMenuBack();window.postMessage({type:'ravito-menu-ready'},'*');scrollTopAll();
 }
 
 function addParts(n,parts){for(const [id,g] of Object.entries(parts))n[id]=(n[id]||0)+g}
@@ -3027,7 +3025,15 @@ Object.assign(window,{
   applyUnavailableChange
 });
 
-clearPreparedResults();renderPrepState();
+const menuBack=menuApp.querySelector('.innerHome'),menuReset=$('innerReset'),menuToolbar=menuApp.querySelector('.menuToolbar');
+function alignMenuBack(){
+ const host=!$('prepCard').classList.contains('hide')?$('prepCard'):!$('buy').classList.contains('hide')?menuApp.querySelector('.shopHeader'):menuApp.querySelector('#ml .daycard');
+ if(host&&menuBack.parentElement!==host)host.appendChild(menuBack);
+ const resetHost=host?.classList.contains('daycard')?menuToolbar:host;
+ if(resetHost&&menuReset.parentElement!==resetHost)resetHost.appendChild(menuReset);
+}
+new MutationObserver(alignMenuBack).observe(menuApp,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
+clearPreparedResults();renderPrepState();alignMenuBack();
 
 
 })();
@@ -3036,14 +3042,14 @@ clearPreparedResults();renderPrepState();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.263"></script>
+<script src="./home-bivouac.js?v=1.264"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./home-map.js?v=1.263"></script>
-<script src="./gas-tracker.js?v=1.263"></script>
-<script src="./reset-points.js?v=1.263"></script>
-<script src="./reset-engine.js?v=1.263"></script>
-<script src="./reset.js?v=1.263"></script>
-<script src="./home.js?v=1.263"></script>
+<script src="./home-map.js?v=1.264"></script>
+<script src="./gas-tracker.js?v=1.264"></script>
+<script src="./reset-points.js?v=1.264"></script>
+<script src="./reset-engine.js?v=1.264"></script>
+<script src="./reset.js?v=1.264"></script>
+<script src="./home.js?v=1.264"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>
