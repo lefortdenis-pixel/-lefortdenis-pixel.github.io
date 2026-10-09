@@ -6,7 +6,8 @@
   const gps=q('homeGpsToggle'),panel=q('homeGpsPanel'),status=q('homeGpsStatus');
   const input=q('homeKmInput'),refresh=q('homeGpsRefresh'),message=q('homeMapMessage');
   const POSITION_KEY='traversee-home-position-v1';
-  const categories=[{id:'water',label:'Eau',icon:'💧',button:'openWaterBtn'},{id:'bivouac',label:'Bivouac',icon:'⛺',button:'openBivouacBtn'},{id:'store',label:'Magasin',icon:'🛒',button:'openStoreBtn'},{id:'gas',label:'Gaz',icon:'<img class="gasIcon" src="./icons/gas-canister.svg" alt="" aria-hidden="true">',button:'openGasBtn'},{id:'reset',label:'Reset',icon:'🚿',button:'openResetBtn'}];
+  const categories=[{id:'water',label:'Eau',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C9 8 5 12 5 16a7 7 0 0 0 14 0c0-4-4-8-7-13Z"/><path d="M8 16a4 4 0 0 0 3 4"/></svg>',button:'openWaterBtn'},{id:'bivouac',label:'Bivouac',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 19H2L12 2Z M8 21l4-9 4 9"/></svg>',button:'openBivouacBtn'},{id:'store',label:'Magasin',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h3l3 12h12l2-9H6"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/></svg>',button:'openStoreBtn'},{id:'gas',label:'Gaz',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="8" width="14" height="14" rx="3"/><path d="M9 8V4h6v4M11 4V1h2v3M5 16h14"/></svg>',button:'openGasBtn'},{id:'reset',label:'Douche',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10V6a4 4 0 0 1 8 0v2M9 10h8l-2-3h-4Z M9 14v2m4-2v2m4-2v2M9 20v2m4-2v2m4-2v2"/></svg>',button:'openResetBtn'}];
+  let activeCategory='water';
   const state={position:null,data:null,bivouac:null,selected:null,selectedPoi:null,points:[],map:null,markers:new Map(),location:null,request:0,gpsBusy:false,lastGpsAttempt:0};
   window.TraverseeHome={getPosition:()=>state.position};
   let messageTimer=0,bivouacRequest=0;
@@ -24,7 +25,7 @@
   }
   function closeBubble(){
     state.selected=null;state.selectedPoi=null;bubble.hidden=true;
-    line.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-expanded','false'));
+    line.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-expanded',String(b.dataset.category===activeCategory)));
     updateMarkerStyles();
   }
   function closeGps(){panel.hidden=true;gps.setAttribute('aria-expanded','false');}
@@ -73,6 +74,15 @@
       return {...category,label:point?.type==='camping'?'Camping':category.label,point};
     }).sort((a,b)=>(a.point?.delta??Infinity)-(b.point?.delta??Infinity));
   }
+  function updateNextCard(){
+    const item=state.points.find(p=>p.id===activeCategory)||categories[0],p=item.point;
+    q('homeNextIcon').innerHTML=item.icon;q('homeNextTitle').textContent=item.label;
+    q('homeNextDistance').textContent=p&&Number.isFinite(p.delta)?(Math.abs(p.delta)<1?Math.round(Math.abs(p.delta)*1000)+' m':kmText(Math.abs(p.delta))+' km'):activeCategory==='bivouac'?'Ce soir':'—';
+    const name=p?(activeCategory==='water'?cleanWaterName(p):activeCategory==='gas'?window.gasPointLabel(p,p.km):p.name):!state.position?'Choisis ta position':activeCategory==='bivouac'?'Préparer mon bivouac':'Voir les points disponibles';
+    q('homeNextMeta').textContent=name+(p&&activeCategory!=='reset'?' · '+offsetText(p):'');
+    line.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-expanded',String(b.dataset.category===activeCategory)));
+    q('homeNextOpen').setAttribute('aria-label',item.label+' · '+q('homeNextDistance').textContent+' · ouvrir le module');
+  }
   function render(){
     state.points=buildPoints();
     state.points.forEach(item=>{
@@ -82,6 +92,7 @@
       button.classList.toggle('is-unavailable',!item.point);
       button.setAttribute('aria-label',item.label+(item.point?' · '+distanceText(item.point):' · '+distance));
     });
+    updateNextCard();
     if(state.map){state.map.setZone(bivouacZone());renderMapPois();}
   }
   const poiKey=(id,p)=>id+':'+p.lat.toFixed(6)+':'+p.lon.toFixed(6);
@@ -199,7 +210,7 @@
   }
   async function loadPoints(){
     try{
-      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.251':'./home-pois.json?v=1.251');if(!response.ok)throw Error('points');
+      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.252':'./home-pois.json?v=1.252');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}
@@ -247,8 +258,13 @@
   line.addEventListener('click',event=>{
     const button=event.target.closest('[data-category]');if(!button||!event.isTrusted)return;
     event.stopImmediatePropagation();
-    if(state.selected===button.dataset.category)closeBubble();else showBubble(button.dataset.category);
+    closeBubble();closeGps();activeCategory=button.dataset.category;updateNextCard();
   },true);
+  let swipeUntil=0;
+  q('homeNextOpen').addEventListener('click',()=>{if(Date.now()<swipeUntil)return;const item=categories.find(p=>p.id===activeCategory);q(item.button)?.click();});
+  let swipeX=null;const nextCard=q('homeNextOpen');
+  nextCard.addEventListener('touchstart',e=>{swipeX=e.touches[0].clientX},{passive:true});
+  nextCard.addEventListener('touchend',e=>{if(swipeX===null)return;const dx=e.changedTouches[0].clientX-swipeX;swipeX=null;if(Math.abs(dx)<40)return;swipeUntil=Date.now()+500;const ids=['water','store','gas','reset','bivouac'];activeCategory=ids[(ids.indexOf(activeCategory)+(dx<0?1:4))%5];closeBubble();updateNextCard();},{passive:true});
   bubble.addEventListener('click',event=>{
     if(event.target.closest('.homePoiClose')){closeBubble();return;}
     const button=event.target.closest('[data-open-tool]');if(button){if(state.selected==='reset'&&state.selectedPoi?.point?.id)window.TraverseeResets.open(state.selectedPoi.point.id);else q(button.dataset.openTool)?.click();}

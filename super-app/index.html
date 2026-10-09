@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#fff4af">
 <meta name="application-name" content="Traversée 2027">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.251 hors ligne</title>
+<title>Traversée 2027 · v1.252 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.251">
-<link rel="stylesheet" href="./reset.css?v=1.251">
+<link rel="stylesheet" href="./home.css?v=1.252">
+<link rel="stylesheet" href="./reset.css?v=1.252">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -638,12 +638,14 @@ html,body{height:100%;overflow:hidden}
 #gasView.active .waterList{display:grid!important;min-height:0;gap:12px;padding-bottom:40px}
 #gasView.active .waterItem{padding:16px 14px;min-height:112px}
 </style>
+<link rel="stylesheet" href="./soleil-font.css?v=1.252"><link rel="stylesheet" href="./soleil.css?v=1.252">
 </head>
 <body>
 <div class="wrap">
 
   <section class="homeView homeMapView appView active" id="homeView" aria-label="Carte de la traversée">
     <div id="homeMap" aria-label="Carte OpenStreetMap et trace de la traversée"></div>
+    <div class="soleilWelcome"><h1>Le chemin<br>continue.<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2"/></svg></h1><button type="button" id="openMenuBtn" class="soleilMenu" aria-label="Trouver un menu"><svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2v6q0 3 3 3t3-3V2M7 2v20M19 2q-4 3-4 10h4V2v20"/></svg><span>Menus</span></button></div>
     <header class="homeMapTop">
       <div class="homePosition">
         <button type="button" id="homeGpsToggle" class="homeGpsToggle" aria-label="Position GPS et kilomètre" aria-expanded="false" aria-controls="homeGpsPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg></button>
@@ -663,20 +665,20 @@ html,body{height:100%;overflow:hidden}
     <button type="button" id="homeGasAlert" class="homeGasAlert" aria-label="Suivi du gaz" hidden></button>
     <div id="homeMapMessage" class="homeMapMessage" role="status" hidden></div>
     <div id="homePoiBubble" class="homePoiBubble" aria-live="polite" hidden></div>
+    <section id="homeNextCard" class="soleilNext"><p>PROCHAIN ARRÊT</p><button id="homeNextOpen" type="button"><span id="homeNextIcon" class="soleilNextIcon"><svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C9 8 5 12 5 16a7 7 0 0 0 14 0c0-4-4-8-7-13Z"/><path d="M8 16a4 4 0 0 0 3 4"/></svg></span><span class="soleilNextText"><span class="soleilNextHeading"><strong id="homeNextTitle">Eau</strong><span id="homeNextDistance">—</span></span><small id="homeNextMeta">Choisis ta position</small></span><span class="soleilNextArrow"><svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></span></button></section>
     <nav id="homeBottomBar" class="homeBottomBar" aria-label="Outils de la traversée">
-      <button type="button" id="openMenuBtn" aria-label="Trouver un menu"><span class="homeToolIcon" aria-hidden="true">🍽️</span><span>Menus</span></button>
-      <button type="button" id="openWaterBtn" data-category="water" aria-expanded="false" aria-controls="homePoiBubble"><span class="homeToolIcon" aria-hidden="true">💧</span><span>Eau</span><small class="homeToolDistance" data-distance="water">—</small></button>
-      <button type="button" id="openStoreBtn" data-category="store" aria-expanded="false" aria-controls="homePoiBubble"><span class="homeToolIcon" aria-hidden="true">🛒</span><span>Magasin</span><small class="homeToolDistance" data-distance="store">—</small></button>
-      <button type="button" id="openGasBtn" data-category="gas" aria-expanded="false" aria-controls="homePoiBubble"><span class="homeToolIcon" aria-hidden="true"><img class="gasIcon" src="./icons/gas-canister.svg" alt="" aria-hidden="true"></span><span>Gaz</span><small class="homeToolDistance" data-distance="gas">—</small></button>
-      <button type="button" id="openResetBtn" data-category="reset" aria-expanded="false" aria-controls="homePoiBubble"><span class="homeToolIcon" aria-hidden="true">🚿</span><span>Reset</span><small class="homeToolDistance" data-distance="reset">—</small></button>
-      <button type="button" id="openBivouacBtn" data-category="bivouac" aria-expanded="false" aria-controls="homePoiBubble"><span class="homeToolIcon" aria-hidden="true">⛺</span><span>Bivouac</span><small class="homeToolDistance" data-distance="bivouac">—</small></button>
+      <button type="button" id="openWaterBtn" data-category="water" aria-expanded="false" aria-controls="homeNextCard"><span class="homeToolIcon" aria-hidden="true"><svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C9 8 5 12 5 16a7 7 0 0 0 14 0c0-4-4-8-7-13Z"/><path d="M8 16a4 4 0 0 0 3 4"/></svg></span><span>Eau</span><small class="homeToolDistance" data-distance="water">—</small></button>
+      <button type="button" id="openStoreBtn" data-category="store" aria-expanded="false" aria-controls="homeNextCard"><span class="homeToolIcon" aria-hidden="true"><svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h3l3 12h12l2-9H6"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/></svg></span><span>Magasin</span><small class="homeToolDistance" data-distance="store">—</small></button>
+      <button type="button" id="openGasBtn" data-category="gas" aria-expanded="false" aria-controls="homeNextCard"><span class="homeToolIcon" aria-hidden="true"><svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="8" width="14" height="14" rx="3"/><path d="M9 8V4h6v4M11 4V1h2v3M5 16h14"/></svg></span><span>Gaz</span><small class="homeToolDistance" data-distance="gas">—</small></button>
+      <button type="button" id="openResetBtn" data-category="reset" aria-expanded="false" aria-controls="homeNextCard"><span class="homeToolIcon" aria-hidden="true"><svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10V6a4 4 0 0 1 8 0v2M9 10h8l-2-3h-4Z M9 14v2m4-2v2m4-2v2M9 20v2m4-2v2m4-2v2"/></svg></span><span>Douche</span><small class="homeToolDistance" data-distance="reset">—</small></button>
+      <button type="button" id="openBivouacBtn" data-category="bivouac" aria-expanded="false" aria-controls="homeNextCard"><span class="homeToolIcon" aria-hidden="true"><svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 19H2L12 2Z M8 21l4-9 4 9"/></svg></span><span>Bivouac</span><small class="homeToolDistance" data-distance="bivouac">—</small></button>
     </nav>
   </section>
 
   <section class="appView" id="storeView">
     <section class="storeDeck" id="storeDecision">
     <div class="storeCard"><button class="storeHomeInline" data-home aria-label="Retour à l’accueil">⌂</button>
-            <h1>Trouver un magasin</h1>
+            <h1>Le prochain<br><em>ravitaillement.</em></h1>
 
       <div class="block">
         <div class="blockLabel"><b>Autonomie</b><span>jusqu’au prochain magasin</span></div>
@@ -690,7 +692,7 @@ html,body{height:100%;overflow:hidden}
         </div>
       </div>
 
-      <div class="block">
+      <details class="soleilPosition"><summary>Ma position</summary><div class="block">
         <button class="gpsBtn" id="gpsBtn">⌖ Utiliser ma position GPS</button>
       <div id="status" role="status" aria-live="polite"></div>
         <div class="positionFields">
@@ -704,6 +706,7 @@ html,body{height:100%;overflow:hidden}
         </div>
       </div>
 
+      </details>
       <div class="result" id="result">
         <div class="resultTop"><div class="badge" id="badge"></div><div class="resultMini" id="resultMini"></div></div>
         <div class="store" id="store"></div>
@@ -722,8 +725,8 @@ html,body{height:100%;overflow:hidden}
   <section class="appView waterView" id="waterView">
     <div class="waterCard">
       <button class="storeHomeInline" data-home aria-label="Retour à l’accueil">⌂</button>
-      <h1>Trouver de l’eau</h1>
-      <div class="waterSearch">
+      <h1>De l’eau.<br><em>Et ça repart.</em></h1>
+      <details class="soleilPosition"><summary>Ma position</summary><div class="waterSearch">
         <button class="waterGpsBtn" id="waterGpsBtn">⌖ Utiliser ma position GPS</button>
         <div class="waterStatus" id="waterStatus" role="status" aria-live="polite"></div>
         <div class="positionFields">
@@ -736,6 +739,7 @@ html,body{height:100%;overflow:hidden}
           </div>
         </div>
       </div>
+      </details>
       <div class="waterList" id="waterList"><div class="waterEmpty">Utilise ta position pour afficher les points les plus proches.</div></div>
     </div>
   </section>
@@ -743,8 +747,8 @@ html,body{height:100%;overflow:hidden}
   <section class="appView waterView" id="gasView">
     <div class="waterCard">
       <button class="storeHomeInline" data-home aria-label="Retour à l’accueil">⌂</button>
-      <h1>Suivi du gaz</h1>
-      <div class="waterSearch">
+      <h1>De quoi<br><em>faire chauffer.</em></h1>
+      <details class="soleilPosition"><summary>Ma position</summary><div class="waterSearch">
         <button class="waterGpsBtn" id="gasGpsBtn">⌖ Utiliser ma position GPS</button>
         <div class="waterStatus" id="gasStatus" role="status" aria-live="polite"></div>
         <div class="positionFields">
@@ -757,6 +761,7 @@ html,body{height:100%;overflow:hidden}
           </div>
         </div>
       </div>
+      </details>
       <div id="gasTracker" class="gasTracker"></div>
       <div class="waterList" id="gasList"></div>
     </div>
@@ -765,12 +770,12 @@ html,body{height:100%;overflow:hidden}
   <section class="appView resetView" id="resetView">
     <div class="resetCard">
       <button class="storeHomeInline" data-home aria-label="Retour à l’accueil">⌂</button>
-      <h1>Trouver un reset</h1>
+      <h1>Un peu<br><em>de fraîcheur.</em></h1>
       <p class="resetMeta">Douche · lessive · recharge</p>
-      <button type="button" class="resetGps" id="resetGpsBtn">⌖ Utiliser ma position GPS</button>
+      <details class="soleilPosition"><summary>Ma position et parcours</summary><button type="button" class="resetGps" id="resetGpsBtn">⌖ Utiliser ma position GPS</button>
       <div class="resetPosition"><label for="resetRouteChoice">Parcours</label><select id="resetRouteChoice"><option value="principal">Principal</option><option value="brenne">Brenne</option></select>
       <form id="resetKmForm"><label for="resetKmInput">Mon km</label><div class="resetKmRow"><input id="resetKmInput" type="number" inputmode="decimal" min="0" step="0.1" placeholder="Ex. 450" required><button type="submit">Afficher</button></div></form></div>
-      <p id="resetStatus" role="status"></p><p id="resetPace" class="resetMeta"></p>
+      </details><p id="resetStatus" role="status"></p><p id="resetPace" class="resetMeta"></p>
       <p id="resetMessage" role="status" aria-live="polite"></p>
       <div id="resetNext" class="resetNext"></div>
       <div id="resetTracking" class="resetTracking"></div>
@@ -1052,8 +1057,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.251"></script>
-<script src="./route-engine.js?v=1.251"></script>
+<script src="./route-data.js?v=1.252"></script>
+<script src="./route-engine.js?v=1.252"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1396,7 +1401,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.251';
+const GPX_WATER_URL='./water-points.json?v=1.252';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -1573,8 +1578,10 @@ function waterRouteLabel(point){
 }
 function cleanWaterName(value){
   let name=String(value||'Point d’eau').trim();
-  name=name.replace(/\s+\d+(?:[.,]\d+)?$/,'').trim();
+  name=name.replace(/\s+\d+(?:[.,]\d+)?[a-z]?$/i,'').trim();
   const upper=name.toUpperCase();
+  if(upper==='WC')return 'Toilettes publiques';
+  if(upper==='EAU')return 'Point d’eau';
   if(upper==='CIMETIERE'||upper==='CIMETIÈRE')return 'Cimetière';
   if(upper==='TOILETTES PUBLIQUES')return 'Toilettes publiques';
   if(upper==='ROBINET')return 'Robinet';
@@ -1603,7 +1610,7 @@ function renderWater(points){
   const renderItems=items=>items.map(point=>{
     const name=cleanWaterName(point.name);
     const desc=waterPointDescription(point);
-    const description=desc?'<div class="waterDesc">'+waterEscape(desc)+'</div>':'';
+    const description=desc?'<details class="soleilWaterInfo"><summary>Infos du point</summary><div class="waterDesc">'+waterEscape(desc)+'</div></details>':'';
     return '<article class="waterItem"><div class="waterItemText"><div class="waterDistance">'+waterEscape(waterRouteLabel(point))+'</div><div class="waterName">'+waterEscape(name)+'</div>'+description+'</div></article>';
   }).join('');
   const onRoute=points.filter(point=>Number.isFinite(point.offRouteMeters)&&point.offRouteMeters<=40);
@@ -1684,7 +1691,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.251"></script>
+<script src="./gas-points.js?v=1.252"></script>
 <script id="gas-search">
 (()=>{
   const rows=window.TRAVERSEE_GAS_POINTS;
@@ -2096,9 +2103,9 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 }
 .allDaysMode #validation{display:none!important}
 
-</style><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
+</style><link rel="stylesheet" href="./soleil-menu.css?v=1.252"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
 <div id="prepCard">
-      <h1 id="prepTitle" class="prepTitle">Trouver un menu</h1>
+      <h1 id="prepTitle" class="prepTitle">Bien manger.<br><em>Bien marcher.</em></h1>
       <p id="prepSubtitle" class="prepSub">Combien de jours d’autonomie ?</p>
     <div id="settingsPanel">
     <div class="days" id="dayChoices">
@@ -2136,7 +2143,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
   <div id="menuNav" class="navgrid">
     <button id="prevDayBtn" onclick="setDeckIndex(-1)">Jour 1</button>
     <button id="allDaysChangeBtn" class="hide" onclick="alternateProposal()">↻ Changer les 2 jours</button>
-    <button id="shopViewBtn" class="main" onclick="showShopView()">🛒 Voir les courses</button>
+    <button id="shopViewBtn" class="main" onclick="showShopView()">Voir les courses</button>
     <button id="nextDayBtn" onclick="setDeckIndex(1)">Jour 2 →</button>
   </div>
   <div id="shopNav" class="navgrid navgrid-two hide">
@@ -2356,7 +2363,7 @@ function setSavedMode(on,archived=false){
   const b=$('shopViewBtn'),v=$('shopValidateBtn');
   if(b){
     b.disabled=false;
-    b.textContent='🛒 Voir les courses';
+    b.textContent='Voir les courses';
     b.onclick=showShopView;
   }
   if(v){
@@ -2390,7 +2397,7 @@ function makeSavedSnapshot(displayRavitoCount,displaySingleSnackToggle){
 function allDaysSummaryHtml(sim,withChange){
   const snacks=sim.snackIds.map(id=>PRODUCTS[id].name).join(' · ');
   return '<div class="allDaysSummary">'
-    +'<div class="allDaysSnacks"><span>🍫</span><div><small>ENCAS</small><b>'+snacks+'</b></div></div>'
+    +'<div class="allDaysSnacks"><span>E</span><div><small>ENCAS</small><b>'+snacks+'</b></div></div>'
     
     +'</div>';
 }
@@ -2410,9 +2417,9 @@ function renderSavedMenusOnly(){
     return '<article class="daycard '+cls+'" data-day="'+i+'">'
       +'<h1>Jour '+(i+1)+'</h1>'
       +'<div class="meals">'
-      +'<div class="meal"><div class="mealIcon morning">☕</div><div><div class="mealHead"><small>PETIT-DÉJEUNER</small>'+mealBadge(i,'b')+'</div><b>'+x.b.title+'</b><span>+ 1 café soluble</span></div></div>'
-      +'<div class="meal"><div class="mealIcon lunch">🥗</div><div><div class="mealHead"><small>DÉJEUNER</small>'+mealBadge(i,'l')+'</div><b>'+x.l.title+'</b>'+(x.l.detail?'<span>'+x.l.detail+'</span>':'')+'</div></div>'
-      +'<div class="meal"><div class="mealIcon dinner">🍜</div><div><div class="mealHead"><small>DÎNER</small>'+mealBadge(i,'d')+sameDayMealBadge(x,'d')+'</div><b>'+x.d.title+'</b>'+(x.d.detail?'<span>'+x.d.detail+'</span>':'')+'</div></div>'
+      +'<div class="meal"><div class="mealIcon morning">M</div><div><div class="mealHead"><small>PETIT-DÉJEUNER</small>'+mealBadge(i,'b')+'</div><b>'+x.b.title+'</b><span>+ 1 café soluble</span></div></div>'
+      +'<div class="meal"><div class="mealIcon lunch">M</div><div><div class="mealHead"><small>DÉJEUNER</small>'+mealBadge(i,'l')+'</div><b>'+x.l.title+'</b>'+(x.l.detail?'<span>'+x.l.detail+'</span>':'')+'</div></div>'
+      +'<div class="meal"><div class="mealIcon dinner">S</div><div><div class="mealHead"><small>DÎNER</small>'+mealBadge(i,'d')+sameDayMealBadge(x,'d')+'</div><b>'+x.d.title+'</b>'+(x.d.detail?'<span>'+x.d.detail+'</span>':'')+'</div></div>'
       +'</div>'
       +'<div class="snackMini">🍫 <div><small>SNACKS</small><b>'+sim.snackIds.map(id=>PRODUCTS[id].name).join(' · ')+'</b></div></div>'
       
@@ -2526,7 +2533,7 @@ function selectDays(n,fromParent=false){const next=Math.max(1,Math.min(4,Number(
 function toggleSettings(){settingsOpen=false;$('prepCard').classList.add('hide');renderPrepState();if(plan)showMenuView()}
 function renderPrepState(){
   const has=!!plan,num=ravitoCount+1;
-  $('prepTitle').textContent='Trouver un menu';
+  $('prepTitle').innerHTML='Bien manger.<br><em>Bien marcher.</em>';
   if($('prepSubtitle')) $('prepSubtitle').textContent='Combien de jours d’autonomie ?';
   if($('stateChip')) $('stateChip').textContent=d+' jour'+(d>1?'s':'');
   menuRoot.querySelectorAll('.daybtn').forEach(b=>b.classList.toggle('active',Number(b.dataset.days)===d));
@@ -2896,9 +2903,9 @@ function render(){
       +'<h1>Jour '+(i+1)+'</h1>'
       
       +'<div class="meals">'
-      +'<div class="meal"><div class="mealIcon morning">☕</div><div><div class="mealHead"><small>PETIT-DÉJEUNER</small>'+mealBadge(i,'b')+'</div><b>'+x.b.title+'</b><span>+ 1 café soluble</span></div></div>'
-      +'<div class="meal"><div class="mealIcon lunch">🥗</div><div><div class="mealHead"><small>DÉJEUNER</small>'+mealBadge(i,'l')+'</div><b>'+x.l.title+'</b>'+(x.l.detail?'<span>'+x.l.detail+'</span>':'')+'</div></div>'
-      +'<div class="meal"><div class="mealIcon dinner">🍜</div><div><div class="mealHead"><small>DÎNER</small>'+mealBadge(i,'d')+sameDayMealBadge(x,'d')+'</div><b>'+x.d.title+'</b>'+(x.d.detail?'<span>'+x.d.detail+'</span>':'')+'</div></div>'
+      +'<div class="meal"><div class="mealIcon morning">M</div><div><div class="mealHead"><small>PETIT-DÉJEUNER</small>'+mealBadge(i,'b')+'</div><b>'+x.b.title+'</b><span>+ 1 café soluble</span></div></div>'
+      +'<div class="meal"><div class="mealIcon lunch">M</div><div><div class="mealHead"><small>DÉJEUNER</small>'+mealBadge(i,'l')+'</div><b>'+x.l.title+'</b>'+(x.l.detail?'<span>'+x.l.detail+'</span>':'')+'</div></div>'
+      +'<div class="meal"><div class="mealIcon dinner">S</div><div><div class="mealHead"><small>DÎNER</small>'+mealBadge(i,'d')+sameDayMealBadge(x,'d')+'</div><b>'+x.d.title+'</b>'+(x.d.detail?'<span>'+x.d.detail+'</span>':'')+'</div></div>'
       +'</div>'
       +'<div class="snackMini">🍫 <div><small>SNACKS</small><b>'+sim.snackIds.map(id=>PRODUCTS[id].name).join(' · ')+'</b></div></div>'
       
@@ -3010,14 +3017,14 @@ clearPreparedResults();renderPrepState();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.251"></script>
+<script src="./home-bivouac.js?v=1.252"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./home-map.js?v=1.251"></script>
-<script src="./gas-tracker.js?v=1.251"></script>
-<script src="./reset-points.js?v=1.251"></script>
-<script src="./reset-engine.js?v=1.251"></script>
-<script src="./reset.js?v=1.251"></script>
-<script src="./home.js?v=1.251"></script>
+<script src="./home-map.js?v=1.252"></script>
+<script src="./gas-tracker.js?v=1.252"></script>
+<script src="./reset-points.js?v=1.252"></script>
+<script src="./reset-engine.js?v=1.252"></script>
+<script src="./reset.js?v=1.252"></script>
+<script src="./home.js?v=1.252"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>
