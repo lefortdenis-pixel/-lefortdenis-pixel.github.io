@@ -135,7 +135,7 @@
   }else if(d?.kind==='finish'){
    result.innerHTML='<strong>Pas d’achat prévu</strong><p>Selon l’estimation, ta cartouche couvre la fin du parcours.</p>';
   }else if(d?.target){
-   result.innerHTML='<strong>Achat à prévoir</strong><p>Achat conseillé dans '+distance+' km.</p>'+(place?'<p>'+esc(place)+'</p>':'')+'<p class="gasEstimate">Selon l’autonomie estimée de ta cartouche.</p>'+(target?'<a class="gasDirections" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(target.lat+','+target.lon)+'" target="_blank" rel="noopener">Voir ce point sur la carte ↗</a>':'');
+   result.innerHTML='<strong>Achat à prévoir</strong><p>Achat conseillé dans '+distance+' km.</p>'+(place?'<p>'+esc(place)+'</p>':'')+(target?'<a class="gasDirections" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(target.lat+','+target.lon)+'" target="_blank" rel="noopener">Voir ce point sur la carte ↗</a>':'');
   }else{
    result.innerHTML='<strong>Cherche un vendeur de gaz</strong><p>Aucun vendeur enregistré n’est assez proche pour ton autonomie estimée.</p>';
   }
