@@ -102,6 +102,11 @@
   }
   const banner=q('homeGasAlert');
   banner.classList.toggle('gasWarning',!!activeAlert||!!(d?.kind==='urgent'));
+  banner.hidden=!state.cart||!(activeAlert||d?.kind==='urgent');
+  const gasButton=q('openGasBtn');
+  gasButton.classList.toggle('needs-cart',!state.cart);
+  gasButton.title=state.cart?'Gaz':'Gaz · cartouche à renseigner';
+
   banner.innerHTML='<strong><img class="gasIcon" src="./icons/gas-canister.svg" alt="" aria-hidden="true"> '+esc(title)+'</strong>'+(detail?'<span>'+esc(detail)+'</span>':'');
 
   const status=q('gasCartStatus');

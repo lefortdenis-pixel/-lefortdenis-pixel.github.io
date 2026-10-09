@@ -2,7 +2,7 @@
 (()=>{
   'use strict';
   const q=id=>document.getElementById(id);
-  const root=q('homeView'),line=q('homeMetroLine'),bubble=q('homePoiBubble');
+  const root=q('homeView'),line=q('homeBottomBar'),bubble=q('homePoiBubble');
   const gps=q('homeGpsToggle'),panel=q('homeGpsPanel'),status=q('homeGpsStatus');
   const input=q('homeKmInput'),refresh=q('homeGpsRefresh'),message=q('homeMapMessage');
   const POSITION_KEY='traversee-home-position-v1';
@@ -75,10 +75,13 @@
   }
   function render(){
     state.points=buildPoints();
-    line.innerHTML=state.points.map(item=>{
-      const distance=item.point?kmText(Math.abs(item.point.delta))+' <small>km</small>':item.id==='bivouac'?'À choisir':state.position?(state.data?'Aucun':'…'):'—';
-      return '<button type="button" class="homeMetroStop'+(item.point?'':' is-unavailable')+'" data-category="'+item.id+'" aria-expanded="false" aria-controls="homePoiBubble" aria-label="'+escape(item.label+(item.point?' · '+distanceText(item.point):''))+'"><span class="homeMetroCircle" aria-hidden="true">'+item.icon+'</span><b>'+distance+'</b><small>'+item.label+'</small></button>';
-    }).join('');
+    state.points.forEach(item=>{
+      const button=line.querySelector('[data-category="'+item.id+'"]');
+      const distance=item.point?kmText(Math.abs(item.point.delta))+' km':item.id==='bivouac'?'À choisir':state.position?(state.data?'Aucun':'…'):'—';
+      button.querySelector('[data-distance]').textContent=distance;
+      button.classList.toggle('is-unavailable',!item.point);
+      button.setAttribute('aria-label',item.label+(item.point?' · '+distanceText(item.point):' · '+distance));
+    });
     if(state.map){state.map.setZone(bivouacZone());renderMapPois();}
   }
   const poiKey=(id,p)=>id+':'+p.lat.toFixed(6)+':'+p.lon.toFixed(6);
@@ -135,12 +138,10 @@
     const p=item.point;
     const name=p?(id==='water'?cleanWaterName(p):id==='gas'?window.gasPointLabel(p,p.km):p.name):id==='bivouac'?'Choisir un bivouac':item.label;
     const extra=p?[offsetText(p),id==='gas'?'':p.note||'',p.hours||'',p.routeAnchor?'Repère d’accès sur la trace':''].filter(Boolean).join(' · '):(!state.position?'Choisis ta position avec le bouton GPS.':id==='bivouac'?'Ouvre le module pour préparer ce soir.':'Aucun autre point disponible.');
-    bubble.innerHTML='<button type="button" class="homePoiClose" aria-label="Fermer la bulle">×</button><button type="button" class="homePoiTitle" data-open-tool="'+item.button+'"><span>'+escape(name)+'</span><em aria-hidden="true">↗</em></button>'+(p&&Number.isFinite(p.delta)?'<div class="homePoiDistance">'+escape(distanceText(p))+'</div>':'')+'<div class="homePoiExtra">'+escape(extra)+'</div>';
+    bubble.innerHTML='<button type="button" class="homePoiClose" aria-label="Fermer la fiche">×</button><div class="homePoiTitle">'+escape(name)+'</div>'+(p&&Number.isFinite(p.delta)?'<div class="homePoiDistance">'+escape(distanceText(p))+'</div>':'')+'<div class="homePoiExtra">'+escape(extra)+'</div><button type="button" class="homePoiOpen" data-open-tool="'+item.button+'">'+(id==='reset'?'Douche · lessive · recharge':id==='bivouac'?'Préparer mon bivouac':'Ouvrir '+item.label.toLowerCase())+' ↗</button>';
     if(p?.sourceUrl)bubble.innerHTML+='<a class="homePoiSource" href="'+escape(p.sourceUrl)+'" target="_blank" rel="noopener">Infos du site ↗</a>';
     bubble.hidden=false;
-    const index=state.points.findIndex(p=>p.id===id);
-    bubble.style.setProperty('--bubble-arrow',Math.max(8,Math.min(90,(index+.5)*100/state.points.length))+'%');
-    line.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-expanded',String(!selectedPoi&&b.dataset.category===id)));
+    line.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-expanded',String(b.dataset.category===id)));
     updateMarkerStyles();
     if(p&&pan&&state.map)state.map.setView([p.lat,p.lon],Math.max(13,state.map.getZoom()),{animate:false});
   }
@@ -197,7 +198,7 @@
   }
   async function loadPoints(){
     try{
-      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.243':'./home-pois.json?v=1.243');if(!response.ok)throw Error('points');
+      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.244':'./home-pois.json?v=1.244');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}
@@ -243,16 +244,17 @@
     ++state.request;gpsBusy(false);setPosition({km:Number(input.value),mode:'km'},{manualEntry:true});closeGps();notice('');input.blur();
   });
   line.addEventListener('click',event=>{
-    const button=event.target.closest('[data-category]');if(!button)return;
+    const button=event.target.closest('[data-category]');if(!button||!event.isTrusted)return;
+    event.stopImmediatePropagation();
     if(state.selected===button.dataset.category)closeBubble();else showBubble(button.dataset.category);
-  });
+  },true);
   bubble.addEventListener('click',event=>{
     if(event.target.closest('.homePoiClose')){closeBubble();return;}
     const button=event.target.closest('[data-open-tool]');if(button){if(state.selected==='reset'&&state.selectedPoi?.point?.id)window.TraverseeResets.open(state.selectedPoi.point.id);else q(button.dataset.openTool)?.click();}
   });
   root.addEventListener('click',event=>{
     if(!event.target.closest('.homePosition'))closeGps();
-    if(!event.target.closest('.homeMetro,.homePoiBubble,.homeMapPin'))closeBubble();
+    if(!event.target.closest('.homeBottomBar,.homePoiBubble,.homeMapPin'))closeBubble();
   });
   root.addEventListener('keydown',event=>{if(event.key==='Escape'){closeBubble();closeGps();gps.focus();}});
   window.addEventListener('traversee-position',event=>{

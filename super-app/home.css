@@ -21,19 +21,7 @@
 .homeGpsRow button{min-height:44px;border:0;border-radius:11px;background:#203b30;color:#fff;font-weight:750;padding:10px 12px;font-size:13px}
 .homeGpsStatus{font-size:12px;line-height:1.4;margin:11px 0 0;color:#627268;overflow-wrap:anywhere}
 .homeMapMessage{position:absolute;top:calc(80px + env(safe-area-inset-top));left:16px;right:16px;z-index:1000;max-width:400px;margin:auto;background:#fff;border-radius:14px;padding:11px 14px;font-size:13px;line-height:1.35;box-shadow:0 4px 18px #0002}
-.homeMetro{position:absolute;bottom:calc(99px + env(safe-area-inset-bottom));left:12px;right:12px;max-width:520px;margin:auto;z-index:1000;background:#fff;border-radius:23px;padding:17px 9px 12px;box-shadow:0 6px 24px #0002}
-.homeMetroLine{display:flex;position:relative;isolation:isolate}
-.homeMetroLine:before{content:'';position:absolute;left:12.5%;right:12.5%;top:22px;height:4px;background:#315ecb;z-index:-1}
-.homeMetroStop{flex:1;min-width:0;border:0;background:transparent;padding:0 2px;display:flex;flex-direction:column;align-items:center;gap:5px;color:#182820;min-height:94px}
-.homeMetroCircle{width:44px;height:44px;border:2px solid #315ecb;border-radius:50%;display:grid;place-items:center;background:#fff;font-size:21px}
-.homeMetroStop[aria-expanded=true] .homeMetroCircle{background:#edf2ff;box-shadow:0 0 0 4px #e0e9ff}
-.homeMetroStop b{font-size:17px;line-height:1.1;font-weight:850;letter-spacing:-.4px;white-space:nowrap}
-.homeMetroStop b small{font-size:11px;font-weight:600;letter-spacing:0}
-.homeMetroStop>small{font-size:11px;color:#66766c}
-.homeMetroStop.is-unavailable .homeMetroCircle{border-color:#a4b0a8;color:#75867c}
-.homeMetroStop.is-unavailable b{font-size:12px;font-weight:650;letter-spacing:0}
-.homePoiBubble{position:absolute;bottom:calc(246px + env(safe-area-inset-bottom));left:16px;right:16px;max-width:360px;margin:auto;z-index:1002;padding:14px 48px 14px 16px;background:#fff;border-radius:18px;box-shadow:0 6px 24px #0003}
-.homePoiBubble:after{content:'';position:absolute;bottom:-7px;left:var(--bubble-arrow,50%);width:14px;height:14px;transform:rotate(45deg);background:#fff}
+.homePoiBubble{position:absolute;bottom:calc(100px + env(safe-area-inset-bottom));left:16px;right:16px;max-width:360px;margin:auto;z-index:1002;padding:14px 48px 14px 16px;background:#fff;border-radius:18px;box-shadow:0 6px 24px #0003}
 .homePoiTitle{display:flex;align-items:center;gap:8px;text-align:left;padding:0;min-height:30px;background:transparent;border:0;color:#182820;font-size:15px;font-weight:800;line-height:1.25}
 .homePoiTitle span{overflow-wrap:anywhere}
 .homePoiTitle em{font-style:normal;color:#315ecb}
@@ -49,8 +37,8 @@
 .homeMapPin span{width:36px;height:36px;border:2px solid #315ecb;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:19px;box-shadow:0 3px 9px #0003}
 .homeMapPin.homeMapPinSelected span{background:#e7efff;border-width:3px}
 .homeGpsRefresh:disabled{opacity:.65}
-@media(max-height:560px){.homeMetro{bottom:calc(87px + env(safe-area-inset-bottom));padding:10px 7px 6px}.homeMetroStop{min-height:83px;gap:3px}.homePoiBubble{bottom:calc(205px + env(safe-area-inset-bottom))}.homeMapTitle{padding:10px 12px}.homeMapTop{top:calc(8px + env(safe-area-inset-top))}}
-@media(min-width:800px){.homeMapTop{left:24px;right:24px}.homeBottomBar{left:50%;right:auto;transform:translateX(-50%);width:540px;border-radius:22px 22px 0 0}.homeMetro{bottom:calc(100px + env(safe-area-inset-bottom))}}
+@media(max-height:560px){.homePoiBubble{bottom:calc(100px + env(safe-area-inset-bottom))}.homeMapTitle{padding:10px 12px}.homeMapTop{top:calc(8px + env(safe-area-inset-top))}}
+@media(min-width:800px){.homeMapTop{left:24px;right:24px}.homeBottomBar{left:50%;right:auto;transform:translateX(-50%);width:540px;border-radius:22px 22px 0 0}}
 @media(prefers-reduced-motion:reduce){.homeGpsToggle.is-loading:after{animation:none}}
 
 
@@ -96,3 +84,18 @@
 .homeCompassToggle[aria-pressed=true]{background:#edf2ff;color:#315ecb;border-color:#c9d8f2}
 .homeCompassToggle[aria-pressed=true] span{color:#315ecb}.homeCompassToggle:disabled{opacity:.65}
 .homeGpsPanel{z-index:2}
+
+/* One stable category bar, with the next distance directly underneath. */
+#homeMap{bottom:calc(88px + env(safe-area-inset-bottom))}
+.homeBottomBar{min-height:88px;padding:8px 5px calc(8px + env(safe-area-inset-bottom));gap:1px}
+.homeBottomBar button{gap:4px;position:relative;min-height:70px;font-size:11px}
+.homeBottomBar .homeToolDistance{font-size:10px;font-weight:750;white-space:nowrap;color:#315ecb;min-height:12px}
+.homeBottomBar button[aria-expanded=true]{background:#edf2ff;color:#315ecb}
+.homeBottomBar .is-unavailable .homeToolDistance{color:#66766c}
+.homeBottomBar .needs-cart:after{content:'';position:absolute;top:2px;right:calc(50% - 18px);width:7px;height:7px;border-radius:50%;background:#c56418;border:2px solid #fff}
+.homePoiBubble{padding:12px 44px 12px 14px;max-width:440px;max-height: min(240px,45dvh);overflow:auto}
+.homePoiExtra{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.homePoiOpen{display:inline-flex;align-items:center;min-height:40px;margin-top:7px;padding:7px 11px;border:0;border-radius:10px;background:#edf2ff;color:#315ecb;font-size:12px;font-weight:750}
+.homePoiSource{margin-left:10px}
+.homeGasAlert[hidden]{display:none}
+.homeBottomBar button:focus-visible,.homePoiOpen:focus-visible{outline:3px solid #315ecb;outline-offset:-3px}
