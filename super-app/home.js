@@ -137,8 +137,9 @@
     closeGps();state.selected=id;state.selectedPoi=item.point?{...item,key:poiKey(id,item.point)}:null;
     const p=item.point;
     const name=p?(id==='water'?cleanWaterName(p):id==='gas'?window.gasPointLabel(p,p.km):p.name):id==='bivouac'?'Choisir un bivouac':item.label;
-    const extra=p?(id==='reset'?'':[offsetText(p),id==='gas'?'':p.note||'',p.hours||'',p.routeAnchor?'Repère d’accès sur la trace':''].filter(Boolean).join(' · ')):(!state.position?'Choisis ta position avec le bouton GPS.':id==='bivouac'?'Ouvre le module pour préparer ce soir.':'Aucun autre point disponible.');
+    const extra=p?(id==='reset'?'':[offsetText(p),id==='gas'?p.gasContact||'':p.note||'',p.hours||'',p.routeAnchor?'Repère d’accès sur la trace':''].filter(Boolean).join(' · ')):(!state.position?'Choisis ta position avec le bouton GPS.':id==='bivouac'?'Ouvre le module pour préparer ce soir.':'Aucun autre point disponible.');
     bubble.innerHTML='<button type="button" class="homePoiClose" aria-label="Fermer la fiche">×</button><div class="homePoiTitle">'+escape(name)+'</div>'+(p&&Number.isFinite(p.delta)?'<div class="homePoiDistance">'+escape(distanceText(p))+'</div>':'')+(extra?'<div class="homePoiExtra">'+escape(extra)+'</div>':'')+'<button type="button" class="homePoiOpen" data-open-tool="'+item.button+'">'+(id==='reset'?'Douche · lessive · recharge':id==='bivouac'?'Préparer mon bivouac':id==='water'?'Plus de points d’eau':id==='store'?'Plus de magasins':id==='gas'?'Trouver plus de gaz':'Ouvrir '+item.label.toLowerCase())+' ↗</button>';
+    if(p?.phone)bubble.innerHTML+='<a class="homePoiSource" href="tel:'+escape(p.phone.replace(/[^+0-9]/g,''))+'">Appeler '+escape(p.phone)+'</a>';
     if(p?.sourceUrl)bubble.innerHTML+='<a class="homePoiSource" href="'+escape(p.sourceUrl)+'" target="_blank" rel="noopener">Infos du site ↗</a>';
     bubble.hidden=false;
     line.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-expanded',String(b.dataset.category===id)));
@@ -198,7 +199,7 @@
   }
   async function loadPoints(){
     try{
-      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.249':'./home-pois.json?v=1.249');if(!response.ok)throw Error('points');
+      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.250':'./home-pois.json?v=1.250');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}
