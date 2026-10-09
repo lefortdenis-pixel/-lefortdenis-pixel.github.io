@@ -35,7 +35,8 @@ vm.runInNewContext(source,c);
 assert.equal(JSON.parse(stored).alert.id,'b');
 assert(get('gasDecision').innerHTML.includes('Tu as dépassé le magasin prévu'));
 get('gasCorrect').onclick();get('gasCartForm').onsubmit({preventDefault(){}});
-assert.equal(JSON.parse(stored).alert.id,'b');
+assert(!JSON.parse(stored).alert);
+assert(get('gasDecision').innerHTML.includes('Aucun vendeur enregistré'));
 
 /* Starting a new cartridge clears the alert and does not create a pending cartridge. */
 get('gasNewCart').onclick();get('gasFormat').value='450';get('gasStarted').value=today;get('gasCartForm').onsubmit({preventDefault(){}});
@@ -101,3 +102,26 @@ assert(get('gasDecision').innerHTML.includes('Voir ce point sur la carte'));
 assert(!get('gasCartStatus').textContent.includes('restants'));
 assert(!/\d+,\d+ jours/.test(get('gasCartStatus').textContent));
 console.log('PASS gas presentation: rounded days, no remaining label, unnamed destination and map link');
+
+/* Editing the format must recompute both the recommendation and the warning. */
+c.window.TRAVERSEE_GAS_POINTS=[{id:'near',name:'Nearby shop',lat:1,lon:9,status:'identified'},{id:'far',name:'Later shop',lat:1,lon:326,status:'identified'}];
+c.window.gasPointLabel=p=>p.name;
+position={km:0,updatedAt:Date.now()};stored=null;
+vm.runInNewContext(source,c);
+function correctFormat(grams){
+ if(JSON.parse(stored||'{}').cart)get('gasCorrect').onclick();
+ get('gasFormat').value=String(grams);get('gasStarted').value=today;
+ get('gasCartForm').onsubmit({preventDefault(){}});
+}
+correctFormat(230);
+assert(!JSON.parse(stored).alert);assert.equal(JSON.parse(stored).plan.id,'far');
+const longPlan=get('gasDecision').innerHTML;
+correctFormat(100);
+assert.equal(JSON.parse(stored).alert.id,'near');assert(get('gasDecision').innerHTML.includes('dans 9,0 km'));
+correctFormat(230);
+assert(!JSON.parse(stored).alert);assert.equal(JSON.parse(stored).plan.id,'far');
+assert.equal(get('gasDecision').innerHTML,longPlan);assert(get('homeGasAlert').hidden);
+vm.runInNewContext(source,c);
+assert(!JSON.parse(stored).alert);assert.equal(get('gasDecision').innerHTML,longPlan);
+correctFormat(100);assert.equal(JSON.parse(stored).alert.id,'near');
+console.log('PASS gas correction: 230 → 100 → 230 → reload → 100 recalculates advice and banner');

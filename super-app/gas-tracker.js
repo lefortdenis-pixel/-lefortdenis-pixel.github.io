@@ -158,7 +158,7 @@
  q('gasNewCart').onclick=()=>{state.edit=true;delete state.correcting;q('gasFormat').value='';q('gasCustom').value='';q('gasFormat').onchange();q('gasStarted').value=dateText();update()};
  q('gasCancel').onclick=()=>{delete state.edit;delete state.correcting;update()};
  q('gasCorrect').onclick=()=>{state.edit=true;state.correcting=true;if(state.cart){q('gasFormat').value=[100,230,450].includes(state.cart.grams)?String(state.cart.grams):'other';q('gasCustom').value=state.cart.grams;q('gasFormat').onchange();q('gasStarted').value=state.cart.started}update()};
- q('gasCartForm').onsubmit=e=>{e.preventDefault();const n=grams(),started=q('gasStarted').value;if(!n||!started||startTime(started)>Date.now())return;state.cart={grams:n,started};if(!state.correcting){delete state.alert;delete state.plan;}delete state.edit;delete state.correcting;if(save())update()};
+ q('gasCartForm').onsubmit=e=>{e.preventDefault();const n=grams(),started=q('gasStarted').value;if(!n||!started||startTime(started)>Date.now())return;state.cart={grams:n,started};delete state.alert;delete state.plan;delete state.edit;delete state.correcting;if(save())update()};
  q('homeGasAlert').onclick=()=>{q('openGasBtn').click();update()};
  window.addEventListener('traversee-home-position',e=>{
   position=e.detail;
