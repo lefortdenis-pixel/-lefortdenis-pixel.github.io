@@ -97,7 +97,7 @@
    if(activeAlert) {title=missed?'Achète du gaz dès que possible':outOfRange?'Cherche du gaz dès maintenant':purchase+' dans '+distance+' km';detail=missed?'Tu as dépassé le magasin prévu.':outOfRange?'Le prochain vendeur enregistré est dans '+distance+' km, trop loin pour ton autonomie.':place;}
    else if(!position) {title='Gaz · '+fmt(days)+' jours restants';detail='Indique ton km pour calculer le prochain achat.';}
    else if(d?.kind==='finish') {title='Gaz · '+fmt(days)+' jours restants';detail='Rien à faire : autonomie suffisante jusqu’à l’arrivée.';}
-   else if(d?.target) {title='Gaz · '+fmt(days)+' jours restants';detail='Prochain achat dans '+distance+' km. Rien à faire pour l’instant.';}
+   else if(d?.target) {title='Gaz · '+fmt(days)+' jours restants';detail='Achat conseillé dans '+distance+' km.';}
    else {title='Gaz · '+fmt(days)+' jours restants';detail='Cherche un vendeur : le prochain point enregistré est trop loin.';}
   }
   const banner=q('homeGasAlert');
@@ -110,7 +110,7 @@
   banner.innerHTML='<strong><img class="gasIcon" src="./icons/gas-canister.svg" alt="" aria-hidden="true"> '+esc(title)+'</strong>'+(detail?'<span>'+esc(detail)+'</span>':'');
 
   const status=q('gasCartStatus');
-  status.textContent=state.cart?state.cart.grams+' g · commencée le '+state.cart.started.split('-').reverse().join('/')+' · environ '+fmt(days)+' jours restants':'Aucune cartouche déclarée';
+  status.textContent=state.cart?state.cart.grams+' g · commencée le '+state.cart.started.split('-').reverse().join('/')+' · autonomie estimée : '+fmt(days)+' jours restants':'Aucune cartouche déclarée';
   const result=q('gasDecision');result.innerHTML='';
   if(!state.cart){
    result.innerHTML='<strong>Quelle cartouche utilises-tu ?</strong>';
@@ -126,9 +126,9 @@
    }
    if(alternative&&!missed)result.innerHTML+='<p class="gasFollow">Autre possibilité dans '+fmt(alternative.km-position.km)+' km : '+esc(pointLabel(alternative,alternative.km))+'. Gaz compatible à vérifier.</p>';
   }else if(d?.kind==='finish'){
-   result.innerHTML='<strong>Rien à faire maintenant</strong><p>Ta cartouche couvre la fin du parcours avec la marge prévue.</p>';
+   result.innerHTML='<strong>Pas d’achat prévu</strong><p>Selon l’estimation, ta cartouche couvre la fin du parcours.</p>';
   }else if(d?.target){
-   result.innerHTML='<strong>Rien à faire maintenant</strong><p>Prochain achat dans '+distance+' km.</p>'+(place?'<p>'+esc(place)+'</p>':'');
+   result.innerHTML='<strong>Achat à prévoir</strong><p>Achat conseillé dans '+distance+' km.</p>'+(place?'<p>'+esc(place)+'</p>':'')+'<p class="gasEstimate">Selon l’autonomie estimée de ta cartouche.</p>';
   }else{
    result.innerHTML='<strong>Cherche un vendeur de gaz</strong><p>Aucun vendeur enregistré n’est assez proche pour ton autonomie restante.</p>';
   }

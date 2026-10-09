@@ -35,3 +35,5 @@ html,body{background:#fff4af;color:#211238}body{font-family:Arial,Helvetica,sans
 .soleilNext[hidden]{display:none}
 #homeView:not(.has-next-card) #homeMap{bottom:calc(82px + env(safe-area-inset-bottom))}
 #homeView:not(.has-next-card) .homePoiBubble{bottom:calc(100px + env(safe-area-inset-bottom))}
+
+#gasDecision .gasEstimate{font-size:12px;color:#726278;margin-top:12px}.gasItem .gasEyebrow{margin-bottom:8px}
