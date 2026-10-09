@@ -52,3 +52,5 @@ html,body{background:#fff4af;color:#211238}body{font-family:Arial,Helvetica,sans
 #waterList .soleilWaterInfo summary{min-height:30px;color:#726278;font-size:11px}
 #waterList .soleilWaterInfo:not([open])>.waterDesc{display:none!important}
 #waterList .soleilWaterInfo[open]>.waterDesc{margin-top:4px;font-size:12px;line-height:1.4}
+
+#homeMap .maplibregl-ctrl-attrib,#homeMap .leaflet-control-attribution{display:none!important}
