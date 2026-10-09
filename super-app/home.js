@@ -135,7 +135,7 @@
     visible.forEach((item,key)=>{
       if(state.markers.has(key))return;
       const p=item.point,title=(p.routeAnchor?'Accès sur la trace · ':'')+(item.id==='water'?cleanWaterName(p):item.id==='gas'?window.gasPointLabel(p,p.km):p.name);
-      state.markers.set(key,state.map.addMarker(p,item.icon,title,()=>showBubble(item.id,false,{...item,point:{...p,delta:Number.isFinite(state.position?.km)?p.km-state.position.km:null}})));
+      state.markers.set(key,state.map.addMarker(p,item.icon,title,()=>showBubble(item.id,false,{...item,point:{...p,delta:Number.isFinite(state.position?.km)?p.km-state.position.km:null}}),item.id));
     });
     updateMarkerStyles();
   }
@@ -219,7 +219,7 @@
   }
   async function loadPoints(){
     try{
-      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.269':'./home-pois.json?v=1.269');if(!response.ok)throw Error('points');
+      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.270':'./home-pois.json?v=1.270');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}
