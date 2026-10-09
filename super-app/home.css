@@ -100,7 +100,6 @@
 .homeGasAlert[hidden]{display:none}
 .homeBottomBar button:focus-visible,.homePoiOpen:focus-visible{outline:3px solid #315ecb;outline-offset:-3px}
 
-/* Extend the map beneath the iPhone status bar; shade only for white system text. */
-@media(display-mode:standalone){
-  body:before{content:'';position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top);background:linear-gradient(to bottom,rgba(24,40,32,.65),rgba(24,40,32,.18) 70%,transparent);pointer-events:none;z-index:10000}
-}
+/* Neutral page background for the iPhone system status area. */
+html,body{background:#fff}
+#homeView.homeMapView,#homeMap{background:#fff}
