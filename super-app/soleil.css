@@ -56,3 +56,5 @@ html,body{background:#fff4af;color:#211238}body{font-family:Arial,Helvetica,sans
 #homeMap .maplibregl-ctrl-attrib,#homeMap .leaflet-control-attribution{display:none!important}
 
 .homeMapPin-store span{border-color:#e95535}.homeMapPin-store .soleilIcon{stroke:#e95535}.homeMapPin-store.homeMapPinSelected span{background:#ffe4d8!important}
+
+.gasTracker.gasNeedsCart form{border-top:0;margin-top:0;padding-top:0}.gasNeedsCart .gasMainActions{display:none}.gasNeedsCart .gasFormIntro{font-family:'Bricolage Grotesque',Arial,sans-serif;font-size:23px;color:#211238;margin-bottom:18px}
