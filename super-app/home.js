@@ -218,7 +218,7 @@
   }
   async function loadPoints(){
     try{
-      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.253':'./home-pois.json?v=1.253');if(!response.ok)throw Error('points');
+      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.254':'./home-pois.json?v=1.254');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}
@@ -266,7 +266,8 @@
   line.addEventListener('click',event=>{
     const button=event.target.closest('[data-category]');if(!button||!event.isTrusted)return;
     event.stopImmediatePropagation();
-    closeBubble();closeGps();activeCategory=button.dataset.category;setNextCardOpen(true);updateNextCard();
+    const open=!(nextCardOpen&&activeCategory===button.dataset.category);
+    closeBubble();closeGps();activeCategory=button.dataset.category;setNextCardOpen(open);updateNextCard();
   },true);
   let swipeUntil=0;
   q('homeNextOpen').addEventListener('click',()=>{if(Date.now()<swipeUntil)return;const item=categories.find(p=>p.id===activeCategory);q(item.button)?.click();});
