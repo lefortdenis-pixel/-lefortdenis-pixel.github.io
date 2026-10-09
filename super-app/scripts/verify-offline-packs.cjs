@@ -18,5 +18,14 @@ const env={console,URL,Request,Response,Blob,AbortController,DOMException,Messag
  failOne=false;await q('offlinePrepare').onclick();packs=await env.window.TraverseeOffline.readPacks();assert(packs[0].complete);assert(packs[0].reliefComplete);assert.equal(tileCalls-firstCalls,1,'Resume must request only the missing tile');assert(q('offlineStatus').textContent.startsWith('✓'));
  env.navigator.onLine=false;const z=await env.window.TraverseeOffline.relief([1,1.1,1.2]);assert.deepEqual(Array.from(z),Array(9).fill(100));const useful=await (await (await caches.open(C.MAP_CACHE)).match(failedUrl)).arrayBuffer();assert(useful.byteLength>50);
  env.navigator.onLine=true;route.pace.windowEnd=()=>4;abortOnTile=true;await q('offlinePrepare').onclick();assert(q('offlineStatus').textContent.includes('interrompu'));assert((await env.window.TraverseeOffline.readPacks()).some(p=>p.complete),'Previous pack preserved');abortOnTile=false;
- console.log('PASS: incomplete download never marked ready; retries resume only missing tiles; offline relief restored; cancellation preserves previous pack.');
+ // Removing a pack must preserve shared tiles and the application shell.
+ const before=await env.window.TraverseeOffline.readPacks(),complete=before.find(p=>p.complete),other=before.find(p=>!p.complete),shared=complete.urls.find(u=>other.urls.includes(u));
+ const shell=await caches.open('traversee-app-'+C.VERSION);await shell.put(scope+'index.html',new Response('app'));
+ const row=q('offlinePackList').children.find(r=>r.children[0].textContent.startsWith('✓'));
+ await row.children[1].onclick();assert.equal((await env.window.TraverseeOffline.readPacks()).length,1);assert(await (await caches.open(C.MAP_CACHE)).match(shared),'Shared tile must survive removal');assert(!(await (await caches.open(C.RELIEF_CACHE)).match(scope+'offline-pack/'+complete.id)));
+ await (await caches.open('traversee-map-tiles-v1')).put(scope+'tile',new Response('tile'));
+ await q('offlineDeleteAll').onclick();assert.equal((await env.window.TraverseeOffline.readPacks()).length,0);
+ for(const name of [C.MAP_CACHE,C.META_CACHE,C.RELIEF_CACHE,'traversee-map-tiles-v1'])assert.equal((await (await caches.open(name)).keys()).length,0);
+ assert(await shell.match(scope+'index.html'),'Deleting maps must preserve the offline application');assert(q('offlineDeleteAll').hidden);
+ console.log('PASS: incomplete download never marked ready; retries resume only missing tiles; offline relief restored; cancellation preserves previous pack; individual/all map removal preserves shared tiles and app.');
 })().catch(e=>{console.error(e);process.exit(1)});
