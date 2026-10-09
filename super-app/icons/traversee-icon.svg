@@ -1,8 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#fff4af"/>
-  <path d="M169 376C151 307 280 336 276 277C273 230 205 246 217 193C221 176 231 162 248 148" fill="none" stroke="#195bff" stroke-width="48" stroke-linecap="round" stroke-linejoin="round"/>
-  <g fill="none" stroke="#ff6745" stroke-width="9" stroke-linecap="round">
-    <circle cx="333" cy="164" r="25"/>
-    <path d="M333 119v-10m0 100v10m-45-55h-10m100 0h10m-76.8-31.8-7.1-7.1m70.7 70.7 7.1 7.1m-70.7-7.1-7.1 7.1m70.7-70.7 7.1-7.1"/>
-  </g>
+ <defs><clipPath id="landscape"><rect x="100" y="84" width="312" height="344" rx="112"/></clipPath></defs>
+ <rect width="512" height="512" fill="#fff4af"/>
+ <g clip-path="url(#landscape)">
+  <rect x="100" y="84" width="312" height="344" fill="#195bff"/>
+  <circle cx="318" cy="171" r="43" fill="#ff6745"/>
+  <path d="M80 289C151 219 198 235 253 277C313 321 353 264 433 237V448H80Z" fill="#e4d6ff"/>
+  <path d="M80 355C148 307 197 296 249 317C318 345 367 330 433 295V448H80Z" fill="#211238"/>
+  <path d="M184 428C178 369 289 363 276 320C267 292 231 290 245 264C249 256 257 250 269 245C252 258 256 270 271 283C292 301 315 315 309 340C300 375 239 391 260 428Z" fill="#fffbea"/>
+ </g>
 </svg>
