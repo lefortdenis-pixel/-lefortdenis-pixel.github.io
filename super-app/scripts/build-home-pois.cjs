@@ -14,7 +14,7 @@ for(const id of ['principal','brenne']){
   // otherwise makes the 100 million segment comparisons needlessly slow.
   const engine=new Function('DATA','R','rad','document','window',source+';return {projectGps};')(data,6371008.8,d=>d*Math.PI/180,{getElementById:()=>null},context.window);
   function project(p){const lat=Number(p.a??p.lat),lon=Number(p.o??p.lon),r=engine.projectGps(lat,lon);return {lat,lon,km:Math.min(data.routeLengthKm,+r.km.toFixed(4)),offRouteMeters:Math.round(r.distanceMeters),name:p.n??p.name,type:p.t??p.type??'gas',...(p.note?{note:p.note}:{}),...(p.id?{id:p.id,status:p.status,source:p.source,stockConfirmed:false}:{}),...(p.sourceUrl?{sourceUrl:p.sourceUrl}:{})};}
-  const result={version:2,routeId:id,routeLengthKm:data.routeLengthKm,water:water.map(project).sort((a,b)=>a.km-b.km),gas:gas.map(project).sort((a,b)=>a.km-b.km),camping:id==='brenne'?branch.camping.map(project):[]};
+  const result={version:2,routeId:id,routeLengthKm:data.routeLengthKm,water:water.map(project).filter(p=>p.offRouteMeters<=2500).sort((a,b)=>a.km-b.km),gas:gas.map(project).sort((a,b)=>a.km-b.km),camping:id==='brenne'?branch.camping.map(project):[]};
   fs.writeFileSync(path.join(base,id==='brenne'?'home-pois-brenne.json':'home-pois.json'),JSON.stringify(result));
   console.log(id+': '+result.water.length+' water points, '+result.gas.length+' gas points, '+result.camping.length+' camping.');
 }
