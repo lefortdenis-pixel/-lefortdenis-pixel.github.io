@@ -10,11 +10,11 @@
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
-<title>Traversée 2027 · v1.255 hors ligne</title>
+<title>Traversée 2027 · v1.256 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.255">
-<link rel="stylesheet" href="./reset.css?v=1.255">
+<link rel="stylesheet" href="./home.css?v=1.256">
+<link rel="stylesheet" href="./reset.css?v=1.256">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -638,7 +638,7 @@ html,body{height:100%;overflow:hidden}
 #gasView.active .waterList{display:grid!important;min-height:0;gap:12px;padding-bottom:40px}
 #gasView.active .waterItem{padding:16px 14px;min-height:112px}
 </style>
-<link rel="stylesheet" href="./soleil-font.css?v=1.255"><link rel="stylesheet" href="./soleil.css?v=1.255">
+<link rel="stylesheet" href="./soleil-font.css?v=1.256"><link rel="stylesheet" href="./soleil.css?v=1.256">
 </head>
 <body>
 <div class="wrap">
@@ -1056,8 +1056,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.255"></script>
-<script src="./route-engine.js?v=1.255"></script>
+<script src="./route-data.js?v=1.256"></script>
+<script src="./route-engine.js?v=1.256"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1278,7 +1278,7 @@ function show(km,stage,offRoute=null){
   const outsideWindow=r.verdict==="HORS FENÊTRE"||r.verdict===">4 JOURS";
 
   box.classList.add("show");
-  if(mini)mini.textContent="E"+stage+" · km "+km.toFixed(1);
+  if(mini){mini.textContent="";mini.hidden=true;}
 
   if(outsideWindow){
     badge.className="badge bad";
@@ -1398,7 +1398,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.255';
+const GPX_WATER_URL='./water-points.json?v=1.256';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -1688,7 +1688,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.255"></script>
+<script src="./gas-points.js?v=1.256"></script>
 <script id="gas-search">
 (()=>{
   const rows=window.TRAVERSEE_GAS_POINTS;
@@ -2100,7 +2100,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 }
 .allDaysMode #validation{display:none!important}
 
-</style><link rel="stylesheet" href="./soleil-menu.css?v=1.255"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
+</style><link rel="stylesheet" href="./soleil-menu.css?v=1.256"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
 <div id="prepCard">
       <h1 id="prepTitle" class="prepTitle">Bien manger.<br><em>Bien marcher.</em></h1>
       <p id="prepSubtitle" class="prepSub">Combien de jours d’autonomie ?</p>
@@ -2414,9 +2414,9 @@ function renderSavedMenusOnly(){
     return '<article class="daycard '+cls+'" data-day="'+i+'">'
       +'<h1>Jour '+(i+1)+'</h1>'
       +'<div class="meals">'
-      +'<div class="meal"><div class="mealIcon morning">M</div><div><div class="mealHead"><small>PETIT-DÉJEUNER</small>'+mealBadge(i,'b')+'</div><b>'+x.b.title+'</b><span>+ 1 café soluble</span></div></div>'
-      +'<div class="meal"><div class="mealIcon lunch">M</div><div><div class="mealHead"><small>DÉJEUNER</small>'+mealBadge(i,'l')+'</div><b>'+x.l.title+'</b>'+(x.l.detail?'<span>'+x.l.detail+'</span>':'')+'</div></div>'
-      +'<div class="meal"><div class="mealIcon dinner">S</div><div><div class="mealHead"><small>DÎNER</small>'+mealBadge(i,'d')+sameDayMealBadge(x,'d')+'</div><b>'+x.d.title+'</b>'+(x.d.detail?'<span>'+x.d.detail+'</span>':'')+'</div></div>'
+      +'<div class="meal"><div class="mealIcon morning">'+mealIcon('morning')+'</div><div><div class="mealHead"><small>PETIT-DÉJEUNER</small>'+mealBadge(i,'b')+'</div><b>'+x.b.title+'</b><span>+ 1 café soluble</span></div></div>'
+      +'<div class="meal"><div class="mealIcon lunch">'+mealIcon('lunch')+'</div><div><div class="mealHead"><small>DÉJEUNER</small>'+mealBadge(i,'l')+'</div><b>'+x.l.title+'</b>'+mealDetail(x.l.detail)+'</div></div>'
+      +'<div class="meal"><div class="mealIcon dinner">'+mealIcon('dinner')+'</div><div><div class="mealHead"><small>DÎNER</small>'+mealBadge(i,'d')+sameDayMealBadge(x,'d')+'</div><b>'+x.d.title+'</b>'+mealDetail(x.d.detail)+'</div></div>'
       +'</div>'
       +'<div class="snackMini">🍫 <div><small>SNACKS</small><b>'+sim.snackIds.map(id=>PRODUCTS[id].name).join(' · ')+'</b></div></div>'
       
@@ -2856,6 +2856,19 @@ function openUnavailable(id){closeUnavailable();const p=PRODUCTS[id],box=menuRoo
 function cycleUnavailable(){if(unavailableOptions.length<2)return;unavailableOptionIndex=(unavailableOptionIndex+1)%unavailableOptions.length;renderUnavailableChoice()}
 function applyUnavailableChange(){if(!pendingUnavailable)return;const beforePlan=clone(plan),beforeSnack=snackOverride,beforeSnackIds=snackIdsForOverride(beforeSnack),beforeSim=simulate(plan),nextSim=pendingUnavailable.nextSim||simulateWithSnackOverride(pendingUnavailable.plan,pendingUnavailable.snackOverride);const nextPlan=pendingUnavailable.plan,nextSnack=pendingUnavailable.snackOverride;for(let i=0;i<nextPlan.length;i++){for(const slot of ['b','l','d']){const beforeMeal=beforePlan[i]?.[slot],afterMeal=nextPlan[i]?.[slot];if(beforeMeal&&afterMeal&&beforeMeal.title!==afterMeal.title){replacementMeals[i+'-'+slot]=true;const beforeParts=beforeMeal.parts||{},afterParts=afterMeal.parts||{};for(const id of Object.keys(afterParts)){if((afterParts[id]||0)>(beforeParts[id]||0))replacementProducts[id]=true}}}}const afterSnackIds=snackIdsForOverride(nextSnack);for(const id of afterSnackIds){if(!beforeSnackIds.includes(id))replacementProducts[id]=true}plan=nextPlan;snackOverride=nextSnack;const kept={};for(const [id,on] of Object.entries(checkedShop)){const before=beforeSim.purchases[id]?.count||0,after=nextSim.purchases[id]?.count||0;if(on&&before===after&&after>0)kept[id]=true}checkedShop=kept;for(const id of Object.keys(resolvedEquivalent)){const before=beforeSim.purchases[id]?.count||0,after=nextSim.purchases[id]?.count||0;if(before!==after||!after)delete resolvedEquivalent[id]}closeUnavailable();menuNeedsRender=true;const s=document.scrollingElement||document.documentElement,keepY=s.scrollTop;renderShoppingOnly();s.scrollTop=Math.min(keepY,Math.max(0,s.scrollHeight-s.clientHeight));scheduleDraftSave();toast('')}
 function markEquivalent(id){resolvedEquivalent[id]=true;checkedShop[id]=true;closeUnavailable();renderShoppingOnly();scheduleDraftSave();toast('')}
+function mealIcon(slot){
+  const paths={morning:'<path d="M4 16h16M6 16a6 6 0 0 1 12 0M12 3v3M4 7l2 2M20 7l-2 2M2 12h2M20 12h2M4 20h16"/>',lunch:'<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="4"/><path d="M2 3v6M4 3v6M3 9v12M22 3v18"/>',dinner:'<path d="M20 15.5A9 9 0 0 1 8.5 4 9 9 0 1 0 20 15.5Z"/>'};
+  return '<svg viewBox="0 0 24 24" aria-hidden="true">'+paths[slot]+'</svg>';
+}
+function mealDetail(text){return text?'<details class="mealPreparation"><summary>Préparation</summary><span>'+text+'</span></details>':''}
+function groupShopRows(){
+  const rows=Array.from($('bl').querySelectorAll('.shop')).sort((a,b)=>Number(a.dataset.shopOrder)-Number(b.dataset.shopOrder));
+  const pending=$('shopPending'),bought=$('shopBought');if(!pending||!bought)return;
+  const focused=menuRoot.activeElement;
+  rows.forEach(row=>(checkedShop[row.dataset.shopId]?bought:pending).appendChild(row));
+  $('shopBoughtHeading').hidden=!bought.children.length;
+  if(focused&&rows.some(row=>row===focused||row.contains(focused)))focused.focus({preventScroll:true});
+}
 function refreshChecklistOnly(){
   if(!plan)return;
   const sim=simulate(plan);
@@ -2876,7 +2889,7 @@ function updateShopRow(id){
     row.classList.toggle('checked',on);
     row.setAttribute('aria-checked',String(on));
   }
-  refreshChecklistOnly();
+  groupShopRows();refreshChecklistOnly();
 }
 function toggleChecked(id,on){checkedShop[id]=!!on;updateShopRow(id);scheduleDraftSave()}
 function toggleShopRow(id){checkedShop[id]=!checkedShop[id];updateShopRow(id);scheduleDraftSave()}
@@ -2900,9 +2913,9 @@ function render(){
       +'<h1>Jour '+(i+1)+'</h1>'
       
       +'<div class="meals">'
-      +'<div class="meal"><div class="mealIcon morning">M</div><div><div class="mealHead"><small>PETIT-DÉJEUNER</small>'+mealBadge(i,'b')+'</div><b>'+x.b.title+'</b><span>+ 1 café soluble</span></div></div>'
-      +'<div class="meal"><div class="mealIcon lunch">M</div><div><div class="mealHead"><small>DÉJEUNER</small>'+mealBadge(i,'l')+'</div><b>'+x.l.title+'</b>'+(x.l.detail?'<span>'+x.l.detail+'</span>':'')+'</div></div>'
-      +'<div class="meal"><div class="mealIcon dinner">S</div><div><div class="mealHead"><small>DÎNER</small>'+mealBadge(i,'d')+sameDayMealBadge(x,'d')+'</div><b>'+x.d.title+'</b>'+(x.d.detail?'<span>'+x.d.detail+'</span>':'')+'</div></div>'
+      +'<div class="meal"><div class="mealIcon morning">'+mealIcon('morning')+'</div><div><div class="mealHead"><small>PETIT-DÉJEUNER</small>'+mealBadge(i,'b')+'</div><b>'+x.b.title+'</b><span>+ 1 café soluble</span></div></div>'
+      +'<div class="meal"><div class="mealIcon lunch">'+mealIcon('lunch')+'</div><div><div class="mealHead"><small>DÉJEUNER</small>'+mealBadge(i,'l')+'</div><b>'+x.l.title+'</b>'+mealDetail(x.l.detail)+'</div></div>'
+      +'<div class="meal"><div class="mealIcon dinner">'+mealIcon('dinner')+'</div><div><div class="mealHead"><small>DÎNER</small>'+mealBadge(i,'d')+sameDayMealBadge(x,'d')+'</div><b>'+x.d.title+'</b>'+mealDetail(x.d.detail)+'</div></div>'
       +'</div>'
       +'<div class="snackMini">🍫 <div><small>SNACKS</small><b>'+sim.snackIds.map(id=>PRODUCTS[id].name).join(' · ')+'</b></div></div>'
       
@@ -2922,7 +2935,14 @@ function render(){
 function renderShop(sim){
   const purchases=Object.values(sim.purchases).sort((a,b)=>(PRODUCTS[a.id].staple?1:0)-(PRODUCTS[b.id].staple?1:0)||PRODUCTS[a.id].name.localeCompare(PRODUCTS[b.id].name)),regular=purchases;
   $('buyTitle').textContent='Liste de courses';
-  $('bl').innerHTML=regular.length?regular.map(x=>{const p=PRODUCTS[x.id],checked=!!checkedShop[x.id],eq=!!resolvedEquivalent[x.id],repl=!!replacementProducts[x.id];return '<div class="shop '+(checked?'checked':'')+'" data-shop-id="'+x.id+'" role="checkbox" tabindex="0" aria-checked="'+checked+'" onclick="if(event.target.closest(\'.bad,.inlineUnavailable\'))return;toggleShopRow(\''+x.id+'\')" onkeydown="if((event.key===\'Enter\'||event.key===\' \')&&event.target===this){event.preventDefault();toggleShopRow(\''+x.id+'\')}"><div class="checkWrap"><span>✓</span></div><div class="shopText"><div class="shopTap"><b>'+p.name+(repl?'<em class="replacementTag">AJOUTÉ APRÈS MODIFICATION</em>':'')+(eq?'<em>ÉQUIVALENT</em>':'')+'</b><small>'+formatBuy(x)+'</small></div><button class="bad" onclick="openUnavailable(\''+x.id+'\')">Introuvable</button></div><div class="unavailable inlineUnavailable hide" data-unavailable-id="'+x.id+'"></div></div>'}).join(''):'<div class="empty-shop">Aucun achat principal supplémentaire.</div>';
+  $('bl').innerHTML=regular.length?regular.map(x=>{const p=PRODUCTS[x.id],checked=!!checkedShop[x.id],eq=!!resolvedEquivalent[x.id],repl=!!replacementProducts[x.id];return '<div class="shop '+(checked?'checked':'')+'" data-shop-id="'+x.id+'" role="checkbox" tabindex="0" aria-checked="'+checked+'" onclick="if(event.target.closest(\'.bad,.inlineUnavailable\'))return;toggleShopRow(\''+x.id+'\')" onkeydown="if((event.key===\'Enter\'||event.key===\' \')&&event.target===this){event.preventDefault();toggleShopRow(\''+x.id+'\')}"><div class="checkWrap"><span>✓</span></div><div class="shopText"><div class="shopTap"><b>'+p.name+(repl?'<em class="replacementTag">AJOUTÉ APRÈS MODIFICATION</em>':'')+(eq?'<em>ÉQUIVALENT</em>':'')+'</b><small>'+formatBuy(x)+'</small></div><button class="bad" aria-label="Alternatives pour '+p.name+'" title="Trouver une alternative" onclick="openUnavailable(\''+x.id+'\')">⋯</button></div><div class="unavailable inlineUnavailable hide" data-unavailable-id="'+x.id+'"></div></div>'}).join(''):'<div class="empty-shop">Aucun achat principal supplémentaire.</div>';
+  const rows=Array.from($('bl').querySelectorAll('.shop'));rows.forEach((row,i)=>row.dataset.shopOrder=i);
+  if(rows.length){
+    const pending=document.createElement('div');pending.id='shopPending';
+    const heading=document.createElement('h3');heading.id='shopBoughtHeading';heading.className='shopBoughtHeading';heading.textContent='Dans le panier';
+    const bought=document.createElement('div');bought.id='shopBought';
+    $('bl').replaceChildren(pending,heading,bought);rows.forEach(row=>pending.appendChild(row));groupShopRows();
+  }
   $('bl').querySelectorAll('.inlineUnavailable').forEach(box=>{box.onclick=event=>event.stopPropagation();box.onkeydown=event=>event.stopPropagation()});
   regular.filter(x=>SAME_DAY_CAN_IDS.has(x.id)).forEach(x=>{const title=$('bl').querySelector('[data-shop-id="'+x.id+'"] .shopText b');if(title)title.insertAdjacentHTML('beforeend','<em class="sameDayShopTag">SOIR MÊME</em>')});
   $('verifyBox').innerHTML='';
@@ -3014,14 +3034,14 @@ clearPreparedResults();renderPrepState();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.255"></script>
+<script src="./home-bivouac.js?v=1.256"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./home-map.js?v=1.255"></script>
-<script src="./gas-tracker.js?v=1.255"></script>
-<script src="./reset-points.js?v=1.255"></script>
-<script src="./reset-engine.js?v=1.255"></script>
-<script src="./reset.js?v=1.255"></script>
-<script src="./home.js?v=1.255"></script>
+<script src="./home-map.js?v=1.256"></script>
+<script src="./gas-tracker.js?v=1.256"></script>
+<script src="./reset-points.js?v=1.256"></script>
+<script src="./reset-engine.js?v=1.256"></script>
+<script src="./reset.js?v=1.256"></script>
+<script src="./home.js?v=1.256"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>

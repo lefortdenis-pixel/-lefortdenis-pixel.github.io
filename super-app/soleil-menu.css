@@ -12,3 +12,28 @@
 #menuApp #buy{padding:16px 0 12px!important}
 #menuApp .bottomNav,#menuApp.allDaysMode .bottomNav{margin:0!important;right:auto!important}
 #menuApp #shopNav{grid-template-columns:1fr 1.45fr!important}
+
+/* Compact meals and a quieter checklist. */
+#menuApp.allDaysMode #ml .daycard{padding:18px!important}
+#menuApp.allDaysMode #ml .daycard .meal{grid-template-columns:34px minmax(0,1fr)!important;gap:10px!important;padding:11px 0!important;min-height:62px!important}
+#menuApp.allDaysMode #ml .daycard .mealIcon{width:34px!important;height:34px!important;border-radius:11px!important}
+#menuApp .mealIcon svg{width:22px;height:22px;fill:none;stroke:#195bff;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#menuApp .mealPreparation{margin-top:5px;font-size:12px;color:#726278}
+#menuApp .mealPreparation summary{cursor:pointer;min-height:28px;display:flex;align-items:center;gap:5px;list-style:none;color:#195bff;font-size:12px}
+#menuApp .mealPreparation summary:before{content:'+'}
+#menuApp .mealPreparation[open] summary:before{content:'−'}
+#menuApp .mealPreparation summary::-webkit-details-marker{display:none}
+#menuApp .mealPreparation span{padding:3px 0 6px}
+#menuApp #bl{background:#fffbea;border-radius:24px;padding:4px 16px;margin-top:18px}
+#menuApp .shop{padding:12px 0!important;min-height:74px!important;background:transparent!important}
+#menuApp .shopText{display:grid!important;grid-template-columns:minmax(0,1fr) 40px!important;align-items:center!important;gap:8px!important}
+#menuApp .shopTap{display:block!important}
+#menuApp .shopText b{font-size:15px!important;line-height:1.3!important}
+#menuApp .shopText small{display:block!important;font-size:13px!important;margin-top:5px!important;color:#195bff!important;font-weight:700!important}
+#menuApp #bl .shop .bad{width:40px!important;height:44px!important;min-height:44px!important;margin:0!important;padding:0!important;background:transparent!important;border:0!important;border-radius:12px!important;color:#726278!important;font-size:24px!important}
+#menuApp #bl .shop .bad:hover,#menuApp #bl .shop .bad:focus-visible{background:#e4d6ff!important}
+#menuApp .shop.checked .shopText{opacity:.55}
+#menuApp .shopBoughtHeading{font-size:12px;color:#726278;letter-spacing:.05em;margin:18px 0 4px;padding-top:10px;border-top:1px solid #21123820}
+#menuApp .shopBoughtHeading[hidden]{display:none}
+#menuApp #allDaysChangeBtn{background:transparent!important;color:#726278!important;border:0!important;font-size:12px!important}
+#menuApp #menuNav{grid-template-columns:1fr 1.4fr!important}
