@@ -7,7 +7,7 @@
   const input=q('homeKmInput'),refresh=q('homeGpsRefresh'),message=q('homeMapMessage');
   const POSITION_KEY='traversee-home-position-v1';
   const categories=[{id:'water',label:'Eau',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C9 8 5 12 5 16a7 7 0 0 0 14 0c0-4-4-8-7-13Z"/><path d="M8 16a4 4 0 0 0 3 4"/></svg>',button:'openWaterBtn'},{id:'bivouac',label:'Bivouac',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 19H2L12 2Z M8 21l4-9 4 9"/></svg>',button:'openBivouacBtn'},{id:'store',label:'Magasin',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h3l3 12h12l2-9H6"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/></svg>',button:'openStoreBtn'},{id:'gas',label:'Gaz',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="8" width="14" height="14" rx="3"/><path d="M9 8V4h6v4M11 4V1h2v3M5 16h14"/></svg>',button:'openGasBtn'},{id:'reset',label:'Douche',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10V6a4 4 0 0 1 8 0v2M9 10h8l-2-3h-4Z M9 14v2m4-2v2m4-2v2M9 20v2m4-2v2m4-2v2"/></svg>',button:'openResetBtn'}];
-  let activeCategory='water';
+  let activeCategory='water',nextCardOpen=false;
   const state={position:null,data:null,bivouac:null,selected:null,selectedPoi:null,points:[],map:null,markers:new Map(),location:null,request:0,gpsBusy:false,lastGpsAttempt:0};
   window.TraverseeHome={getPosition:()=>state.position};
   let messageTimer=0,bivouacRequest=0;
@@ -23,13 +23,21 @@
     clearTimeout(messageTimer);message.textContent=text;message.hidden=!text;
     if(text&&ms)messageTimer=setTimeout(()=>{message.hidden=true},ms);
   }
+  function setNextCardOpen(open){
+    if(nextCardOpen===open)return;
+    nextCardOpen=open;
+    q('homeNextCard').hidden=!open;
+    root.classList.toggle('has-next-card',open);
+    line.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-expanded',String(open&&b.dataset.category===activeCategory)));
+    requestAnimationFrame(()=>state.map?.invalidateSize({pan:false}));
+  }
   function closeBubble(){
     state.selected=null;state.selectedPoi=null;bubble.hidden=true;
-    line.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-expanded',String(b.dataset.category===activeCategory)));
+    line.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-expanded',String(nextCardOpen&&b.dataset.category===activeCategory)));
     updateMarkerStyles();
   }
   function closeGps(){panel.hidden=true;gps.setAttribute('aria-expanded','false');}
-  function openGps(){closeBubble();panel.hidden=false;gps.setAttribute('aria-expanded','true');}
+  function openGps(){setNextCardOpen(false);closeBubble();panel.hidden=false;gps.setAttribute('aria-expanded','true');}
   function offsetText(p){
     if(p.customRoute)return '';
     if(!Number.isFinite(p.offRouteMeters))return 'Écart hors trace non renseigné';
@@ -80,7 +88,7 @@
     q('homeNextDistance').textContent=p&&Number.isFinite(p.delta)?(Math.abs(p.delta)<1?Math.round(Math.abs(p.delta)*1000)+' m':kmText(Math.abs(p.delta))+' km'):activeCategory==='bivouac'?'Ce soir':'—';
     const name=p?(activeCategory==='water'?cleanWaterName(p):activeCategory==='gas'?window.gasPointLabel(p,p.km):p.name):!state.position?'Choisis ta position':activeCategory==='bivouac'?'Préparer mon bivouac':'Voir les points disponibles';
     q('homeNextMeta').textContent=name+(p&&activeCategory!=='reset'?' · '+offsetText(p):'');
-    line.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-expanded',String(b.dataset.category===activeCategory)));
+    line.querySelectorAll('[data-category]').forEach(b=>b.setAttribute('aria-expanded',String(nextCardOpen&&b.dataset.category===activeCategory)));
     q('homeNextOpen').setAttribute('aria-label',item.label+' · '+q('homeNextDistance').textContent+' · ouvrir le module');
   }
   function render(){
@@ -145,7 +153,7 @@
   }
   function showBubble(id,pan=true,selectedPoi=null){
     const item=selectedPoi||state.points.find(p=>p.id===id);if(!item)return;
-    closeGps();state.selected=id;state.selectedPoi=item.point?{...item,key:poiKey(id,item.point)}:null;
+    setNextCardOpen(false);closeGps();state.selected=id;state.selectedPoi=item.point?{...item,key:poiKey(id,item.point)}:null;
     const p=item.point;
     const name=p?(id==='water'?cleanWaterName(p):id==='gas'?window.gasPointLabel(p,p.km):p.name):id==='bivouac'?'Choisir un bivouac':item.label;
     const extra=p?(id==='reset'?'':[offsetText(p),id==='gas'?p.gasContact||'':p.note||'',p.hours||'',p.routeAnchor?'Repère d’accès sur la trace':''].filter(Boolean).join(' · ')):(!state.position?'Choisis ta position avec le bouton GPS.':id==='bivouac'?'Ouvre le module pour préparer ce soir.':'Aucun autre point disponible.');
@@ -186,7 +194,7 @@
     syncCompass();
     if(!state.map){notice('Carte indisponible. Les outils restent accessibles.',0);return}
     if(state.position)setPosition(state.position,{persist:false});else render();
-    state.map.on('click',()=>{closeBubble();closeGps()});
+    state.map.on('click',()=>{setNextCardOpen(false);closeBubble();closeGps()});
     state.map.on('moveend',renderMapPois);state.map.on('resize',renderMapPois);renderMapPois();
     requestAnimationFrame(()=>state.map.invalidateSize());
   }
@@ -210,7 +218,7 @@
   }
   async function loadPoints(){
     try{
-      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.252':'./home-pois.json?v=1.252');if(!response.ok)throw Error('points');
+      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.253':'./home-pois.json?v=1.253');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}
@@ -258,7 +266,7 @@
   line.addEventListener('click',event=>{
     const button=event.target.closest('[data-category]');if(!button||!event.isTrusted)return;
     event.stopImmediatePropagation();
-    closeBubble();closeGps();activeCategory=button.dataset.category;updateNextCard();
+    closeBubble();closeGps();activeCategory=button.dataset.category;setNextCardOpen(true);updateNextCard();
   },true);
   let swipeUntil=0;
   q('homeNextOpen').addEventListener('click',()=>{if(Date.now()<swipeUntil)return;const item=categories.find(p=>p.id===activeCategory);q(item.button)?.click();});
@@ -270,15 +278,16 @@
     const button=event.target.closest('[data-open-tool]');if(button){if(state.selected==='reset'&&state.selectedPoi?.point?.id)window.TraverseeResets.open(state.selectedPoi.point.id);else q(button.dataset.openTool)?.click();}
   });
   root.addEventListener('click',event=>{
+    if(!event.target.closest('.homeBottomBar,.soleilNext'))setNextCardOpen(false);
     if(!event.target.closest('.homePosition'))closeGps();
     if(!event.target.closest('.homeBottomBar,.homePoiBubble,.homeMapPin'))closeBubble();
   });
-  root.addEventListener('keydown',event=>{if(event.key==='Escape'){closeBubble();closeGps();gps.focus();}});
+  root.addEventListener('keydown',event=>{if(event.key==='Escape'){setNextCardOpen(false);closeBubble();closeGps();gps.focus();}});
   window.addEventListener('traversee-position',event=>{
     ++state.request;gpsBusy(false);setPosition(event.detail,{center:event.detail?.mode!=='gps',manualEntry:event.detail?.mode==='km'});
   });
   window.addEventListener('traversee-view',event=>{
-    closeBubble();closeGps();const name=event.detail.name,p=state.position;
+    setNextCardOpen(false);closeBubble();closeGps();const name=event.detail.name,p=state.position;
     if(name==='home'){
       requestAnimationFrame(()=>{state.map?.invalidateSize({pan:false});if(p)state.map?.setPosition(p,true)});
       refreshBivouac();setTimeout(refreshBivouac,800);
