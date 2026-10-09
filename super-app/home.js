@@ -84,7 +84,6 @@
   }
   function updateNextCard(){
     const item=state.points.find(p=>p.id===activeCategory)||categories[0],p=item.point;
-    q('homeNextCard').querySelector('p').textContent=activeCategory==='gas'?'PROCHAIN VENDEUR':'PROCHAIN ARRÊT';
     q('homeNextIcon').innerHTML=item.icon;q('homeNextTitle').textContent=item.label;
     q('homeNextDistance').textContent=p&&Number.isFinite(p.delta)?(Math.abs(p.delta)<1?Math.round(Math.abs(p.delta)*1000)+' m':kmText(Math.abs(p.delta))+' km'):activeCategory==='bivouac'?'Ce soir':'—';
     const name=p?(activeCategory==='water'?cleanWaterName(p):activeCategory==='gas'?window.gasPointLabel(p,p.km):p.name):!state.position?'Choisis ta position':activeCategory==='bivouac'?'Préparer mon bivouac':'Voir les points disponibles';
@@ -219,7 +218,7 @@
   }
   async function loadPoints(){
     try{
-      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.278':'./home-pois.json?v=1.278');if(!response.ok)throw Error('points');
+      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.279':'./home-pois.json?v=1.279');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}
