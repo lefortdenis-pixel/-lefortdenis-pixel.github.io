@@ -9,12 +9,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Traversée">
 <link rel="manifest" href="./manifest.webmanifest">
-<link rel="apple-touch-icon" href="./icons/apple-touch-icon-soleil-v2.png">
-<title>Traversée 2027 · v1.271 hors ligne</title>
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon-soleil-v3.png">
+<title>Traversée 2027 · v1.272 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.271">
-<link rel="stylesheet" href="./reset.css?v=1.271">
+<link rel="stylesheet" href="./home.css?v=1.272">
+<link rel="stylesheet" href="./reset.css?v=1.272">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -638,7 +638,7 @@ html,body{height:100%;overflow:hidden}
 #gasView.active .waterList{display:grid!important;min-height:0;gap:12px;padding-bottom:40px}
 #gasView.active .waterItem{padding:16px 14px;min-height:112px}
 </style>
-<link rel="stylesheet" href="./soleil-font.css?v=1.271"><link rel="stylesheet" href="./soleil.css?v=1.271">
+<link rel="stylesheet" href="./soleil-font.css?v=1.272"><link rel="stylesheet" href="./soleil.css?v=1.272">
 </head>
 <body>
 <div class="wrap">
@@ -1051,8 +1051,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.271"></script>
-<script src="./route-engine.js?v=1.271"></script>
+<script src="./route-data.js?v=1.272"></script>
+<script src="./route-engine.js?v=1.272"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1393,7 +1393,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.271';
+const GPX_WATER_URL='./water-points.json?v=1.272';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -1678,7 +1678,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.271"></script>
+<script src="./gas-points.js?v=1.272"></script>
 <script id="gas-search">
 (()=>{
   const rows=window.TRAVERSEE_GAS_POINTS;
@@ -2090,7 +2090,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 }
 .allDaysMode #validation{display:none!important}
 
-</style><link rel="stylesheet" href="./soleil-menu.css?v=1.271"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
+</style><link rel="stylesheet" href="./soleil-menu.css?v=1.272"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
 <div id="prepCard">
       <h1 id="prepTitle" class="prepTitle">Bien manger.<br><em>Bien marcher.</em></h1>
       <p id="prepSubtitle" class="prepSub">Combien de jours d’autonomie ?</p>
@@ -2405,9 +2405,9 @@ function renderSavedMenusOnly(){
     return '<article class="daycard '+cls+'" data-day="'+i+'">'
       +'<h1>Jour '+(i+1)+'</h1>'
       +'<div class="meals">'
-      +'<div class="meal"><div class="mealIcon morning">'+mealIcon('morning')+'</div><div><div class="mealHead"><small>PETIT-DÉJEUNER</small>'+mealBadge(i,'b')+'</div><b>'+x.b.title+'</b><span>+ 1 café soluble</span></div></div>'
-      +'<div class="meal"><div class="mealIcon lunch">'+mealIcon('lunch')+'</div><div><div class="mealHead"><small>DÉJEUNER</small>'+mealBadge(i,'l')+'</div><b>'+x.l.title+'</b>'+mealDetail(x.l.detail)+'</div></div>'
-      +'<div class="meal"><div class="mealIcon dinner">'+mealIcon('dinner')+'</div><div><div class="mealHead"><small>DÎNER</small>'+mealBadge(i,'d')+sameDayMealBadge(x,'d')+'</div><b>'+x.d.title+'</b>'+mealDetail(x.d.detail)+'</div></div>'
+      +'<div class="meal"><div class="mealIcon morning">'+mealIcon('morning')+'</div><div><div class="mealHead"><small>PETIT-DÉJEUNER</small>'+mealBadge(i,'b')+'</div><b>'+x.b.title+'</b><span>+ 1 café soluble</span></div>'+mealImage(x.b)+'</div>'
+      +'<div class="meal"><div class="mealIcon lunch">'+mealIcon('lunch')+'</div><div><div class="mealHead"><small>DÉJEUNER</small>'+mealBadge(i,'l')+'</div><b>'+x.l.title+'</b>'+mealDetail(x.l.detail)+'</div>'+mealImage(x.l)+'</div>'
+      +'<div class="meal"><div class="mealIcon dinner">'+mealIcon('dinner')+'</div><div><div class="mealHead"><small>DÎNER</small>'+mealBadge(i,'d')+sameDayMealBadge(x,'d')+'</div><b>'+x.d.title+'</b>'+mealDetail(x.d.detail)+'</div>'+mealImage(x.d)+'</div>'
       +'</div>'
       +'<div class="snackMini">🍫 <div><small>SNACKS</small><b>'+sim.snackIds.map(id=>PRODUCTS[id].name).join(' · ')+'</b></div></div>'
       
@@ -2465,7 +2465,7 @@ function startNewRavito(days,state=null){
   d=Math.max(1,Math.min(4,Number(days)||2));
   const menuBack=menuApp.querySelector('.innerHome'),menuReset=$('innerReset'),menuToolbar=menuApp.querySelector('.menuToolbar');
 function alignMenuBack(){
- const host=!$('prepCard').classList.contains('hide')?$('prepCard'):!$('buy').classList.contains('hide')?menuApp.querySelector('.shopHeader'):menuApp.querySelector('#ml .daycard');
+ const host=!$('prepCard').classList.contains('hide')?$('prepCard'):!$('buy').classList.contains('hide')?menuApp.querySelector('.shopHeader'):menuToolbar;
  if(host&&menuBack.parentElement!==host)host.appendChild(menuBack);
  const resetHost=host?.classList.contains('daycard')?menuToolbar:host;
  if(resetHost&&menuReset.parentElement!==resetHost)resetHost.appendChild(menuReset);
@@ -2856,6 +2856,11 @@ function openUnavailable(id){closeUnavailable();const p=PRODUCTS[id],box=menuRoo
 function cycleUnavailable(){if(unavailableOptions.length<2)return;unavailableOptionIndex=(unavailableOptionIndex+1)%unavailableOptions.length;renderUnavailableChoice()}
 function applyUnavailableChange(){if(!pendingUnavailable)return;unavailableProducts=[...new Set([...unavailableProducts,pendingUnavailable.id])];const beforePlan=clone(plan),beforeSnack=snackOverride,beforeSnackIds=snackIdsForOverride(beforeSnack),beforeSim=simulate(plan),nextSim=pendingUnavailable.nextSim||simulateWithSnackOverride(pendingUnavailable.plan,pendingUnavailable.snackOverride);const nextPlan=pendingUnavailable.plan,nextSnack=pendingUnavailable.snackOverride;for(let i=0;i<nextPlan.length;i++){for(const slot of ['b','l','d']){const beforeMeal=beforePlan[i]?.[slot],afterMeal=nextPlan[i]?.[slot];if(beforeMeal&&afterMeal&&beforeMeal.title!==afterMeal.title){replacementMeals[i+'-'+slot]=true;const beforeParts=beforeMeal.parts||{},afterParts=afterMeal.parts||{};for(const id of Object.keys(afterParts)){if((afterParts[id]||0)>(beforeParts[id]||0))replacementProducts[id]=true}}}}const afterSnackIds=snackIdsForOverride(nextSnack);for(const id of afterSnackIds){if(!beforeSnackIds.includes(id))replacementProducts[id]=true}plan=nextPlan;snackOverride=nextSnack;const kept={};for(const [id,on] of Object.entries(checkedShop)){const before=beforeSim.purchases[id]?.count||0,after=nextSim.purchases[id]?.count||0;if(on&&before===after&&after>0)kept[id]=true}checkedShop=kept;for(const id of Object.keys(resolvedEquivalent)){const before=beforeSim.purchases[id]?.count||0,after=nextSim.purchases[id]?.count||0;if(before!==after||!after)delete resolvedEquivalent[id]}closeUnavailable();menuNeedsRender=true;const s=document.scrollingElement||document.documentElement,keepY=s.scrollTop;renderShoppingOnly();s.scrollTop=Math.min(keepY,Math.max(0,s.scrollHeight-s.clientHeight));scheduleDraftSave();toast('')}
 function markEquivalent(id){resolvedEquivalent[id]=true;checkedShop[id]=true;closeUnavailable();renderShoppingOnly();scheduleDraftSave();toast('')}
+const MEAL_IMAGE_TITLES=["Madeleines", "Pâté / terrine + tortillas", "Riz précuit + fromage", "Marbré", "Saucisson sec + fromage + baguette", "Purée + saucisson", "Salade de lentilles + fromage en dés + maïs", "Pâtes + concentré de tomate + saucisson", "Muesli + lait en poudre", "Ravioli en conserve", "Chips + saucisson sec + fromage", "Nouilles instantanées + saucisson", "Salade de pois chiches + Knacki + maïs", "Biscuits sablés", "Ramen bomb", "Quatre-quarts", "Pâtes + soupe déshydratée", "Saucisson sec + fromage + tortillas", "Cassoulet en conserve", "Muesli + lait en poudre + fruits secs", "Semoule + épices", "Semoule épicée + raisins secs", "Semoule + concentré de tomate", "Semoule + pois chiches + épices", "Pains au lait + chocolat en tablette", "Crackers + saucisson sec + fromage", "Semoule + soupe déshydratée", "Knacki + tortillas", "Lentilles-saucisses en conserve", "Semoule + Knacki", "Knacki + pain de mie", "Pâté / terrine + pain de mie", "Chili con carne en conserve", "Purée + fromage", "Brioche + chocolat en tablette", "Salade de lentilles + Knacki", "Couscous en conserve", "Salade de lentilles + Knacki + fromage", "Riz basmati précuit + saucisson", "Nouilles instantanées + fromage", "Pâté / terrine + baguette", "Petit salé aux lentilles en conserve", "Salade de haricots rouges + fromage en dés + maïs", "Riz précuit + Knacki", "Salade de haricots rouges + Knacki + maïs", "Pâtes + concentré de tomate + fromage", "Pâtes + concentré de tomate", "Quinoa aux légumes précuit + saucisson", "Salade de pois chiches + Knacki + fromage"];
+function mealImage(meal){
+ const index=MEAL_IMAGE_TITLES.indexOf(meal.title);
+ return index<0?'':'<img class="mealPhoto" src="./images/meals/meal-'+String(index).padStart(2,'0')+'.webp" alt="" loading="lazy" decoding="async">';
+}
 function mealIcon(slot){
   const paths={morning:'<path d="M4 16h16M6 16a6 6 0 0 1 12 0M12 3v3M4 7l2 2M20 7l-2 2M2 12h2M20 12h2M4 20h16"/>',lunch:'<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="4"/><path d="M2 3v6M4 3v6M3 9v12M22 3v18"/>',dinner:'<path d="M20 15.5A9 9 0 0 1 8.5 4 9 9 0 1 0 20 15.5Z"/>'};
   return '<svg viewBox="0 0 24 24" aria-hidden="true">'+paths[slot]+'</svg>';
@@ -2913,9 +2918,9 @@ function render(){
       +'<h1>Jour '+(i+1)+'</h1>'
       
       +'<div class="meals">'
-      +'<div class="meal"><div class="mealIcon morning">'+mealIcon('morning')+'</div><div><div class="mealHead"><small>PETIT-DÉJEUNER</small>'+mealBadge(i,'b')+'</div><b>'+x.b.title+'</b><span>+ 1 café soluble</span></div></div>'
-      +'<div class="meal"><div class="mealIcon lunch">'+mealIcon('lunch')+'</div><div><div class="mealHead"><small>DÉJEUNER</small>'+mealBadge(i,'l')+'</div><b>'+x.l.title+'</b>'+mealDetail(x.l.detail)+'</div></div>'
-      +'<div class="meal"><div class="mealIcon dinner">'+mealIcon('dinner')+'</div><div><div class="mealHead"><small>DÎNER</small>'+mealBadge(i,'d')+sameDayMealBadge(x,'d')+'</div><b>'+x.d.title+'</b>'+mealDetail(x.d.detail)+'</div></div>'
+      +'<div class="meal"><div class="mealIcon morning">'+mealIcon('morning')+'</div><div><div class="mealHead"><small>PETIT-DÉJEUNER</small>'+mealBadge(i,'b')+'</div><b>'+x.b.title+'</b><span>+ 1 café soluble</span></div>'+mealImage(x.b)+'</div>'
+      +'<div class="meal"><div class="mealIcon lunch">'+mealIcon('lunch')+'</div><div><div class="mealHead"><small>DÉJEUNER</small>'+mealBadge(i,'l')+'</div><b>'+x.l.title+'</b>'+mealDetail(x.l.detail)+'</div>'+mealImage(x.l)+'</div>'
+      +'<div class="meal"><div class="mealIcon dinner">'+mealIcon('dinner')+'</div><div><div class="mealHead"><small>DÎNER</small>'+mealBadge(i,'d')+sameDayMealBadge(x,'d')+'</div><b>'+x.d.title+'</b>'+mealDetail(x.d.detail)+'</div>'+mealImage(x.d)+'</div>'
       +'</div>'
       +'<div class="snackMini">🍫 <div><small>SNACKS</small><b>'+sim.snackIds.map(id=>PRODUCTS[id].name).join(' · ')+'</b></div></div>'
       
@@ -3027,7 +3032,7 @@ Object.assign(window,{
 
 const menuBack=menuApp.querySelector('.innerHome'),menuReset=$('innerReset'),menuToolbar=menuApp.querySelector('.menuToolbar');
 function alignMenuBack(){
- const host=!$('prepCard').classList.contains('hide')?$('prepCard'):!$('buy').classList.contains('hide')?menuApp.querySelector('.shopHeader'):menuApp.querySelector('#ml .daycard');
+ const host=!$('prepCard').classList.contains('hide')?$('prepCard'):!$('buy').classList.contains('hide')?menuApp.querySelector('.shopHeader'):menuToolbar;
  if(host&&menuBack.parentElement!==host)host.appendChild(menuBack);
  const resetHost=host?.classList.contains('daycard')?menuToolbar:host;
  if(resetHost&&menuReset.parentElement!==resetHost)resetHost.appendChild(menuReset);
@@ -3042,14 +3047,14 @@ clearPreparedResults();renderPrepState();alignMenuBack();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.271"></script>
+<script src="./home-bivouac.js?v=1.272"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./home-map.js?v=1.271"></script>
-<script src="./gas-tracker.js?v=1.271"></script>
-<script src="./reset-points.js?v=1.271"></script>
-<script src="./reset-engine.js?v=1.271"></script>
-<script src="./reset.js?v=1.271"></script>
-<script src="./home.js?v=1.271"></script>
+<script src="./home-map.js?v=1.272"></script>
+<script src="./gas-tracker.js?v=1.272"></script>
+<script src="./reset-points.js?v=1.272"></script>
+<script src="./reset-engine.js?v=1.272"></script>
+<script src="./reset.js?v=1.272"></script>
+<script src="./home.js?v=1.272"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>

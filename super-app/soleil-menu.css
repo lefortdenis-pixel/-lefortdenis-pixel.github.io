@@ -58,3 +58,14 @@
 
 #menuApp:has(#buy:not(.hide)) .menuToolbar{display:none!important}
 #menuApp #buy{padding-top:0!important}
+
+/* Meal artwork uses the former icon width, so text retains its space. */
+#menuApp .meal,#menuApp.allDaysMode #ml .daycard .meal{position:relative!important;display:block!important;padding-right:44px!important}
+#menuApp .meal .mealIcon{display:none!important}
+#menuApp .meal .mealPhoto{position:absolute;right:0;top:11px;width:40px;height:calc(100% - 22px);max-height:76px;object-fit:cover;border-radius:10px;pointer-events:none}
+#menuApp .daycard h1{padding-right:0!important}
+#menuApp .menuToolbar>.innerHome{background:#fffbea!important;border-radius:20px!important;min-width:76px!important;height:40px!important;min-height:40px!important;padding:0 9px!important}
+#menuApp .menuToolbar>.topWeight{order:0;white-space:nowrap!important;height:36px!important}
+#menuApp .menuToolbar>.innerReset{order:1;min-height:40px!important;height:40px!important;padding:0 12px!important}
+#menuApp .menuToolbar>.innerHome{order:2}
+@media(max-width:350px){#menuApp .menuToolbar{gap:6px!important}#menuApp .menuToolbar>.topWeight{font-size:11px!important;padding:0 8px!important}#menuApp .menuToolbar>.innerReset{padding:0 8px!important;font-size:11px!important}#menuApp .menuToolbar>.innerHome{min-width:70px!important;padding:0 7px!important}#menuApp .menuToolbar>.innerHome:after{font-size:13px!important}}
