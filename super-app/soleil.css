@@ -62,3 +62,12 @@ html,body{background:#fff4af;color:#211238}body{font-family:Arial,Helvetica,sans
 /* v1.285 — compact, legible water-map action (overrides legacy gas link styles). */
 #waterView #waterList .waterItem .gasMapLink{display:inline-flex;align-items:center;justify-content:center;width:auto;max-width:100%;min-height:44px;margin:12px 0 0;padding:10px 17px;border:0;border-radius:13px;background:#195bff!important;color:#fff!important;font-family:inherit;font-size:14px;font-weight:800;line-height:1.2;letter-spacing:0;white-space:nowrap;text-decoration:none!important;box-shadow:none;-webkit-appearance:none;appearance:none}
 #waterView #waterList .waterItem .gasMapLink:focus-visible{outline:3px solid #211238;outline-offset:2px}
+
+/* v1.288 — Gas contact and navigation actions: responsive, isolated from legacy link styles. */
+#gasView #gasList .gasContactNumber{font-size:13px;color:#726278;line-height:1.4;margin-top:9px;overflow-wrap:anywhere}
+#gasView #gasList .gasItemActions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%;margin-top:14px}
+#gasView #gasList .gasItemActionsSingle{grid-template-columns:minmax(0,1fr)}
+#gasView #gasList .gasItemActions .gasMapLink{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;width:100%;min-width:0;max-width:100%;min-height:46px;margin:0;padding:10px 12px!important;border:0;border-radius:13px;background:#195bff!important;color:#fff!important;font-family:inherit;font-size:14px;font-weight:750;line-height:1.2;text-align:center;text-decoration:none!important;white-space:normal;overflow-wrap:anywhere;box-shadow:none;-webkit-appearance:none;appearance:none}
+#gasView #gasList .gasItemActions .gasCallAction{border:1.5px solid #195bff;background:#fffbea!important;color:#195bff!important;padding:9px 10px!important}
+#gasView #gasList .gasItemActions .gasMapLink:focus-visible,#gasView #gasDecision .gasDirections:focus-visible{outline:3px solid #211238;outline-offset:2px}
+#gasView #gasDecision button.gasDirections{display:inline-flex;align-items:center;justify-content:center;min-width:0;max-width:100%;min-height:44px;margin-top:11px;padding:11px 17px!important;border:0;border-radius:13px;background:#195bff!important;color:#fff!important;font-family:inherit;font-size:14px;font-weight:750;line-height:1.2;text-align:center;text-decoration:none!important;white-space:normal}
