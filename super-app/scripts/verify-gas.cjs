@@ -12,7 +12,7 @@ assert.equal(e.durationText(.4),'moins d’un jour');
 assert.equal(e.durationText(0),'0 jour');
 assert(Math.abs(e.remaining({grams:100,started:'2026-10-01'},new Date('2026-10-04T00:00:00').getTime())-6.09)<.01);
 const points=[{id:'a',km:100,offRouteMeters:0,status:'identified'},{id:'p',km:200,offRouteMeters:0,status:'probable'},{id:'b',km:450,offRouteMeters:0,status:'identified'}];
-const d=e.assess({km:0,length:700,points,days:21});assert.equal(d.target.id,'a');assert.equal(d.next.id,'b');assert(d.gap>7);
+const d=e.assess({km:0,length:700,points,days:21});assert.equal(d.target.id,'p');assert.equal(d.next.id,'b');assert(d.gap>7);
 assert.equal(e.assess({km:0,length:700,points:[points[1]],days:9}).kind,'urgent');
 assert.equal(e.assess({km:690,length:700,points,days:3}).kind,'finish');
 assert.equal(e.assess({km:0,length:700,points,days:3,rest:1}).kind,'urgent');
@@ -24,19 +24,19 @@ assert(get('gasDecision').innerHTML.includes('Cartouche enregistrée'));
 /* A long-distance plan is informational first and only becomes an alert in its two-day window. */
 position={km:0,updatedAt:Date.now()};events['traversee-home-position']({detail:position});
 assert(!JSON.parse(stored).alert);
-assert.equal(JSON.parse(stored).plan.id,'a');
+assert.equal(JSON.parse(stored).plan.id,'p');
 vm.runInNewContext(source,c);
-assert.equal(JSON.parse(stored).plan.id,'a');
+assert.equal(JSON.parse(stored).plan.id,'p');
 position={km:420,updatedAt:Date.now()};events['traversee-home-position']({detail:position});
-assert.equal(JSON.parse(stored).alert.id,'b');assert(get('homeGasAlert').innerHTML.includes('Achète une cartouche de 450 g dans 30,0 km'));
+assert.equal(JSON.parse(stored).alert.id,'b');assert(get('homeGasAlert').innerHTML.includes('Cherche une cartouche de 450 g dans 30,0 km'));
 /* Passing the point or reopening the app must not silently clear a purchase alert. */
 position={km:460,updatedAt:Date.now()};events['traversee-home-position']({detail:position});
 vm.runInNewContext(source,c);
 assert.equal(JSON.parse(stored).alert.id,'b');
-assert(get('gasDecision').innerHTML.includes('Tu as dépassé le magasin prévu'));
+assert(get('gasDecision').innerHTML.includes('Tu as dépassé le magasin repéré'));
 get('gasCorrect').onclick();get('gasCartForm').onsubmit({preventDefault(){}});
 assert(!JSON.parse(stored).alert);
-assert(get('gasDecision').innerHTML.includes('Aucun vendeur enregistré'));
+assert(get('gasDecision').innerHTML.includes('Aucun magasin possible enregistré'));
 
 /* Starting a new cartridge clears the alert and does not create a pending cartridge. */
 get('gasNewCart').onclick();get('gasFormat').value='450';get('gasStarted').value=today;get('gasCartForm').onsubmit({preventDefault(){}});
@@ -47,9 +47,9 @@ c.window.gasPointLabel=p=>({a:'Magasin',p:'Weldom',b:'Decathlon'}[p.id]);
 stored=JSON.stringify({schema:2,rest:30});position={km:1,updatedAt:Date.now()};
 vm.runInNewContext(source,c);
 get('gasFormat').value='100';get('gasStarted').value=today;get('gasCartForm').onsubmit({preventDefault(){}});
-assert.equal(JSON.parse(stored).alert.id,'a');assert(!('rest' in JSON.parse(stored)));
-assert(get('gasDecision').innerHTML.includes('Achète une cartouche de 230 g dans 13,8 km'));
-assert(get('gasDecision').innerHTML.includes('Autre possibilité dans 26,8 km : Weldom'));
+assert.equal(JSON.parse(stored).alert.id,'p');assert(!('rest' in JSON.parse(stored)));
+assert(get('gasDecision').innerHTML.includes('Cherche une cartouche de 230 g dans 26,8 km'));
+assert(get('gasDecision').innerHTML.includes('Autre magasin possible dans 13,8 km : Magasin'));
 assert(!get('gasDecision').innerHTML.includes('Gaz compatible à vérifier'));
 assert(!get('gasDecision').innerHTML.includes('316,5 km suivants'));
 assert(!get('gasTracker').innerHTML.includes('Réglages'));
@@ -59,17 +59,17 @@ c.window.TRAVERSEE_GAS_POINTS.push({id:'far',name:'Intersport',lat:1,lon:674.2,s
 const cartBeforeMigration=JSON.parse(stored).cart;
 stored=JSON.stringify({schema:2,cart:cartBeforeMigration,unavailable:['a','b'],alert:{id:'far',routeId:'principal'}});
 vm.runInNewContext(source,c);
-assert.equal(JSON.parse(stored).alert.id,'a');
+assert.equal(JSON.parse(stored).alert.id,'p');
 assert.deepEqual(JSON.parse(stored).cart,cartBeforeMigration);
 assert(!('unavailable' in JSON.parse(stored)));
-assert(get('gasDecision').innerHTML.includes('dans 13,8 km'));
+assert(get('gasDecision').innerHTML.includes('dans 26,8 km'));
 assert(!get('gasDecision').innerHTML.includes('673,2 km'));
 vm.runInNewContext(source,c);
-assert.equal(JSON.parse(stored).alert.id,'a');
+assert.equal(JSON.parse(stored).alert.id,'p');
 /* A stale alert for a distant seller must also give way to an earlier useful seller. */
 stored=JSON.stringify({schema:2,cart:cartBeforeMigration,alert:{id:'far',routeId:'principal'}});
 vm.runInNewContext(source,c);
-assert.equal(JSON.parse(stored).alert.id,'a');
+assert.equal(JSON.parse(stored).alert.id,'p');
 /* Manual corrections preserve the cartridge and recompute the purchase plan. */
 position={km:100,mode:'km',updatedAt:Date.now()};
 events['traversee-home-position']({detail:{...position,manualEntry:true}});
@@ -87,12 +87,13 @@ assert.deepEqual(JSON.parse(stored).cart,testCart);
 events['traversee-home-position']({detail:{...position,mode:'km',manualEntry:true}});
 assert.deepEqual(JSON.parse(stored).cart,testCart);
 position={km:1,mode:'km',updatedAt:Date.now()};events['traversee-home-position']({detail:{...position,manualEntry:true}});
-assert.deepEqual(JSON.parse(stored).cart,testCart);assert.equal(JSON.parse(stored).alert.id,'a');
+assert.deepEqual(JSON.parse(stored).cart,testCart);assert.equal(JSON.parse(stored).alert.id,'p');
 vm.runInNewContext(source,c);assert.deepEqual(JSON.parse(stored).cart,testCart);
 /* Unknown GPX labels must not leak into the user-facing names. */
 vm.runInNewContext(fs.readFileSync(path.join(base,'gas-points.js'),'utf8'),c);
 for(const point of c.window.TRAVERSEE_GAS_POINTS){assert(!/^GAZ\b/i.test(point.name));assert(point.sourceUrl);assert(!/^GAZ\b/i.test(c.window.gasPointLabel(point)));}
-console.log('PASS gas: autonomy, probable exclusion, margin, no-position declaration, saved plan, persistent alert, correction, new cartridge, human names');
+assert.equal(e.assess({km:0,length:500,points:[{id:'campsite',km:50,offRouteMeters:0,kind:'contact',status:'probable'},{id:'shop',km:120,offRouteMeters:0,status:'probable'}],days:9}).target.id,'shop');
+console.log('PASS gas: all plausible shops, contact-only excluded, persistence and correction');
 
 /* An unnamed imported point still needs a visible destination. */
 c.DATA.routeLengthKm=2034;
@@ -131,5 +132,5 @@ console.log('PASS gas correction: 230 → 100 → 230 → reload → 100 recalcu
 
 const mixed=(from,to,extra=0)=>Math.max(0,Math.min(to,100)-Math.min(from,100))/30+Math.max(0,to-Math.max(from,100))/15+extra/30;
 const paced=e.assess({km:0,length:700,points,days:12,travelDays:mixed});
-assert.equal(paced.target.id,'a');assert.equal(paced.travel,mixed(0,100));
+assert.equal(paced.target.id,'p');assert.equal(paced.travel,mixed(0,200));
 console.log('PASS gas uses supplied terrain travel time instead of a fixed distance per day');

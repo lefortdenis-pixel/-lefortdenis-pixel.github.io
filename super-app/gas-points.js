@@ -1,4 +1,4 @@
-/* Business identity and compatible-cartridge evidence are separate. No local stock guarantee. */
+/* Shops are plausible leads, never guaranteed stock. Both identified and probable feed the planner; kind:'contact' is informational only. */
 window.TRAVERSEE_GAS_POINTS=[
   {
     "id": "gas-49.289754--0.285281",

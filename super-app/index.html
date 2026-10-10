@@ -11,12 +11,12 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-montagnes-v4.png">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon-montagnes-v4.png">
-<title>Traversée 2027 · v1.286 hors ligne</title>
+<title>Traversée 2027 · v1.287 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.286">
-<link rel="stylesheet" href="./offline.css?v=1.286">
-<link rel="stylesheet" href="./reset.css?v=1.286">
+<link rel="stylesheet" href="./home.css?v=1.287">
+<link rel="stylesheet" href="./offline.css?v=1.287">
+<link rel="stylesheet" href="./reset.css?v=1.287">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -640,7 +640,7 @@ html,body{height:100%;overflow:hidden}
 #gasView.active .waterList{display:grid!important;min-height:0;gap:12px;padding-bottom:40px}
 #gasView.active .waterItem{padding:16px 14px;min-height:112px}
 </style>
-<link rel="stylesheet" href="./soleil-font.css?v=1.286"><link rel="stylesheet" href="./soleil.css?v=1.286">
+<link rel="stylesheet" href="./soleil-font.css?v=1.287"><link rel="stylesheet" href="./soleil.css?v=1.287">
 </head>
 <body>
 <div class="wrap">
@@ -1055,8 +1055,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.286"></script>
-<script src="./route-engine.js?v=1.286"></script>
+<script src="./route-data.js?v=1.287"></script>
+<script src="./route-engine.js?v=1.287"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1398,7 +1398,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.286';
+const GPX_WATER_URL='./water-points.json?v=1.287';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -1684,7 +1684,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.286"></script>
+<script src="./gas-points.js?v=1.287"></script>
 <script id="gas-search">
 (()=>{
   const rows=window.TRAVERSEE_GAS_POINTS;
@@ -2097,7 +2097,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 }
 .allDaysMode #validation{display:none!important}
 
-</style><link rel="stylesheet" href="./soleil-menu.css?v=1.286"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
+</style><link rel="stylesheet" href="./soleil-menu.css?v=1.287"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
 <div id="prepCard">
       <h1 id="prepTitle" class="prepTitle">Bien manger.<br><em>Bien marcher.</em></h1>
       <p id="prepSubtitle" class="prepSub">Combien de jours d’autonomie ?</p>
@@ -3055,16 +3055,16 @@ clearPreparedResults();renderPrepState();alignMenuBack();
 
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.286"></script>
+<script src="./home-bivouac.js?v=1.287"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./offline-core.js?v=1.286"></script>
-<script src="./home-map.js?v=1.286"></script>
-<script src="./gas-tracker.js?v=1.286"></script>
-<script src="./reset-points.js?v=1.286"></script>
-<script src="./reset-engine.js?v=1.286"></script>
-<script src="./reset.js?v=1.286"></script>
-<script src="./home.js?v=1.286"></script><script src="./backups.js?v=1.286"></script>
-<script src="./offline.js?v=1.286"></script>
+<script src="./offline-core.js?v=1.287"></script>
+<script src="./home-map.js?v=1.287"></script>
+<script src="./gas-tracker.js?v=1.287"></script>
+<script src="./reset-points.js?v=1.287"></script>
+<script src="./reset-engine.js?v=1.287"></script>
+<script src="./reset.js?v=1.287"></script>
+<script src="./home.js?v=1.287"></script><script src="./backups.js?v=1.287"></script>
+<script src="./offline.js?v=1.287"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>
