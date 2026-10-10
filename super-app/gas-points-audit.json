@@ -30,6 +30,13 @@
       "identityCheckedAt": "2026-10-09",
       "coordinateSource": "https://www.openstreetmap.org/way/167488821",
       "excludedReason": "Point de bouteilles de gaz domestique, téléphone Decathlon copié par erreur"
+    },
+    {
+      "id": "gas-44.261077-4.706398",
+      "name": "Ateliers Provence Loisirs · Mondragon",
+      "sourceUrl": "https://apl84.com/carte-ateliers-provence-loisirs/",
+      "excludedReason": "Exclusion demandée par l’utilisateur le 10/10/2026 : ce commerce ne vend pas les cartouches adaptées. Ne pas réintroduire comme vendeur de gaz.",
+      "exclusionSource": "Retour direct de l’utilisateur"
     }
   ],
   "identityEvidence": [
@@ -180,11 +187,6 @@
       "name": "Sport 2000 · Pont-Saint-Esprit",
       "sourceUrl": "https://www.sport2000.fr/magasins/fiche/300511-sport-2000-pont-saint-esprit",
       "coordinateSource": "https://www.openstreetmap.org/way/73761265"
-    },
-    {
-      "id": "gas-44.261077-4.706398",
-      "name": "Ateliers Provence Loisirs · Mondragon",
-      "sourceUrl": "https://apl84.com/carte-ateliers-provence-loisirs/"
     },
     {
       "id": "gas-43.818669-5.795409",

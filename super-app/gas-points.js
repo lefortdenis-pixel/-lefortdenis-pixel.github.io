@@ -369,19 +369,6 @@ window.TRAVERSEE_GAS_POINTS=[
     "phone": "+33 4 66 39 33 47"
   },
   {
-    "id": "gas-44.261077-4.706398",
-    "name": "Ateliers Provence Loisirs · Mondragon",
-    "lat": 44.261077,
-    "lon": 4.706398,
-    "note": "E71 - 18/06/2027 vers Cairanne | km 1650.9 | 1729 m de la trace | sources : Reseau_gaz_v4_verifie+Reseau_secours_gaz_v3 | E70 - 17/06/2027 | ~1.73 km à vol d'oiseau de la trace. ZA Notre-Dame RN7, 84430 Mondragon. Tél. 04 90 40 38 16. Spécialiste camping-car/caravane. Cartouche 7/16 230 g non confirmée : appeler avant.",
-    "source": "Reseau_gaz_v4_verifie+Reseau_secours_gaz_v3",
-    "status": "probable",
-    "stockConfirmed": false,
-    "sourceUrl": "https://apl84.com/carte-ateliers-provence-loisirs/",
-    "identityCheckedAt": "2026-10-09",
-    "phone": "04 90 40 38 16"
-  },
-  {
     "id": "gas-43.818669-5.795409",
     "name": "Decathlon · Manosque",
     "lat": 43.818669,
