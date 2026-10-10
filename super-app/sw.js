@@ -1,7 +1,7 @@
-importScripts('./offline-core.js?v=1.282','./offline-assets.js');
+importScripts('./offline-core.js?v=1.283','./offline-assets.js');
 const A=TraverseeOfflineAssets,C=TraverseeOfflineCore,CACHE='traversee-app-'+A.version,TILE_CACHE='traversee-map-tiles-v1';
 const absolute=p=>new URL(p,self.registration.scope).href;
-async function fetchGood(request,timeout=20000){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);try{const r=await fetch(request,{signal:controller.signal,cache:'no-cache'});if(!r.ok)throw Error('HTTP '+r.status);return r}finally{clearTimeout(timer)}}
+async function fetchGood(request,timeout=20000){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);try{const r=await fetch(request,{signal:controller.signal,cache:'no-cache'});if(!r.ok&&r.type!=='opaque')throw Error('HTTP '+r.status);return r}finally{clearTimeout(timer)}}
 self.addEventListener('install',event=>event.waitUntil((async()=>{
  const cache=await caches.open(CACHE);
  // Activation happens only after every essential file is safely written.
@@ -37,7 +37,7 @@ self.addEventListener('fetch',event=>{
   if(canonical){const saved=await pinned.match(canonical);if(saved)return saved;}
   const cache=await caches.open(TILE_CACHE),saved=await cache.match(event.request);
   if(saved&&(event.request.mode==='no-cors'||saved.type!=='opaque'))return saved;
-  try{const r=await fetch(event.request);if(r.ok||r.type==='opaque')event.waitUntil((async()=>{await cache.put(event.request,r.clone());const keys=await cache.keys();for(const k of keys.slice(0,Math.max(0,keys.length-1200)))await cache.delete(k)})());return r}catch(_){return new Response('',{status:504})}
+  try{const r=await fetchGood(event.request,4000);if(r.ok||r.type==='opaque')event.waitUntil((async()=>{await cache.put(event.request,r.clone());const keys=await cache.keys();for(const k of keys.slice(0,Math.max(0,keys.length-1200)))await cache.delete(k)})());return r}catch(_){return new Response('',{status:504})}
  })());
 });
 self.addEventListener('message',event=>{

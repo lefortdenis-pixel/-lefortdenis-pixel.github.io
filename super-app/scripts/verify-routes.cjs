@@ -29,3 +29,14 @@ for(const {d,e,route} of Object.values(results)){
  console.log(route.id,'pace:',JSON.stringify(pace.averages),'reference stages:',pace.reference.filter(s=>s.kind==='flat').length,'flat /',pace.reference.filter(s=>s.kind==='mountain').length,'mountain');
 }
 console.log('PASS terrain pace: reference means, mid-stage continuity, mixed relief, day inverse and arrival clamp');
+
+const C=require('../offline-core.js');
+assert.equal(C.projectWindowEnd(0,1,100,[35,35]),35);
+assert.equal(C.projectWindowEnd(0,2,100,[35,35]),70);
+assert.equal(C.projectWindowEnd(0,3,100,[35,35]),100);
+assert.equal(C.projectWindowEnd(25,1,100,[35,35]),60);
+for(const {route} of Object.values(results)){
+ assert.equal(route.pace.journeyDays(0,225),route.pace.travelDays(0,225));
+ assert(route.pace.journeyDays(0,225,2)>route.pace.travelDays(0,225));
+}
+console.log('PASS shared pace and custom project: stage budgets, progress, arrival and detours');

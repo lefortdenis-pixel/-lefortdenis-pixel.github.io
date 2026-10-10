@@ -16,6 +16,13 @@ async function event(name,extra={}){const promises=[];let response;handlers[name
  await event('install');await event('activate');let report;await event('message',{data:{type:'VERIFY_OFFLINE'},ports:[{postMessage:r=>report=r}]});assert.equal(report.missing.length,0);assert.equal(report.version,C.VERSION);
  environment.offline=true;for(const file of ['index.html','bivouac/index.html','route-data.js?v='+C.VERSION,'water-points.json?v='+C.VERSION,'home-pois-brenne.json?v='+C.VERSION,'shelter-points.json']){const request=new Request(scope+file);if(file.endsWith('.html'))Object.defineProperty(request,'mode',{value:'navigate'});const r=await event('fetch',{request});assert.equal(r.status,200,file);assert((await r.text()).length>100,file)}
  const pinned=await caches.open(C.MAP_CACHE),url=C.tileUrl(15,16355,11217);await pinned.put(url,new Response('verified-map'));const r=await event('fetch',{request:new Request(url)});assert.equal(await r.text(),'verified-map');
+ // Even with the device reporting online, map failures must settle promptly.
+ environment.offline=false;const realFetch=environment.fetch;
+ environment.fetch=async()=>new Response('',{status:503});
+ assert.equal((await event('fetch',{request:new Request(C.tileUrl(15,1,1))})).status,504);
+ environment.fetch=(request,{signal}={})=>new Promise((resolve,reject)=>signal.addEventListener('abort',()=>reject(Error('network stalled'))));
+ const started=Date.now();assert.equal((await event('fetch',{request:new Request('https://server.arcgisonline.com/stalled')})).status,504);assert(Date.now()-started<5000);
+ environment.fetch=realFetch;
  // Cached application navigation also survives a server 500.
  environment.offline=false;environment.fail=scope+'index.html';const request=new Request(scope+'index.html');Object.defineProperty(request,'mode',{value:'navigate'});assert.equal((await event('fetch',{request})).status,200);
  // Failed installation leaves the previous validated shell and pinned maps intact.

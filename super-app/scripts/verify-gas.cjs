@@ -1,6 +1,6 @@
 const vm=require('vm'),fs=require('fs'),assert=require('assert'),path=require('path');
 const base=path.join(__dirname,'..'),source=fs.readFileSync(path.join(base,'gas-tracker.js'),'utf8');
-const el=()=>({hidden:false,value:'',textContent:'',innerHTML:'',classList:{toggle(){}},click(){}}),elements=new Map(),events={};
+const el=()=>({hidden:false,value:'',textContent:'',innerHTML:'',classList:{toggle(){}},click(){},addEventListener(){}}),elements=new Map(),events={};
 const get=id=>{if(!elements.has(id))elements.set(id,el());return elements.get(id)};let stored=null,position=null;
 const today=new Date().toLocaleDateString('en-CA');
 const c={Date,Math,Number,String,Set,JSON,document:{getElementById:get,visibilityState:'visible',addEventListener(){}},window:{addEventListener:(n,f)=>events[n]=f,TRAVERSEE_GAS_POINTS:[{id:'a',name:'GAZ 100',lat:1,lon:100,status:'identified'},{id:'p',name:'GAZ 200',lat:1,lon:200,status:'probable'},{id:'b',name:'GAZ 450',lat:1,lon:450,status:'identified'}],gasPointLabel:(p)=>p.id==='a'?'Bricomarché':p.name,TraverseeHome:{getPosition:()=>position}},DATA:{routeId:'principal',routeLengthKm:850},projectGps:(lat,lon)=>({km:lon,distanceMeters:100}),escapeHtml:s=>s,parseJSON:s=>s?JSON.parse(s):null,safeStorageGet:()=>stored,safeStorageSet:(k,s)=>{stored=s;return true},setInterval(){}};
@@ -101,7 +101,7 @@ c.window.gasPointLabel=(p,km)=>'Point de ravitaillement · km '+km;
 position={km:375,updatedAt:Date.now()};stored=JSON.stringify({schema:2,cart:{grams:230,started:today}});
 vm.runInNewContext(source,c);
 assert(!get('gasDecision').innerHTML.includes('enseigne non renseignée'));
-assert(get('gasDecision').innerHTML.includes('Voir ce point sur la carte'));
+assert(get('gasDecision').innerHTML.includes('Voir la carte'));
 assert(!get('gasCartStatus').textContent.includes('restants'));
 assert(!/\d+,\d+ jours/.test(get('gasCartStatus').textContent));
 console.log('PASS gas presentation: rounded days, no remaining label, unnamed destination and map link');
@@ -128,3 +128,8 @@ vm.runInNewContext(source,c);
 assert(!JSON.parse(stored).alert);assert.equal(get('gasDecision').innerHTML,longPlan);
 correctFormat(100);assert.equal(JSON.parse(stored).alert.id,'near');
 console.log('PASS gas correction: 230 → 100 → 230 → reload → 100 recalculates advice and banner');
+
+const mixed=(from,to,extra=0)=>Math.max(0,Math.min(to,100)-Math.min(from,100))/30+Math.max(0,to-Math.max(from,100))/15+extra/30;
+const paced=e.assess({km:0,length:700,points,days:12,travelDays:mixed});
+assert.equal(paced.target.id,'a');assert.equal(paced.travel,mixed(0,100));
+console.log('PASS gas uses supplied terrain travel time instead of a fixed distance per day');

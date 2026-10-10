@@ -50,7 +50,8 @@
   function travelDays(from,to){
     let days=0;for(const s of profiles){const distance=Math.min(to,s.endKm)-Math.max(from,s.startKm);if(distance>0)days+=distance/averages[s.kind];}return days;
   }
-  const pace={averages,profiles,reference,windowEnd,travelDays,method:'90 planned stages; mountain: smoothed ascent >=500 m and >=20 m/km'};
+  function journeyDays(from,to,detourKm=0){const section=profiles.find(s=>s.endKm>Math.min(from,to))||profiles.at(-1);return travelDays(Math.min(from,to),Math.max(from,to))+Math.max(0,detourKm)/averages[section.kind];}
+  const pace={averages,profiles,reference,windowEnd,travelDays,journeyDays,method:'90 planned stages; mountain: smoothed ascent >=500 m and >=20 m/km'};
   const data={version:c.version,routeId:id,routeLengthKm:cumulative,tracks,stageEndsKm:actualEnds,stores:c.stores[id]};
   window.TraverseeRoutes={id,version:c.version,data,points,pace,camping:id==='brenne'?c.camping:[],branch:{startKm:c.startKm,endKm:c.endBrenneKm,extraKm:c.extraKm},
     inactiveLeg:id==='brenne'?c.main.slice(c.joins[0],c.joins[1]+1):c.variant,

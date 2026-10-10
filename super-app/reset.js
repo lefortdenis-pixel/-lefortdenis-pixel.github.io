@@ -7,7 +7,7 @@
  const points=E.projectPoints(window.TRAVERSEE_RESET_POINTS,projectGps);
  function save(){if(safeStorageSet(KEY,JSON.stringify(state)))return true;q('resetMessage').textContent='Impossible d’enregistrer sur cet appareil.';return false}
  function pace(){return E.recentPace(state.samples)}
- function days(distance){const n=distance/(pace().kmPerDay||25);return n<1?'moins d’un jour de marche':'environ '+Math.round(n)+' jours de marche'}
+ function days(distance){const from=position?.km||0,n=window.TraverseeRoutes.pace.travelDays(from,Math.min(DATA.routeLengthKm,from+distance));return n<1?'moins d’un jour de marche':'environ '+Math.round(n)+' jours de marche'}
 
  function at(km){const s=SEGMENTS.find(s=>km<=s.startKm+s.lengthKm)||SEGMENTS.at(-1),t=s.lengthKm?Math.max(0,Math.min(1,(km-s.startKm)/s.lengthKm)):0;return {lat:s.a[0]+(s.b[0]-s.a[0])*t,lon:s.a[1]+(s.b[1]-s.a[1])*t}}
  function eligible(p){return p.level==='complete'&&p.offRouteMeters<=5000}

@@ -9,7 +9,8 @@
   const categories=[{id:'water',label:'Eau',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C9 8 5 12 5 16a7 7 0 0 0 14 0c0-4-4-8-7-13Z"/><path d="M8 16a4 4 0 0 0 3 4"/></svg>',button:'openWaterBtn'},{id:'bivouac',label:'Bivouac',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 19H2L12 2Z M8 21l4-9 4 9"/></svg>',button:'openBivouacBtn'},{id:'store',label:'Magasin',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h3l3 12h12l2-9H6"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/></svg>',button:'openStoreBtn'},{id:'gas',label:'Gaz',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="8" width="14" height="14" rx="3"/><path d="M9 8V4h6v4M11 4V1h2v3M5 16h14"/></svg>',button:'openGasBtn'},{id:'reset',label:'Escale',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10V6a4 4 0 0 1 8 0v2M9 10h8l-2-3h-4Z M9 14v2m4-2v2m4-2v2M9 20v2m4-2v2m4-2v2"/></svg>',button:'openResetBtn'}];
   let activeCategory='water',nextCardOpen=false;
   const state={position:null,data:null,bivouac:null,selected:null,selectedPoi:null,points:[],map:null,markers:new Map(),location:null,request:0,gpsBusy:false,lastGpsAttempt:0};
-  window.TraverseeHome={getPosition:()=>state.position};
+  window.TraverseeHome={getPosition:()=>state.position,showPoint};
+  function showPoint(point,id='store'){const category=categories.find(c=>c.id===id);if(!category)return;const routeAnchor=id==='store'&&!Number.isFinite(point.lat)&&Number.isFinite(point.km);if(routeAnchor)point={...point,...atKm(point.km),routeAnchor:true};const lat=Number(point.lat),lon=Number(point.lon??point.lng);if(!Number.isFinite(lat)||!Number.isFinite(lon)){notice('Position de ce point indisponible.');return;}const km=Number.isFinite(point.km)?point.km:projectGps(lat,lon)?.km;const p={...point,lat,lon,km,delta:Number.isFinite(state.position?.km)?km-state.position.km:null};openAppView('home');requestAnimationFrame(()=>{state.map?.invalidateSize();state.map?.setView([lat,lon],15);showBubble(id,false,{...category,point:p});renderMapPois()});}
   let messageTimer=0,bivouacRequest=0;
   const kmText=km=>km.toFixed(1).replace('.',',');
   const escape=value=>escapeHtml(String(value??''));
@@ -218,7 +219,7 @@
   }
   async function loadPoints(){
     try{
-      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.282':'./home-pois.json?v=1.282');if(!response.ok)throw Error('points');
+      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.283':'./home-pois.json?v=1.283');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}

@@ -11,12 +11,12 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-montagnes-v4.png">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon-montagnes-v4.png">
-<title>Traversée 2027 · v1.282 hors ligne</title>
+<title>Traversée 2027 · v1.283 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.282">
-<link rel="stylesheet" href="./offline.css?v=1.282">
-<link rel="stylesheet" href="./reset.css?v=1.282">
+<link rel="stylesheet" href="./home.css?v=1.283">
+<link rel="stylesheet" href="./offline.css?v=1.283">
+<link rel="stylesheet" href="./reset.css?v=1.283">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -630,7 +630,7 @@ html,body{height:100%;overflow:hidden}
 /* All menu states share the same surrounding background as other tools. */
 #menuSection.active{background:var(--bg)!important}
 #menuSection.active #menuHost{background:transparent!important}
-</style>
+</style><style>.gasMapLink,.gasDirections{cursor:pointer;border:0;background:transparent;font:inherit;color:var(--ink);text-decoration:underline;padding:8px 0}.backupRow{display:block;padding:12px 0}.backupRow input{margin-right:10px}</style>
 
 <style>/* v1.228 — page Gaz réellement défilable */
 #gasView.active{height:100%!important;max-height:100%!important;overflow-y:auto!important;overflow-x:hidden!important;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
@@ -640,7 +640,7 @@ html,body{height:100%;overflow:hidden}
 #gasView.active .waterList{display:grid!important;min-height:0;gap:12px;padding-bottom:40px}
 #gasView.active .waterItem{padding:16px 14px;min-height:112px}
 </style>
-<link rel="stylesheet" href="./soleil-font.css?v=1.282"><link rel="stylesheet" href="./soleil.css?v=1.282">
+<link rel="stylesheet" href="./soleil-font.css?v=1.283"><link rel="stylesheet" href="./soleil.css?v=1.283">
 </head>
 <body>
 <div class="wrap">
@@ -710,7 +710,7 @@ html,body{height:100%;overflow:hidden}
       <div class="result" id="result">
         <div class="resultTop"><div class="badge" id="badge"></div><div class="resultMini" id="resultMini"></div></div>
         <div class="store" id="store"></div>
-        <div class="storeMeta" id="storeMeta"></div>
+        <div class="storeMeta" id="storeMeta"></div><button type="button" id="storeMapBtn" class="gasMapLink" hidden>Voir la carte</button>
         <div class="ignored-wrap">
           <details class="ignored" id="ignoredDetails">
             <summary id="ignoredSummary">Magasins ignorés (0)</summary>
@@ -825,10 +825,10 @@ function showAppNotice(message,ms=7000){
   if(ms>0)appNoticeTimer=setTimeout(()=>{el.hidden=true},ms);
 }
 function safeStorageGet(key){
-  try{return localStorage.getItem(key)}catch(_){return null}
+  try{const raw=localStorage.getItem(key),backup=localStorage.getItem(key+'-recovery');if(raw==null)return backup;if(backup&&/^[\[{]/.test(raw)){try{JSON.parse(raw)}catch(_){return backup}}return raw}catch(_){return null}
 }
 function safeStorageSet(key,value){
-  try{if(value==null)localStorage.removeItem(key);else localStorage.setItem(key,value);return true}catch(_){window.dispatchEvent(new Event('traversee-storage-error'));return false}
+  try{if(value==null)localStorage.removeItem(key);else localStorage.setItem(key,value);if(/^(ravito-|traversee-)/.test(key)){try{if(value==null)localStorage.removeItem(key+'-recovery');else localStorage.setItem(key+'-recovery',value)}catch(_){}window.TraverseeBackups?.schedule()}return true}catch(_){window.dispatchEvent(new Event('traversee-storage-error'));return false}
 }
 function safeStorageSetPair(primary,backup,value){
   const a=safeStorageSet(primary,value);
@@ -957,21 +957,21 @@ function sendSavedToMenuIfNeeded(){
   if(!savedRavito)return;
   const id=savedRavito.id||('legacy-'+(savedRavito.displayRavitoCount||0)+'-'+savedRavito.plan.map(x=>x.idx).join('-'));
   if(lastSentSavedId===id)return;
-  window.postMessage({type:'open-saved-ravito',saved:savedRavito},'*');
+  window.postMessage({type:'open-saved-ravito',saved:savedRavito},location.origin);
   lastSentSavedId=id;
 }
 function sendDraftToMenuIfNeeded(){
   if(!savedDraft)return;
   const stamp=Number(savedDraft.updatedAt)||1;
   if(lastSentDraftStamp===stamp)return;
-  window.postMessage({type:'open-draft-ravito',draft:savedDraft},'*');
+  window.postMessage({type:'open-draft-ravito',draft:savedDraft},location.origin);
   lastSentDraftStamp=stamp;
 }
 document.getElementById("openMenuBtn")?.addEventListener("click",()=>{
   openAppView("menu");
   if(savedDraft)sendDraftToMenuIfNeeded();
   else if(savedRavito)sendSavedToMenuIfNeeded();
-  else window.postMessage({type:'set-menu-days',days:autonomy},'*');
+  else window.postMessage({type:'set-menu-days',days:autonomy},location.origin);
 });
 document.querySelectorAll("[data-home]").forEach(btn=>btn.addEventListener("click",()=>openAppView("home")));
 
@@ -1000,11 +1000,13 @@ historyList?.addEventListener('click',e=>{
   closeHistory();
   openAppView('menu');
   lastSentSavedId=snapshotId(item);
-  window.postMessage({type:'open-saved-ravito',saved:item,archived:true},'*');
+  window.postMessage({type:'open-saved-ravito',saved:item,archived:true},location.origin);
 });
 
 window.addEventListener("message", e => {
-  if (!e.data) return;
+  if(!e.data||e.origin!==location.origin)return;
+  const bivouacMessage=e.data.type==='bivouac-home';
+  if(e.source!==(bivouacMessage?document.getElementById('bivouacHost')?.contentWindow:window))return;
   if (e.data.type === "ravito-menu-height") {
     return;
   }
@@ -1031,10 +1033,10 @@ window.addEventListener("message", e => {
   if (e.data.type === "ravito-menu-open-current") {
     if(savedDraft){
       lastSentDraftStamp=Number(savedDraft.updatedAt)||1;
-      window.postMessage({type:'open-draft-ravito',draft:savedDraft},'*');
+      window.postMessage({type:'open-draft-ravito',draft:savedDraft},location.origin);
     }else if(savedRavito){
       lastSentSavedId=snapshotId(savedRavito);
-      window.postMessage({type:'open-saved-ravito',saved:savedRavito,archived:false},'*');
+      window.postMessage({type:'open-saved-ravito',saved:savedRavito,archived:false},location.origin);
     }
     return;
   }
@@ -1053,8 +1055,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.282"></script>
-<script src="./route-engine.js?v=1.282"></script>
+<script src="./route-data.js?v=1.283"></script>
+<script src="./route-engine.js?v=1.283"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1267,6 +1269,7 @@ async function enrichStoreMeta(store,km,baseText,meta){
 function show(km,stage,offRoute=null){
   lastShown={km,stage,offRoute};
   const r=select(km,stage);
+  const mapButton=document.getElementById('storeMapBtn');mapButton.hidden=!r.store;mapButton.onclick=()=>window.TraverseeHome.showPoint(r.store,'store');
   const box=document.getElementById("result");
   const badge=document.getElementById("badge");
   const storeEl=document.getElementById("store");
@@ -1316,7 +1319,7 @@ function setAutonomyUI(days,notifyMenu=true){
   document.getElementById("nearestStoreBtn")?.classList.remove("active");
   const daysLabel=document.getElementById("menuDaysLabel");
   if(daysLabel) daysLabel.textContent=autonomy+" jour"+(autonomy>1?"s":"");
-  if(notifyMenu)window.postMessage({type:"set-menu-days",days:autonomy},"*");
+  if(notifyMenu)window.postMessage({type:"set-menu-days",days:autonomy},location.origin);
   if(lastShown)show(lastShown.km,lastShown.stage,lastShown.offRoute);
 }
 document.querySelectorAll(".day[data-d]").forEach(b=>b.addEventListener("click",()=>setAutonomyUI(Number(b.dataset.d),true)));
@@ -1395,7 +1398,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.282';
+const GPX_WATER_URL='./water-points.json?v=1.283';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -1601,13 +1604,14 @@ function renderWater(points){
     waterList.innerHTML='<div class="waterEmpty">Aucun point trouvé autour de cette position.</div>';
     return;
   }
-  const renderItems=items=>items.map(point=>{
+  const renderItems=items=>items.map((point,index)=>{
     const name=cleanWaterName(point.name);
     const desc=waterPointDescription(point);
     const description=desc?'<details class="soleilWaterInfo"><summary>Infos du point</summary><div class="waterDesc">'+waterEscape(desc)+'</div></details>':'';
-    return '<article class="waterItem"><div class="waterItemText"><div class="waterName">'+waterEscape(name)+'</div><div class="waterDistance">'+waterEscape(waterRouteLabel(point))+'</div>'+description+'</div></article>';
+    return '<article class="waterItem"><div class="waterItemText"><div class="waterName">'+waterEscape(name)+'</div><div class="waterDistance">'+waterEscape(waterRouteLabel(point))+'</div>'+description+'</div><button type="button" class="gasMapLink" data-water-map="'+index+'">Voir la carte</button></article>';
   }).join('');
   waterList.innerHTML=renderItems(points);
+  waterList.onclick=e=>{const button=e.target.closest('[data-water-map]');if(!button)return;const p=points[Number(button.dataset.waterMap)];if(p)window.TraverseeHome.showPoint({...p,lon:p.lon??p.lng,km:p.routeKm??p.km},'water')};
 }
 async function searchWater(origin,context='',originKm=null){
   waterGpsBtn.disabled=true;
@@ -1680,7 +1684,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.282"></script>
+<script src="./gas-points.js?v=1.283"></script>
 <script id="gas-search">
 (()=>{
   const rows=window.TRAVERSEE_GAS_POINTS;
@@ -1714,10 +1718,11 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
       const displayName=window.gasPointLabel?window.gasPointLabel(point,point.km):('Point de ravitaillement · km '+formatKm(point.km));
       const contact=point.phone?'<div class="waterDesc">'+escapeHtml(point.hours||'')+'</div><a class="gasMapLink" href="tel:'+escapeHtml(point.phone.replace(/[^+0-9]/g,''))+'">Appeler '+escapeHtml(point.phone)+'</a>':'';
       const reliability='';
-      return '<article class="waterItem gasItem"><div class="waterDistance">'+escapeHtml(routeDistance)+'</div><div class="waterName">'+escapeHtml(displayName)+'</div><div class="waterDesc">km '+formatKm(point.km)+' · '+escapeHtml(offset)+'</div>'+reliability+contact+'<a class="gasMapLink" href="'+map+'" target="_blank" rel="noopener noreferrer" aria-label="Ouvrir '+escapeHtml(displayName)+' sur la carte">Voir la carte</a></article>';
+      return '<article class="waterItem gasItem"><div class="waterDistance">'+escapeHtml(routeDistance)+'</div><div class="waterName">'+escapeHtml(displayName)+'</div><div class="waterDesc">km '+formatKm(point.km)+' · '+escapeHtml(offset)+'</div>'+reliability+contact+'<button type="button" class="gasMapLink" data-gas-point="'+escapeHtml(point.id)+'" aria-label="Ouvrir '+escapeHtml(displayName)+' sur la carte">Voir la carte</button></article>';
     }).join(''):'<div class="waterEmpty">Aucun autre point gaz prévu jusqu’à l’arrivée.</div>';
     list.scrollTop=0;
   }
+  list.addEventListener('click',e=>{const id=e.target.closest('[data-gas-point]')?.dataset.gasPoint;const p=projectedPoints().find(p=>p.id===id);if(p)window.TraverseeHome.showPoint(p,'gas')});
   function simulate(){
     const raw=input.value.trim().replace(',','.');
     const km=Number(raw);
@@ -2092,7 +2097,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 }
 .allDaysMode #validation{display:none!important}
 
-</style><link rel="stylesheet" href="./soleil-menu.css?v=1.282"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
+</style><link rel="stylesheet" href="./soleil-menu.css?v=1.283"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
 <div id="prepCard">
       <h1 id="prepTitle" class="prepTitle">Bien manger.<br><em>Bien marcher.</em></h1>
       <p id="prepSubtitle" class="prepSub">Combien de jours d’autonomie ?</p>
@@ -2317,7 +2322,7 @@ const menuApp=menuRoot.getElementById('menuApp');
 const $=id=>menuRoot.getElementById(id);
 function captureShopScroll(){if(currentView!=='shop')return;shopScrollTop=Math.max(0,host.scrollTop||menuApp.scrollTop||0)}
 function restoreShopScroll(){requestAnimationFrame(()=>{host.scrollTop=shopScrollTop;menuApp.scrollTop=shopScrollTop})}
-function goHome(){captureShopScroll();scheduleDraftSave(true);window.postMessage({type:'ravito-menu-home'},'*')}
+function goHome(){captureShopScroll();scheduleDraftSave(true);window.postMessage({type:'ravito-menu-home'},location.origin)}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){captureShopScroll();scheduleDraftSave(true)}});
 window.addEventListener('pagehide',()=>{captureShopScroll();scheduleDraftSave(true)});
 host.addEventListener('scroll',()=>{if(currentView==='shop'){shopScrollTop=host.scrollTop;scheduleDraftSave(false)}},{passive:true});
@@ -2365,7 +2370,7 @@ function setSavedMode(on,archived=false){
 }
 function returnToCurrentRavito(){
   if(!archivedMode)return;
-  window.postMessage({type:'ravito-menu-open-current'},'*');
+  window.postMessage({type:'ravito-menu-open-current'},location.origin);
 }
 function startNewRavitoFromSaved(){
   if(!savedMode)return;
@@ -2473,7 +2478,7 @@ function alignMenuBack(){
  if(resetHost&&menuReset.parentElement!==resetHost)resetHost.appendChild(menuReset);
 }
 new MutationObserver(alignMenuBack).observe(menuApp,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
-clearPreparedResults();renderPrepState();alignMenuBack();window.postMessage({type:'ravito-menu-ready'},'*');scrollTopAll();
+clearPreparedResults();renderPrepState();alignMenuBack();window.postMessage({type:'ravito-menu-ready'},location.origin);scrollTopAll();
 }
 
 function addParts(n,parts){for(const [id,g] of Object.entries(parts))n[id]=(n[id]||0)+g}
@@ -2527,7 +2532,7 @@ function checkedCount(){return Object.values(checkedShop).filter(Boolean).length
 function confirmRebuild(what){const n=checkedCount();if(!n)return true;return confirm('Tu as déjà coché '+n+' article'+(n>1?'s':'')+' dans ton panier. '+what+' va recalculer la liste de courses. Continuer ?')}
 function clearReplacementMarks(){replacementMeals={};replacementProducts={}}
 function clearShoppingState(){unavailableProducts=[];checkedShop={};resolvedEquivalent={};clearReplacementMarks();closeUnavailable()}
-function selectDays(n,fromParent=false){const next=Math.max(1,Math.min(4,Number(n)||2));if(next===d){renderPrepState();return}if(plan&&!confirmRebuild('Modifier la durée')){renderPrepState();return}d=next;if(plan){clearShoppingState();clearDraftAutosave();clearPreparedResults();toast('Durée modifiée. Génère à nouveau les menus.')}if(!fromParent)window.postMessage({type:'ravito-menu-days-change',days:d},'*');renderPrepState()}
+function selectDays(n,fromParent=false){const next=Math.max(1,Math.min(4,Number(n)||2));if(next===d){renderPrepState();return}if(plan&&!confirmRebuild('Modifier la durée')){renderPrepState();return}d=next;if(plan){clearShoppingState();clearDraftAutosave();clearPreparedResults();toast('Durée modifiée. Génère à nouveau les menus.')}if(!fromParent)window.postMessage({type:'ravito-menu-days-change',days:d},location.origin);renderPrepState()}
 function toggleSettings(){settingsOpen=false;$('prepCard').classList.add('hide');renderPrepState();if(plan)showMenuView()}
 function renderPrepState(){
   const has=!!plan,num=ravitoCount+1;
@@ -2987,7 +2992,7 @@ function validate(){
 function resetAll(){
   if(!confirm('Réinitialiser les menus, les courses et l’historique des ravitos ?'))return;
   clearDraftAutosave();
-  d=2;plan=null;rotationCursor=0;proposalStart=0;proposalSerial=0;ravitoCount=0;validatedMealMemory=[];settingsOpen=false;checkedShop={};resolvedEquivalent={};replacementMeals={};replacementProducts={};singleSnackToggle=Array(SNACK_PACKS.length).fill(0);snackOverride=null;currentDayIndex=0;currentView='prep';savedNextState=null;loadedSavedId=null;setSavedMode(false);clearPreparedResults();window.postMessage({type:'ravito-menu-days-change',days:d},'*');clearSavedAndHistory();renderPrepState();toast('Reset effectué.','ok');scrollTopAll()
+  d=2;plan=null;rotationCursor=0;proposalStart=0;proposalSerial=0;ravitoCount=0;validatedMealMemory=[];settingsOpen=false;checkedShop={};resolvedEquivalent={};replacementMeals={};replacementProducts={};singleSnackToggle=Array(SNACK_PACKS.length).fill(0);snackOverride=null;currentDayIndex=0;currentView='prep';savedNextState=null;loadedSavedId=null;setSavedMode(false);clearPreparedResults();window.postMessage({type:'ravito-menu-days-change',days:d},location.origin);clearSavedAndHistory();renderPrepState();toast('Reset effectué.','ok');scrollTopAll()
 }
 
 function renderDeckClasses(){
@@ -3002,6 +3007,7 @@ function showMenuView(){if(!plan)return;currentView='menus';menuApp.classList.ad
 function showShopView(restorePosition=false){if(!plan)return;currentView='shop';menuApp.classList.remove('allDaysMode');scheduleDraftSave();$('prepCard').classList.add('hide');$('menus').classList.add('hide');$('buy').classList.remove('hide');$('validation').classList.toggle('hide',savedMode);$('bottomNav').classList.remove('hide');$('menuNav').classList.add('hide');$('shopNav').classList.remove('hide');renderShoppingOnly();if(restorePosition)restoreShopScroll();else{shopScrollTop=0;scrollTopAll()}}
 function openDuration(){if(!plan)return;settingsOpen=true;currentView='prep';menuApp.classList.remove('allDaysMode');$('prepCard').classList.remove('hide');$('menus').classList.add('hide');$('buy').classList.add('hide');$('validation').classList.add('hide');$('bottomNav').classList.add('hide');renderPrepState();scrollTopAll()}
 window.addEventListener('message',e=>{
+  if(e.origin!==location.origin||e.source!==window)return;
   if(!e.data)return;
   if(e.data.type==='open-saved-ravito'){openSavedRavito(e.data.saved,!!e.data.archived);return}
   if(e.data.type==='open-draft-ravito'){restoreDraft(e.data.draft);return}
@@ -3049,16 +3055,16 @@ clearPreparedResults();renderPrepState();alignMenuBack();
 
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.282"></script>
+<script src="./home-bivouac.js?v=1.283"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./offline-core.js?v=1.282"></script>
-<script src="./home-map.js?v=1.282"></script>
-<script src="./gas-tracker.js?v=1.282"></script>
-<script src="./reset-points.js?v=1.282"></script>
-<script src="./reset-engine.js?v=1.282"></script>
-<script src="./reset.js?v=1.282"></script>
-<script src="./home.js?v=1.282"></script>
-<script src="./offline.js?v=1.282"></script>
+<script src="./offline-core.js?v=1.283"></script>
+<script src="./home-map.js?v=1.283"></script>
+<script src="./gas-tracker.js?v=1.283"></script>
+<script src="./reset-points.js?v=1.283"></script>
+<script src="./reset-engine.js?v=1.283"></script>
+<script src="./reset.js?v=1.283"></script>
+<script src="./home.js?v=1.283"></script><script src="./backups.js?v=1.283"></script>
+<script src="./offline.js?v=1.283"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>

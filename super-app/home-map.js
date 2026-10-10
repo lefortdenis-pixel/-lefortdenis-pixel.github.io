@@ -11,7 +11,7 @@
     try{if(localStorage.getItem(viewKey)==='north')viewMode='north'}catch(_){}
     if(!window.maplibregl)return leaflet({tracks,inactive,start,atKm});
     try{
-      const sources={osm:{type:'raster',tiles:[TraverseeOfflineCore.TILE_URL],tileSize:256,maxzoom:19,attribution:'© IGN · Plan IGN'},route:{type:'geojson',data:feature('MultiLineString',tracks.map(t=>t.map(p=>[p[1],p[0]])))},alternative:{type:'geojson',data:feature('LineString',inactive.map(p=>[p[1],p[0]]))},bivouac:{type:'geojson',data:empty()},position:{type:'geojson',data:empty()}};
+      const sources={osm:{type:'raster',tiles:[TraverseeOfflineCore.TILE_URL],tileSize:256,maxzoom:15,attribution:'© IGN · Plan IGN'},route:{type:'geojson',data:feature('MultiLineString',tracks.map(t=>t.map(p=>[p[1],p[0]])))},alternative:{type:'geojson',data:feature('LineString',inactive.map(p=>[p[1],p[0]]))},bivouac:{type:'geojson',data:empty()},position:{type:'geojson',data:empty()}};
       const map=new maplibregl.Map({container:'homeMap',center:[start.lon,start.lat],zoom:13,pitch:45,bearing:0,maxPitch:60,attributionControl:false,style:{version:8,sources,layers:[{id:'osm',type:'raster',source:'osm'},{id:'alternative',type:'line',source:'alternative',paint:{'line-color':'#7d8b7e','line-width':3,'line-dasharray':[2,2]}},{id:'route',type:'line',source:'route',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#315ecb','line-width':4}},{id:'bivouac-band',type:'line',source:'bivouac',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#ef9537','line-width':30,'line-opacity':.28}},{id:'bivouac-line',type:'line',source:'bivouac',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#e68b24','line-width':7,'line-opacity':.9}},{id:'position',type:'circle',source:'position',paint:{'circle-radius':8,'circle-color':'#315ecb','circle-stroke-color':'white','circle-stroke-width':3}}]}});
       const offlineZoom=()=>map.setMaxZoom(navigator.onLine?19:15);offlineZoom();window.addEventListener('offline',offlineZoom);window.addEventListener('online',offlineZoom);
       map.addControl(new maplibregl.AttributionControl({compact:false}),'bottom-right');
@@ -29,6 +29,8 @@
       };
       setViewMode(viewMode);
       const arrowElement=document.createElement('div');arrowElement.innerHTML=directionSvg;arrowElement.style.cssText='width:48px;height:48px;pointer-events:none';arrowElement.setAttribute('aria-hidden','true');
+      map.on('error',e=>{if(e.sourceId==='osm'||e.error?.message?.includes('tile'))mapNotice('Carte indisponible')});
+      map.on('sourcedata',e=>{if(e.sourceId==='osm'&&e.sourceDataType==='content')mapNotice('')});
       map.on('load',()=>{map.getSource('bivouac').setData(zone);map.getSource('position').setData(position)});
       const update=(id,data)=>{map.getSource(id)?.setData(data)};
       return {gl:true,on:(e,fn)=>map.on(e,fn),invalidateSize:()=>map.resize(),getZoom:()=>map.getZoom(),
@@ -45,12 +47,13 @@
   function leaflet({tracks,inactive,start,atKm}){
     if(!window.L)return null;
     const map=L.map('homeMap',{zoomControl:false,preferCanvas:true});
-    L.tileLayer(TraverseeOfflineCore.TILE_URL,{maxZoom:19,attribution:'© IGN · Plan IGN'}).addTo(map);
+    const base=L.tileLayer(TraverseeOfflineCore.TILE_URL,{maxZoom:19,maxNativeZoom:15,attribution:'© IGN · Plan IGN'}).addTo(map);base.on('tileerror',()=>mapNotice('Carte indisponible'));base.on('tileload',()=>mapNotice(''));
     const offlineZoom=()=>map.setMaxZoom(navigator.onLine?19:15);offlineZoom();window.addEventListener('offline',offlineZoom);window.addEventListener('online',offlineZoom);
     L.polyline(inactive,{color:'#7d8b7e',weight:3,dashArray:'7 7',interactive:false}).addTo(map);
     tracks.forEach(t=>L.polyline(t,{color:'#315ecb',weight:4,interactive:false}).addTo(map));map.setView([start.lat,start.lon],13);
     let pos,arrow,zone=[];
     return {gl:false,on:(e,f)=>map.on(e,f),invalidateSize:()=>map.invalidateSize({pan:false}),getZoom:()=>map.getZoom(),screenPoint(p){return map.latLngToContainerPoint([p.lat,p.lon])},size(){const s=map.getSize();return {width:s.x,height:s.y}},setView:(ll,z)=>map.setView(ll,z,{animate:false}),setPosition(p,center){pos?.remove();arrow?.remove();const heading=direction(p,atKm);if(heading!==null)arrow=L.marker([p.lat,p.lon],{interactive:false,keyboard:false,icon:L.divIcon({className:'',html:'<div style="width:48px;height:48px;pointer-events:none;transform:rotate('+heading+'deg)">'+directionSvg+'</div>',iconSize:[48,48],iconAnchor:[24,24]})}).addTo(map);pos=L.circleMarker([p.lat,p.lon],{radius:9,weight:3,color:'#fff',fillColor:'#315ecb',fillOpacity:1}).addTo(map);if(center)map.setView([p.lat,p.lon],14,{animate:false})},setZone(coords){zone.forEach(l=>l.remove());zone=[];if(coords?.length>1){zone=[L.polyline(coords,{color:'#ef9537',weight:30,opacity:.28,interactive:false}).addTo(map),L.polyline(coords,{color:'#e68b24',weight:7,opacity:.9,interactive:false}).addTo(map)]}},addMarker(p,icon,title,click,category){return L.marker([p.lat,p.lon],{icon:L.divIcon({className:'homeMapPin homeMapPin-'+category,html:'<span>'+icon+'</span>',iconSize:[36,36],iconAnchor:[18,18]}),title}).addTo(map).on('click',e=>{L.DomEvent.stopPropagation(e);click()})},selectMarker(marker,on){marker.getElement()?.classList.toggle('homeMapPinSelected',on)}};
   }
+  function mapNotice(text){const e=document.getElementById('homeMapMessage');if(text){e.dataset.mapError='1';e.textContent=text;e.hidden=false}else if(e.dataset.mapError){delete e.dataset.mapError;e.hidden=true}}
   window.TraverseeHomeMap={create};
 })();
