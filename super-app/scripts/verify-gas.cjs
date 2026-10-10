@@ -70,11 +70,11 @@ assert.equal(JSON.parse(stored).alert.id,'a');
 stored=JSON.stringify({schema:2,cart:cartBeforeMigration,alert:{id:'far',routeId:'principal'}});
 vm.runInNewContext(source,c);
 assert.equal(JSON.parse(stored).alert.id,'a');
-/* Each explicit manual entry starts a fresh scenario, including the same km again. */
+/* Manual corrections preserve the cartridge and recompute the purchase plan. */
 position={km:100,mode:'km',updatedAt:Date.now()};
 events['traversee-home-position']({detail:{...position,manualEntry:true}});
-assert(!JSON.parse(stored).cart);assert(!JSON.parse(stored).alert);assert(!JSON.parse(stored).plan);
-assert.equal(get('gasFormat').value,'');assert.equal(get('gasCartForm').hidden,false);
+assert.deepEqual(JSON.parse(stored).cart,cartBeforeMigration);
+assert.equal(JSON.parse(stored).alert.id,'b');assert.equal(get('gasCartForm').hidden,true);
 get('gasFormat').value='100';get('gasStarted').value=today;get('gasCartForm').onsubmit({preventDefault(){}});
 const testCart=JSON.parse(stored).cart;
 /* GPS and restored manual positions update the calculation without discarding the cartridge. */
@@ -85,7 +85,10 @@ events['traversee-home-position']({detail:{...position,mode:'km',manualEntry:fal
 vm.runInNewContext(source,c);
 assert.deepEqual(JSON.parse(stored).cart,testCart);
 events['traversee-home-position']({detail:{...position,mode:'km',manualEntry:true}});
-assert(!JSON.parse(stored).cart);assert.equal(get('gasFormat').value,'');
+assert.deepEqual(JSON.parse(stored).cart,testCart);
+position={km:1,mode:'km',updatedAt:Date.now()};events['traversee-home-position']({detail:{...position,manualEntry:true}});
+assert.deepEqual(JSON.parse(stored).cart,testCart);assert.equal(JSON.parse(stored).alert.id,'a');
+vm.runInNewContext(source,c);assert.deepEqual(JSON.parse(stored).cart,testCart);
 /* Unknown GPX labels must not leak into the user-facing names. */
 vm.runInNewContext(fs.readFileSync(path.join(base,'gas-points.js'),'utf8'),c);
 for(const point of c.window.TRAVERSEE_GAS_POINTS){assert(!/^GAZ\b/i.test(point.name));assert(point.sourceUrl);assert(!/^GAZ\b/i.test(c.window.gasPointLabel(point)));}

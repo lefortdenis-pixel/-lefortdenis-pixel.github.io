@@ -11,12 +11,12 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-montagnes-v4.png">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon-montagnes-v4.png">
-<title>Traversée 2027 · v1.281 hors ligne</title>
+<title>Traversée 2027 · v1.282 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.281">
-<link rel="stylesheet" href="./offline.css?v=1.281">
-<link rel="stylesheet" href="./reset.css?v=1.281">
+<link rel="stylesheet" href="./home.css?v=1.282">
+<link rel="stylesheet" href="./offline.css?v=1.282">
+<link rel="stylesheet" href="./reset.css?v=1.282">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -640,7 +640,7 @@ html,body{height:100%;overflow:hidden}
 #gasView.active .waterList{display:grid!important;min-height:0;gap:12px;padding-bottom:40px}
 #gasView.active .waterItem{padding:16px 14px;min-height:112px}
 </style>
-<link rel="stylesheet" href="./soleil-font.css?v=1.281"><link rel="stylesheet" href="./soleil.css?v=1.281">
+<link rel="stylesheet" href="./soleil-font.css?v=1.282"><link rel="stylesheet" href="./soleil.css?v=1.282">
 </head>
 <body>
 <div class="wrap">
@@ -1053,8 +1053,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.281"></script>
-<script src="./route-engine.js?v=1.281"></script>
+<script src="./route-data.js?v=1.282"></script>
+<script src="./route-engine.js?v=1.282"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1395,7 +1395,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.281';
+const GPX_WATER_URL='./water-points.json?v=1.282';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -1680,7 +1680,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.281"></script>
+<script src="./gas-points.js?v=1.282"></script>
 <script id="gas-search">
 (()=>{
   const rows=window.TRAVERSEE_GAS_POINTS;
@@ -2092,7 +2092,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 }
 .allDaysMode #validation{display:none!important}
 
-</style><link rel="stylesheet" href="./soleil-menu.css?v=1.281"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
+</style><link rel="stylesheet" href="./soleil-menu.css?v=1.282"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
 <div id="prepCard">
       <h1 id="prepTitle" class="prepTitle">Bien manger.<br><em>Bien marcher.</em></h1>
       <p id="prepSubtitle" class="prepSub">Combien de jours d’autonomie ?</p>
@@ -2320,21 +2320,21 @@ function restoreShopScroll(){requestAnimationFrame(()=>{host.scrollTop=shopScrol
 function goHome(){captureShopScroll();scheduleDraftSave(true);window.postMessage({type:'ravito-menu-home'},'*')}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){captureShopScroll();scheduleDraftSave(true)}});
 window.addEventListener('pagehide',()=>{captureShopScroll();scheduleDraftSave(true)});
-host.addEventListener('scroll',()=>{if(currentView==='shop'){shopScrollTop=host.scrollTop;scheduleDraftSave()}},{passive:true});
-menuApp.addEventListener('scroll',()=>{if(currentView==='shop'){shopScrollTop=menuApp.scrollTop;scheduleDraftSave()}},{passive:true});
+host.addEventListener('scroll',()=>{if(currentView==='shop'){shopScrollTop=host.scrollTop;scheduleDraftSave(false)}},{passive:true});
+menuApp.addEventListener('scroll',()=>{if(currentView==='shop'){shopScrollTop=menuApp.scrollTop;scheduleDraftSave(false)}},{passive:true});
 function clone(o){try{return typeof structuredClone==='function'?structuredClone(o):JSON.parse(JSON.stringify(o))}catch(_){return JSON.parse(JSON.stringify(o))}}
 let draftTimer=0;
 function makeDraftSnapshot(){
   if(savedMode||archivedMode||!plan||!plan.length)return null;
   return {version:13,updatedAt:Date.now(),savedMode:false,d,plan:clone(plan),rotationCursor,proposalStart,proposalSerial,ravitoCount,validatedMealMemory:clone(validatedMealMemory),checkedShop:clone(checkedShop),resolvedEquivalent:clone(resolvedEquivalent),replacementMeals:clone(replacementMeals),replacementProducts:clone(replacementProducts),unavailableProducts:unavailableProducts.slice(),singleSnackToggle:clone(singleSnackToggle),snackOverride,currentDayIndex,currentView:currentView==='shop'?'shop':'menus',shopScrollTop:Math.max(0,shopScrollTop||0)};
 }
-function scheduleDraftSave(immediate=false){
+function scheduleDraftSave(immediate=true){
   if(savedMode||archivedMode||!plan||!plan.length)return;
   clearTimeout(draftTimer);
-  const send=()=>{const draft=makeDraftSnapshot();if(draft)window.postMessage({type:'ravito-menu-draft-save',draft},'*')};
+  const send=()=>{const draft=makeDraftSnapshot();if(draft)saveDraftRavito(draft)};
   if(immediate)send();else draftTimer=setTimeout(send,180);
 }
-function clearDraftAutosave(){clearTimeout(draftTimer);window.postMessage({type:'ravito-menu-draft-clear'},'*')}
+function clearDraftAutosave(){clearTimeout(draftTimer);clearDraftRavito()}
 function restoreDraft(data){
   if(!data||!Array.isArray(data.plan)||!data.plan.length)return;
   if(!planUsesKnownProducts(data.plan)){clearDraftAutosave();toast('Le brouillon était incompatible et a été écarté.');return}
@@ -2982,12 +2982,12 @@ function validate(){
   savedNextState=clone(saved.nextState||{});
   setSavedMode(true);
   checkedShop={};resolvedEquivalent={};pendingUnavailable=null;
-  window.postMessage({type:'ravito-menu-validated',saved},'*');
+  saveValidatedRavito(saved);openAppView('home');
 }
 function resetAll(){
   if(!confirm('Réinitialiser les menus, les courses et l’historique des ravitos ?'))return;
   clearDraftAutosave();
-  d=2;plan=null;rotationCursor=0;proposalStart=0;proposalSerial=0;ravitoCount=0;validatedMealMemory=[];settingsOpen=false;checkedShop={};resolvedEquivalent={};replacementMeals={};replacementProducts={};singleSnackToggle=Array(SNACK_PACKS.length).fill(0);snackOverride=null;currentDayIndex=0;currentView='prep';savedNextState=null;loadedSavedId=null;setSavedMode(false);clearPreparedResults();window.postMessage({type:'ravito-menu-days-change',days:d},'*');window.postMessage({type:'ravito-menu-clear-saved'},'*');renderPrepState();toast('Reset effectué.','ok');scrollTopAll()
+  d=2;plan=null;rotationCursor=0;proposalStart=0;proposalSerial=0;ravitoCount=0;validatedMealMemory=[];settingsOpen=false;checkedShop={};resolvedEquivalent={};replacementMeals={};replacementProducts={};singleSnackToggle=Array(SNACK_PACKS.length).fill(0);snackOverride=null;currentDayIndex=0;currentView='prep';savedNextState=null;loadedSavedId=null;setSavedMode(false);clearPreparedResults();window.postMessage({type:'ravito-menu-days-change',days:d},'*');clearSavedAndHistory();renderPrepState();toast('Reset effectué.','ok');scrollTopAll()
 }
 
 function renderDeckClasses(){
@@ -3049,16 +3049,16 @@ clearPreparedResults();renderPrepState();alignMenuBack();
 
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.281"></script>
+<script src="./home-bivouac.js?v=1.282"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./offline-core.js?v=1.281"></script>
-<script src="./home-map.js?v=1.281"></script>
-<script src="./gas-tracker.js?v=1.281"></script>
-<script src="./reset-points.js?v=1.281"></script>
-<script src="./reset-engine.js?v=1.281"></script>
-<script src="./reset.js?v=1.281"></script>
-<script src="./home.js?v=1.281"></script>
-<script src="./offline.js?v=1.281"></script>
+<script src="./offline-core.js?v=1.282"></script>
+<script src="./home-map.js?v=1.282"></script>
+<script src="./gas-tracker.js?v=1.282"></script>
+<script src="./reset-points.js?v=1.282"></script>
+<script src="./reset-engine.js?v=1.282"></script>
+<script src="./reset.js?v=1.282"></script>
+<script src="./home.js?v=1.282"></script>
+<script src="./offline.js?v=1.282"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>

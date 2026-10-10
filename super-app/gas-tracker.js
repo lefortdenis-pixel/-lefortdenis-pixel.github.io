@@ -162,9 +162,8 @@
  window.addEventListener('traversee-home-position',e=>{
   position=e.detail;
   if(e.detail?.manualEntry){
-   state={schema:2};
-   q('gasFormat').value='';q('gasCustom').value='';q('gasFormat').onchange();
-   q('gasStarted').value=dateText();q('gasTrackerMessage').textContent='';
+   // A position correction changes the purchase plan, never the active cartridge.
+   delete state.alert;delete state.plan;
    save();
   }
   update();

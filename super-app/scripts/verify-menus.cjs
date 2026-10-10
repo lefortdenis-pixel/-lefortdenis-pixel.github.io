@@ -41,3 +41,30 @@ for(const id of Object.keys(simulate(plan).purchases))for(const option of buildU
 }
 console.log('PASS menus: 16 plans (1–4 days), '+alternatives+' distinct alternatives, package quantities, day changes, full rotation, successive substitutions');
 `,context,{timeout:60000});
+
+// Persist the real draft synchronously: no timer/message may be needed before unloading.
+const persistence=section('function validParts(', 'function loadRedundant(')+
+ section('function saveDraftRavito(', 'function saveValidatedRavito(')+
+ section('let draftTimer=', 'function restoreDraft(');
+vm.runInContext(`
+const draftStore=new Map();
+const RAVITO_DRAFT_KEY='draft',RAVITO_DRAFT_BACKUP_KEY='backup';
+let savedDraft=null,lastSentDraftStamp=null;
+function safeStorageSetPair(a,b,value){for(const key of [a,b]){if(value==null)draftStore.delete(key);else draftStore.set(key,value)}return true}
+function updateHomeMenuButton(){}
+function clearTimeout(){}
+function setTimeout(){throw Error('A meal mutation must be saved before a timer can run')}
+const window={postMessage(){throw Error('Saving must not depend on a queued message')}};
+`+persistence+`
+d=2;plan=composePlan(0);savedMode=false;archivedMode=false;currentDayIndex=0;currentView='shop';
+scheduleDraftSave();assert.equal(JSON.parse(draftStore.get('draft')).plan[0].d.title,plan[0].d.title);
+const replacement=buildUnavailableAlternatives('cheese')[0];assert.ok(replacement);
+plan=replacement.plan;snackOverride=replacement.snackOverride;unavailableProducts=['cheese'];checkedShop={cho:true};
+scheduleDraftSave();
+const reopened=JSON.parse(draftStore.get('draft'));
+assert.deepEqual(reopened.plan,JSON.parse(JSON.stringify(plan)));
+assert.deepEqual(reopened.checkedShop,{cho:true});assert.deepEqual(reopened.unavailableProducts,['cheese']);
+assert.equal(draftStore.get('draft'),draftStore.get('backup'));
+clearDraftAutosave();assert.equal(draftStore.size,0);
+console.log('PASS meal persistence: replacement and checked groceries saved before returning, redundant copy, synchronous clear');
+`,context);
