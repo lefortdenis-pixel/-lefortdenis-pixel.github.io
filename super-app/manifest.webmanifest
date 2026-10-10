@@ -11,19 +11,19 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "./icons/icon-192-soleil-v3.png",
+      "src": "./icons/icon-192-montagnes-v4.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "./icons/icon-512-soleil-v3.png",
+      "src": "./icons/icon-512-montagnes-v4.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "./icons/apple-touch-icon-soleil-v3.png",
+      "src": "./icons/apple-touch-icon-montagnes-v4.png",
       "sizes": "180x180",
       "type": "image/png"
     }
