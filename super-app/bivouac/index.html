@@ -57,7 +57,7 @@ main{height:100dvh;display:grid;grid-template-rows:minmax(0,1fr) 136px}.mapwrap{
 .baseChoice{position:relative;min-width:0;padding:3px;border:2px solid #e1e5dc;border-radius:13px;background:#fff;color:#263027;text-align:left;overflow:hidden;cursor:pointer}.baseChoice[aria-pressed="true"]{border-color:#62942e;background:#f1f7e8}.baseChoice:focus-visible,.pickerClose:focus-visible{outline:3px solid #426d23;outline-offset:2px}.basePreview{display:block;position:relative;height:52px;overflow:hidden;border-radius:8px;background:#eef0e9}.basePreview img{width:100%;height:100%;object-fit:cover;display:block}.basePreview img[hidden]{display:none}.previewFallback{display:grid;place-items:center;position:absolute;inset:0;color:#78816e;font-size:10px;text-align:center;padding:5px}.basePreview.loaded .previewFallback{display:none}.baseName{display:block;padding:6px 3px 4px;font-size:11px;line-height:1.2;font-weight:800}.baseCheck{display:none;position:absolute;top:7px;right:7px;width:21px;height:21px;border-radius:50%;background:#4b7c26;color:#fff;font-size:13px;text-align:center;line-height:21px;box-shadow:0 1px 5px #0003}.baseChoice[aria-pressed="true"] .baseCheck{display:block}
 .pickerOverlays{border-top:1px solid var(--line);padding-top:7px;display:grid;gap:2px}.pickerOverlays .overlayToggle{min-height:44px;margin:0;display:flex;justify-content:space-between;font-size:13px;font-weight:700}.pickerOverlays input{width:20px;height:20px;accent-color:#62942e}
 @media(max-width:760px){.mapPicker{position:fixed;left:12px;right:12px;top:auto;bottom:calc(166px + env(safe-area-inset-bottom));margin:0;width:calc(100% - 24px);max-width:none;max-height:calc(100dvh - 190px - env(safe-area-inset-bottom));overflow:auto;overscroll-behavior:contain}.mapActions #layerFab{flex-direction:column;gap:3px;white-space:normal}.mapActions #layerFab .activeBase{font-size:10px;font-weight:650;color:#69736b;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mapStyle.open{display:none}}
-.routeCampingMarker{display:grid;place-items:center;background:#fff;border:2px solid #315ecb;border-radius:50%;font-size:19px;box-shadow:0 2px 8px #0003}
+.routeCampingMarker{display:grid;place-items:center;background:#fff;border:2px solid #315ecb;border-radius:50%;font-size:19px;box-shadow:0 2px 8px #0003}.routeNightMarker{display:grid;place-items:center;background:#fff8e2;color:#211238;border:2px solid #315ecb;border-radius:50%;font-size:15px;font-weight:850;box-shadow:0 2px 8px #0003}
 </style>
 <link rel="stylesheet" href="../soleil-font.css?v=1.274"><link rel="stylesheet" href="../soleil-bivouac.css?v=1.274"></head>
 <body>
@@ -135,10 +135,15 @@ let routeCampLayers=[];
 function drawRouteCamps(){
   routeCampLayers.forEach(m=>m.remove());routeCampLayers=[];
   const route=parentRoute();if(!route||S.mode==='three'||!isAppRoute(S.gpxText))return;
-  for(const p of route.camping||[])for(const map of [S.map,S.mapIgn]){
-    const el=document.createElement('div'),title=document.createElement('strong'),info=document.createElement('p'),link=document.createElement('a');
-    title.textContent=p.name;info.textContent=p.note;link.textContent='Infos du camping ↗';link.href=p.sourceUrl;link.target='_blank';link.rel='noopener';el.append(title,info,link);
-    routeCampLayers.push(L.marker([p.lat,p.lon],{title:p.name,icon:L.divIcon({className:'routeCampingMarker',html:'⛺',iconSize:[32,32],iconAnchor:[16,16]})}).addTo(map).bindPopup(el));
+  const places=[...(route.camping||[]).map(p=>({...p,isNightReference:false})),...(route.nightStops||[]).map(p=>({...p,isNightReference:true}))];
+  for(const p of places)for(const map of [S.map,S.mapIgn]){
+    const el=document.createElement('div'),title=document.createElement('strong'),info=document.createElement('p');
+    title.textContent=p.name.replace(/^E\d+\s*\/\s*E\d+\s*[—-]\s*/,'');
+    info.textContent=p.isNightReference?p.description:(p.note||'Camping');
+    el.append(title,info);
+    if(p.sourceUrl){const link=document.createElement('a');link.textContent='Infos du camping ↗';link.href=p.sourceUrl;link.target='_blank';link.rel='noopener';el.append(link);}
+    const markerClass=p.isNightReference?'routeNightMarker':'routeCampingMarker',markerIcon=p.isNightReference?'N':'⛺';
+    routeCampLayers.push(L.marker([p.lat,p.lon],{title:title.textContent,icon:L.divIcon({className:markerClass,html:markerIcon,iconSize:[32,32],iconAnchor:[16,16]})}).addTo(map).bindPopup(el));
   }
 }
 
