@@ -1,4 +1,4 @@
-importScripts('./offline-core.js?v=1.284','./offline-assets.js');
+importScripts('./offline-core.js?v=1.285','./offline-assets.js');
 const A=TraverseeOfflineAssets,C=TraverseeOfflineCore,CACHE='traversee-app-'+A.version,TILE_CACHE='traversee-map-tiles-v1';
 const absolute=p=>new URL(p,self.registration.scope).href;
 async function fetchGood(request,timeout=20000){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);try{const r=await fetch(request,{signal:controller.signal,cache:'no-cache'});if(!r.ok&&r.type!=='opaque')throw Error('HTTP '+r.status);return r}finally{clearTimeout(timer)}}
