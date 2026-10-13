@@ -11,12 +11,12 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-montagnes-v4.png">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon-montagnes-v4.png">
-<title>Traversée 2027 · v1.291 hors ligne</title>
+<title>Traversée 2027 · v1.292 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.291">
-<link rel="stylesheet" href="./offline.css?v=1.291">
-<link rel="stylesheet" href="./reset.css?v=1.291">
+<link rel="stylesheet" href="./home.css?v=1.292">
+<link rel="stylesheet" href="./offline.css?v=1.292">
+<link rel="stylesheet" href="./reset.css?v=1.292">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -640,7 +640,7 @@ html,body{height:100%;overflow:hidden}
 #gasView.active .waterList{display:grid!important;min-height:0;gap:12px;padding-bottom:40px}
 #gasView.active .waterItem{padding:16px 14px;min-height:112px}
 </style>
-<link rel="stylesheet" href="./soleil-font.css?v=1.291"><link rel="stylesheet" href="./soleil.css?v=1.291">
+<link rel="stylesheet" href="./soleil-font.css?v=1.292"><link rel="stylesheet" href="./soleil.css?v=1.292">
 </head>
 <body>
 <div class="wrap">
@@ -1055,8 +1055,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.291"></script>
-<script src="./route-engine.js?v=1.291"></script>
+<script src="./route-data.js?v=1.292"></script>
+<script src="./route-engine.js?v=1.292"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1398,7 +1398,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.291';
+const GPX_WATER_URL='./water-points.json?v=1.292';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -1684,7 +1684,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.291"></script>
+<script src="./gas-points.js?v=1.292"></script>
 <script id="gas-search">
 (()=>{
   const rows=window.TRAVERSEE_GAS_POINTS;
@@ -2098,7 +2098,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 }
 .allDaysMode #validation{display:none!important}
 
-</style><link rel="stylesheet" href="./soleil-menu.css?v=1.291"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
+</style><link rel="stylesheet" href="./soleil-menu.css?v=1.292"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
 <div id="prepCard">
       <h1 id="prepTitle" class="prepTitle">Bien manger.<br><em>Bien marcher.</em></h1>
       <p id="prepSubtitle" class="prepSub">Combien de jours d’autonomie ?</p>
@@ -2150,7 +2150,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 
 const PRODUCTS={
   brio:{name:'Brioche tranchée',pack:500,unit:'paquet',format:'500 g',snackable:true},
-  mad:{name:'Madeleines',pack:250,unit:'paquet',format:'250 g',snackable:true},
+  mad:{name:'Madeleines fourrées',pack:250,unit:'paquet',format:'250 g',snackable:true},
   mue:{name:'Muesli',pack:375,unit:'paquet',format:'375 g'},
   milk:{name:'Lait en poudre entier',pack:300,unit:'paquet',format:'300 g',staple:true},
   quart:{name:'Quatre-quarts',pack:250,unit:'paquet',format:'250 g',snackable:true},
@@ -2162,6 +2162,9 @@ const PRODUCTS={
   cra:{name:'Crackers',pack:150,unit:'paquet',format:'150 g'},
   chip:{name:'Chips nature',pack:150,unit:'sachet',format:'150 g'},
   sauc:{name:'Saucisson sec',pack:100,unit:'saucisson',format:'100 g'},
+  vqr:{name:'La Vache qui rit',pack:128,unit:'boîte',format:'8 portions · 128 g'},
+  saladReady:{name:'Salade préparée',pack:300,unit:'barquette',format:'≈ 300 g'},
+  mealCan:{name:'Repas en conserve',pack:400,unit:'boîte',format:'≈ 400 g'},
   cheese:{name:'Fromage',pack:200,unit:'paquet',format:'200 g'},
   tort:{name:'Tortillas',pack:192,unit:'paquet',format:'≈ 192 g'},
   pate:{name:'Pâté / terrine',pack:78,unit:'portion',format:'≈ 78 g'},
@@ -2199,110 +2202,53 @@ const PRODUCTS={
   ,couscousCan:{name:'Couscous en conserve',pack:800,unit:'boîte',format:'800 g'}
   ,petitSaleCan:{name:'Petit salé aux lentilles en conserve',pack:800,unit:'boîte',format:'800 g'}
 };
-const SAME_DAY_CAN_IDS=new Set(['ravioliCan','cassouletCan','lentSausCan','chiliCan','couscousCan','petitSaleCan']);
+const SAME_DAY_CAN_IDS=new Set(['ravioliCan','cassouletCan','lentSausCan','chiliCan','couscousCan','petitSaleCan','mealCan']);
 const B=(title,parts)=>({title,parts});
 const L=(title,parts,detail='')=>({title,parts,detail});
 const D=(title,parts,detail='')=>({title,parts,detail});
-const LUNCHES={
-  lentKn:L('Salade de lentilles + Knacki',{lent:200,knacki:105}),
-  lentCheCorn:L('Salade de lentilles + fromage en dés + maïs',{lent:180,cheese:70,corn:100}),
-  chickKnCorn:L('Salade de pois chiches + Knacki + maïs',{chick:180,knacki:105,corn:100}),
-  redKnCorn:L('Salade de haricots rouges + Knacki + maïs',{redbean:180,knacki:105,corn:100}),
-  redCheCorn:L('Salade de haricots rouges + fromage en dés + maïs',{redbean:180,cheese:70,corn:100}),
-  chickKnChe:L('Salade de pois chiches + Knacki + fromage',{chick:180,knacki:90,cheese:60}),
-  lentKnChe:L('Salade de lentilles + Knacki + fromage',{lent:180,knacki:90,cheese:60}),
-  pateTort:L('Pâté / terrine + tortillas',{pate:78,tort:110}),
-  patePain:L('Pâté / terrine + pain de mie',{pate:78,painmie:120}),
-  pateBag:L('Pâté / terrine + baguette',{pate:78,baguette:125}),
-  knackTort:L('Knacki + tortillas',{knacki:105,tort:110}),
-  knackPain:L('Knacki + pain de mie',{knacki:105,painmie:120}),
-  charTort:L('Saucisson sec + fromage + tortillas',{sauc:50,cheese:50,tort:110}),
-  charBag:L('Saucisson sec + fromage + baguette',{sauc:50,cheese:50,baguette:125}),
-  classicCra:L('Crackers + saucisson sec + fromage',{cra:75,sauc:50,cheese:50}),
-  classicChip:L('Chips + saucisson sec + fromage',{chip:75,sauc:50,cheese:50})
-};
-const DAYS=[
-  {b:B('Brioche + chocolat en tablette',{brio:250,cho:20}),l:LUNCHES.lentKn,d:D('Ramen bomb',{noui:85,pur:65},'1 sachet de nouilles instantanées + une portion de purée en flocons, mélangées ensemble')},
-  {b:B('Brioche + chocolat en tablette',{brio:250,cho:20}),l:LUNCHES.knackTort,d:D("Pâtes + concentré de tomate",{pas:125,tom:20})},
-  {b:B('Madeleines',{mad:125}),l:LUNCHES.pateTort,d:D('Purée + saucisson',{pur:65,sauc:50})},
-  {b:B('Madeleines',{mad:125}),l:LUNCHES.charTort,d:D('Nouilles instantanées + fromage',{noui:85,cheese:50})},
-  {b:B('Muesli + lait en poudre',{mue:125,milk:25}),l:LUNCHES.chickKnCorn,d:D('Pâtes + concentré de tomate + saucisson',{pas:125,tom:20,sauc:50})},
-  {b:B('Muesli + lait en poudre',{mue:125,milk:25}),l:LUNCHES.pateTort,d:D('Ramen bomb',{noui:85,pur:65},'1 sachet de nouilles instantanées + une portion de purée en flocons, mélangées ensemble')},
-  {b:B('Muesli + lait en poudre',{mue:125,milk:25}),l:LUNCHES.patePain,d:D('Nouilles instantanées + saucisson',{noui:85,sauc:50})},
-  {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.knackPain,d:D('Purée + fromage',{pur:65,cheese:50})},
-  {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.redKnCorn,d:D("Pâtes + concentré de tomate + fromage",{pas:125,tom:20,cheese:50})},
-  {b:B('Pains au lait + chocolat en tablette',{painl:175,cho:20}),l:LUNCHES.redCheCorn,d:D('Ramen bomb',{noui:85,pur:65},'1 sachet de nouilles instantanées + une portion de purée en flocons, mélangées ensemble')},
-  {b:B('Pains au lait + chocolat en tablette',{painl:175,cho:20}),l:LUNCHES.pateBag,d:D('Nouilles instantanées + fromage',{noui:85,cheese:50})},
-  {b:B('Marbré',{marb:125}),l:LUNCHES.charBag,d:D('Purée + saucisson',{pur:65,sauc:50})},
-  {b:B('Marbré',{marb:125}),l:LUNCHES.lentCheCorn,d:D('Pâtes + concentré de tomate + saucisson',{pas:125,tom:20,sauc:50})},
-  {b:B('Biscuits sablés',{sab:100}),l:LUNCHES.lentKnChe,d:D('Nouilles instantanées + saucisson',{noui:85,sauc:50})},
-  {b:B('Biscuits sablés',{sab:100}),l:LUNCHES.pateTort,d:D('Ramen bomb',{noui:85,pur:65},'1 sachet de nouilles instantanées + une portion de purée en flocons, mélangées ensemble')},
-  {b:B('Brioche + chocolat en tablette',{brio:250,cho:20}),l:LUNCHES.knackTort,d:D('Purée + fromage',{pur:65,cheese:50})},
-  {b:B('Brioche + chocolat en tablette',{brio:250,cho:20}),l:LUNCHES.chickKnChe,d:D("Pâtes + concentré de tomate",{pas:125,tom:20})},
-  {b:B('Madeleines',{mad:125}),l:LUNCHES.classicChip,d:D('Nouilles instantanées + fromage',{noui:85,cheese:50})},
-  {b:B('Madeleines',{mad:125}),l:LUNCHES.patePain,d:D('Purée + saucisson',{pur:65,sauc:50})},
-  {b:B('Muesli + lait en poudre',{mue:125,milk:25}),l:LUNCHES.knackPain,d:D('Pâtes + concentré de tomate + saucisson',{pas:125,tom:20,sauc:50})},
-  {b:B('Muesli + lait en poudre',{mue:125,milk:25}),l:LUNCHES.classicCra,d:D('Ramen bomb',{noui:85,pur:65},'1 sachet de nouilles instantanées + une portion de purée en flocons, mélangées ensemble')},
-  {b:B('Muesli + lait en poudre',{mue:125,milk:25}),l:LUNCHES.classicChip,d:D('Nouilles instantanées + saucisson',{noui:85,sauc:50})},
-  {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.pateBag,d:D('Purée + fromage',{pur:65,cheese:50})},
-  {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.charBag,d:D("Pâtes + concentré de tomate + fromage",{pas:125,tom:20,cheese:50})},
-  {b:B('Pains au lait + chocolat en tablette',{painl:175,cho:20}),l:LUNCHES.lentKn,d:D('Riz basmati précuit + saucisson',{riceReady:250,sauc:50},'Sachet de riz déjà cuit : à manger froid ou simplement réchauffer')},
-  {b:B('Madeleines',{mad:125}),l:LUNCHES.pateTort,d:D('Riz précuit + fromage',{riceReady:250,cheese:50},'Sachet de riz déjà cuit : à manger froid ou simplement réchauffer')},
-  {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.knackTort,d:D('Riz précuit + Knacki',{riceReady:250,knacki:105},'Sachet de riz déjà cuit : à manger froid ou simplement réchauffer')},
-  {b:B('Brioche + chocolat en tablette',{brio:250,cho:20}),l:LUNCHES.classicCra,d:D('Quinoa aux légumes précuit + saucisson',{quinoaReady:250,sauc:50},'Sachet déjà cuit : à manger froid ou simplement réchauffer')}
+/* Catalogue choisi par Denis : une entrée par repas, sans variantes retirées. */
+const BREAKFAST_CATALOG=[
+ B('Muesli + lait en poudre',{mue:125,milk:25}),
+ B('Biscuits sablés',{sab:100}),
+ B('Brioche + chocolat en tablette',{brio:250,cho:20}),
+ B('Pains au lait + chocolat en tablette',{painl:175,cho:20}),
+ B('Madeleines fourrées',{mad:125})
 ];
-/* Les quatre repas déjà hydratés sont répartis dans la rotation.
-   Ainsi un ravito de 1 à 4 jours n'en embarque jamais plusieurs. */
-const READY_MEAL_DAYS=DAYS.splice(-4);
-[3,10,17,24].forEach((pos,i)=>DAYS.splice(pos,0,READY_MEAL_DAYS[i]));
-/* Ordre audité : équilibre poids/conditionnements et variété sur les blocs 2–4 jours. */
-const BALANCED_DAY_ORDER=[10, 13, 14, 25, 5, 16, 22, 21, 6, 8, 7, 23, 0, 15, 18, 3, 20, 11, 12, 17, 9, 1, 26, 24, 4, 19, 2, 27];
-{const source=DAYS.slice();DAYS.splice(0,DAYS.length,...BALANCED_DAY_ORDER.map(i=>source[i]));}
-/* Repas chaud simple : les pâtes cuisent directement dans la soupe reconstituée. */
-DAYS.splice(6,0,
-  {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.pateTort,d:D('Pâtes + soupe déshydratée',{pas:125,soup:30},'Cuire les pâtes directement dans la soupe pour obtenir un bouillon épais')}
-);
-/* Repas ajoutés à la base : ils alimentent les catalogues indépendants
-   petit-déjeuner / déjeuner / dîner utilisés par le générateur. */
-DAYS.splice(7,0,
-  {b:B('Muesli + lait en poudre + fruits secs',{mue:125,milk:25,dryfruit:40}),
-   l:L('Semoule + épices',{semoule:125,spices:5}),
-   d:D('Semoule épicée + raisins secs',{semoule:125,spices:5,raisins:40})},
-  {b:B('Madeleines',{mad:125}),l:LUNCHES.pateTort,d:D('Semoule + concentré de tomate',{semoule:125,tom:20})},
-  {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.pateTort,d:D('Semoule + pois chiches + épices',{semoule:125,chick:180,spices:5})},
-  {b:B('Pains au lait + chocolat en tablette',{painl:175,cho:20}),l:LUNCHES.classicCra,d:D('Semoule + soupe déshydratée',{semoule:125,soup:30},'Préparer la semoule directement dans la soupe reconstituée')},
-  {b:B('Marbré',{marb:125}),l:LUNCHES.knackTort,d:D('Semoule + Knacki',{semoule:125,knacki:105})}
-);
-/* Les conserves apportent volontairement de la variété malgré leur poids.
-   Elles ne peuvent être proposées que le premier soir : achat au ravito,
-   portage pendant la journée, puis boîte entièrement consommée. */
-const CANNED_DAYS=[
-  {b:B('Muesli + lait en poudre',{mue:125,milk:25}),l:LUNCHES.pateTort,d:D('Ravioli en conserve',{ravioliCan:800},'Boîte entière · à manger le soir du ravito')},
-  {b:B('Madeleines',{mad:125}),l:LUNCHES.charTort,d:D('Cassoulet en conserve',{cassouletCan:840},'Boîte entière · à manger le soir du ravito')},
-  {b:B('Quatre-quarts',{quart:125}),l:LUNCHES.knackTort,d:D('Lentilles-saucisses en conserve',{lentSausCan:800},'Boîte entière · à manger le soir du ravito')},
-  {b:B('Pains au lait + chocolat en tablette',{painl:175,cho:20}),l:LUNCHES.patePain,d:D('Chili con carne en conserve',{chiliCan:420},'Boîte entière · à manger le soir du ravito')},
-  {b:B('Marbré',{marb:125}),l:LUNCHES.classicCra,d:D('Couscous en conserve',{couscousCan:800},'Boîte entière · à manger le soir du ravito')},
-  {b:B('Biscuits sablés',{sab:100}),l:LUNCHES.pateBag,d:D('Petit salé aux lentilles en conserve',{petitSaleCan:800},'Boîte entière · à manger le soir du ravito')}
+const LUNCH_CATALOG=[
+ L('Pâté + tortillas',{pate:78,tort:110}),
+ L('Tortillas + saucisson sec + La Vache qui rit',{tort:110,sauc:50,vqr:48}),
+ L('Salade préparée',{saladReady:300},'Barquette prête à manger · à consommer au ravitaillement'),
+ L('Semoule cold soak + épices',{semoule:125,spices:5},'Mélanger avec de l’eau potable froide, couvrir et laisser gonfler jusqu’à la texture souhaitée.')
 ];
-CANNED_DAYS.forEach((day,i)=>DAYS.splice(3+i*5,0,day));
-
-/* v1.169 — les journées historiques ne sont plus des choix indivisibles.
-   Elles servent uniquement de catalogue de repas. Petit-déjeuner, déjeuner
-   et dîner sont ensuite combinés librement par le moteur. */
-function mealKey(meal){return meal.title+'|'+JSON.stringify(meal.parts||{})+'|'+(meal.detail||'')}
-function uniqueMealCatalog(slot){
-  const out=[],seen=new Set();
-  for(const day of DAYS){
-    const meal=day[slot],key=mealKey(meal);
-    if(seen.has(key))continue;
-    seen.add(key);out.push(meal)
-  }
-  return out
-}
-const BREAKFAST_CATALOG=uniqueMealCatalog('b');
-const LUNCH_CATALOG=uniqueMealCatalog('l');
-const DINNER_CATALOG=uniqueMealCatalog('d');
+const DINNER_CATALOG=[
+ D('Purée + saucisson',{pur:65,sauc:50}),
+ D('Purée + fromage',{pur:65,cheese:50}),
+ D('Nouilles instantanées + saucisson',{noui:85,sauc:50}),
+ D('Nouilles instantanées + fromage',{noui:85,cheese:50}),
+ D('Ramen bomb',{noui:85,pur:65},'1 sachet de nouilles instantanées + une portion de purée en flocons, mélangées ensemble'),
+ D('Pâtes + concentré de tomate',{pas:125,tom:20}),
+ D('Pâtes + soupe déshydratée',{pas:125,soup:30},'Cuire les pâtes directement dans la soupe pour obtenir un bouillon épais'),
+ D('Semoule + concentré de tomate',{semoule:125,tom:20}),
+ D('Semoule + soupe déshydratée',{semoule:125,soup:30},'Préparer la semoule directement dans la soupe reconstituée'),
+ D('Semoule épicée + raisins secs',{semoule:125,spices:5,raisins:40}),
+ D('Riz précuit',{riceReady:250},'Sachet de riz déjà cuit : à manger froid ou simplement réchauffer'),
+ D('Repas en conserve',{mealCan:400},'Choisir un plat préparé en conserve · boîte entière à manger le soir du ravito')
+];
 const MEAL_CATALOGS={b:BREAKFAST_CATALOG,l:LUNCH_CATALOG,d:DINNER_CATALOG};
+function mealKey(meal){return meal.title+'|'+JSON.stringify(meal.parts||{})+'|'+(meal.detail||'')}
+function normalizeCurrentMenuPlan(days){
+ return days.map((day,i)=>{
+  const result={...day};
+  for(const slot of ['b','l','d']){
+   const catalog=MEAL_CATALOGS[slot];
+   result[slot]=clone(catalog.find(meal=>meal.title===day[slot]?.title)||catalog[i%catalog.length]);
+  }
+  if(i>0&&result.l.parts.saladReady)result.l=clone(LUNCH_CATALOG[0]);
+  if(i>0&&result.d.parts.mealCan)result.d=clone(DINNER_CATALOG[0]);
+  result.idx=DAY_OPTIONS.findIndex(option=>['b','l','d'].every(slot=>mealKey(option[slot])===mealKey(result[slot])));
+  return result;
+ });
+}
 /* La semoule est une vraie base de repas, pas une curiosité rare.
    On la pondère dans les propositions comme les autres bases chaudes qui ont
    plusieurs variantes (nouilles, purée, pâtes), sans dupliquer les repas affichés. */
@@ -2346,7 +2292,7 @@ function restoreDraft(data){
   if(!planUsesKnownProducts(data.plan)){clearDraftAutosave();toast('Le brouillon était incompatible et a été écarté.');return}
   clearTimeout(draftTimer);
   setSavedMode(false);archivedMode=false;savedNextState=null;loadedSavedId=null;
-  d=Math.max(1,Math.min(4,Number(data.d)||data.plan.length));plan=clone(data.plan);rotationCursor=Number(data.rotationCursor)||0;proposalStart=Number(data.proposalStart)||rotationCursor;proposalSerial=Number(data.proposalSerial)||0;ravitoCount=Number(data.ravitoCount)||0;validatedMealMemory=normalizeMealMemory(data.validatedMealMemory);
+  d=Math.max(1,Math.min(4,Number(data.d)||data.plan.length));plan=normalizeCurrentMenuPlan(data.plan);rotationCursor=Number(data.rotationCursor)||0;proposalStart=Number(data.proposalStart)||rotationCursor;proposalSerial=Number(data.proposalSerial)||0;ravitoCount=Number(data.ravitoCount)||0;validatedMealMemory=normalizeMealMemory(data.validatedMealMemory);
   checkedShop=clone(data.checkedShop||{});resolvedEquivalent=clone(data.resolvedEquivalent||{});replacementMeals=clone(data.replacementMeals||{});replacementProducts=clone(data.replacementProducts||{});
   unavailableProducts=Array.isArray(data.unavailableProducts)?data.unavailableProducts.filter(id=>PRODUCTS[id]):[];
   singleSnackToggle=clone(data.singleSnackToggle||Array(SNACK_PACKS.length).fill(0));snackOverride=data.snackOverride==null?null:data.snackOverride;currentDayIndex=Math.max(0,Math.min(plan.length-1,Number(data.currentDayIndex)||0));currentView=data.currentView==='shop'?'shop':'menus';shopScrollTop=Math.max(0,Number(data.shopScrollTop)||0);settingsOpen=false;pendingUnavailable=null;
@@ -2447,7 +2393,7 @@ function openSavedRavito(data,archived=false){
   loadedSavedId=incomingId;
   savedNextState=clone(data.nextState||{});
   d=Math.max(1,Math.min(4,Number(data.d)||data.plan.length));
-  plan=clone(data.plan);
+  plan=archived?clone(data.plan):normalizeCurrentMenuPlan(data.plan);
   snackOverride=data.snackOverride==null?null:data.snackOverride;
   replacementMeals=clone(data.replacementMeals||{});
   replacementProducts=clone(data.replacementProducts||{});
@@ -2554,7 +2500,7 @@ function renderPrepState(){
 function cyclicDistance(from,to){return (to-from+DAY_OPTIONS.length)%DAY_OPTIONS.length}
 function containsProduct(day,id){return !!(day?.b?.parts?.[id]||day?.l?.parts?.[id]||day?.d?.parts?.[id])}
 function isSameDayCan(day){return [...SAME_DAY_CAN_IDS].some(id=>containsProduct(day,id))}
-function dayAllowed(day,position){return !(position>0&&containsProduct(day,'baguette'))&&!(position>1&&containsProduct(day,'knacki'))&&!(position>0&&isSameDayCan(day))}
+function dayAllowed(day,position){return !(position>0&&containsProduct(day,'baguette'))&&!(position>1&&containsProduct(day,'knacki'))&&!(position>0&&isSameDayCan(day))&&!(position>0&&containsProduct(day,'saladReady'))}
 function duplicateMealCount(days,slot){return Math.max(0,days.length-new Set(days.map(x=>x[slot].title)).size)}
 function dayFoodWeight(day){return Object.values(dayNeed(day)).reduce((a,g)=>a+(Number(g)||0),0)+SNACK_TARGET_PER_DAY}
 function planAllowedForLength(days){return Array.isArray(days)&&days.every((day,i)=>dayAllowed(day,i))}
@@ -2866,7 +2812,8 @@ function applyUnavailableChange(){if(!pendingUnavailable)return;unavailableProdu
 function markEquivalent(id){resolvedEquivalent[id]=true;checkedShop[id]=true;closeUnavailable();renderShoppingOnly();scheduleDraftSave();toast('')}
 const MEAL_IMAGE_TITLES=["Madeleines", "Pâté / terrine + tortillas", "Riz précuit + fromage", "Marbré", "Saucisson sec + fromage + baguette", "Purée + saucisson", "Salade de lentilles + fromage en dés + maïs", "Pâtes + concentré de tomate + saucisson", "Muesli + lait en poudre", "Ravioli en conserve", "Chips + saucisson sec + fromage", "Nouilles instantanées + saucisson", "Salade de pois chiches + Knacki + maïs", "Biscuits sablés", "Ramen bomb", "Quatre-quarts", "Pâtes + soupe déshydratée", "Saucisson sec + fromage + tortillas", "Cassoulet en conserve", "Muesli + lait en poudre + fruits secs", "Semoule + épices", "Semoule épicée + raisins secs", "Semoule + concentré de tomate", "Semoule + pois chiches + épices", "Pains au lait + chocolat en tablette", "Crackers + saucisson sec + fromage", "Semoule + soupe déshydratée", "Knacki + tortillas", "Lentilles-saucisses en conserve", "Semoule + Knacki", "Knacki + pain de mie", "Pâté / terrine + pain de mie", "Chili con carne en conserve", "Purée + fromage", "Brioche + chocolat en tablette", "Salade de lentilles + Knacki", "Couscous en conserve", "Salade de lentilles + Knacki + fromage", "Riz basmati précuit + saucisson", "Nouilles instantanées + fromage", "Pâté / terrine + baguette", "Petit salé aux lentilles en conserve", "Salade de haricots rouges + fromage en dés + maïs", "Riz précuit + Knacki", "Salade de haricots rouges + Knacki + maïs", "Pâtes + concentré de tomate + fromage", "Pâtes + concentré de tomate", "Quinoa aux légumes précuit + saucisson", "Salade de pois chiches + Knacki + fromage"];
 function mealImage(meal){
- const index=MEAL_IMAGE_TITLES.indexOf(meal.title);
+ const aliases={'Madeleines fourrées':'Madeleines','Pâté + tortillas':'Pâté / terrine + tortillas','Semoule cold soak + épices':'Semoule + épices'};
+ const index=MEAL_IMAGE_TITLES.indexOf(aliases[meal.title]||meal.title);
  return index<0?'':'<img class="mealPhoto" src="./images/meals/meal-'+String(index).padStart(2,'0')+'.webp" alt="" loading="lazy" decoding="async">';
 }
 function mealIcon(slot){
@@ -3056,17 +3003,18 @@ clearPreparedResults();renderPrepState();alignMenuBack();
 
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.291"></script>
+<script src="./home-bivouac.js?v=1.292"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./offline-core.js?v=1.291"></script>
-<script src="./home-map.js?v=1.291"></script>
-<script src="./gas-tracker.js?v=1.291"></script>
-<script src="./reset-points.js?v=1.291"></script>
-<script src="./reset-engine.js?v=1.291"></script>
-<script src="./reset.js?v=1.291"></script>
-<script src="./home.js?v=1.291"></script><script src="./backups.js?v=1.291"></script>
-<script src="./offline.js?v=1.291"></script>
+<script src="./offline-core.js?v=1.292"></script>
+<script src="./home-map.js?v=1.292"></script>
+<script src="./gas-tracker.js?v=1.292"></script>
+<script src="./reset-points.js?v=1.292"></script>
+<script src="./reset-engine.js?v=1.292"></script>
+<script src="./reset.js?v=1.292"></script>
+<script src="./home.js?v=1.292"></script><script src="./backups.js?v=1.292"></script>
+<script src="./offline.js?v=1.292"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>
+
 
