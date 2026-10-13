@@ -11,12 +11,12 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-montagnes-v4.png">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon-montagnes-v4.png">
-<title>Traversée 2027 · v1.293 hors ligne</title>
+<title>Traversée 2027 · v1.294 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.293">
-<link rel="stylesheet" href="./offline.css?v=1.293">
-<link rel="stylesheet" href="./reset.css?v=1.293">
+<link rel="stylesheet" href="./home.css?v=1.294">
+<link rel="stylesheet" href="./offline.css?v=1.294">
+<link rel="stylesheet" href="./reset.css?v=1.294">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -640,7 +640,7 @@ html,body{height:100%;overflow:hidden}
 #gasView.active .waterList{display:grid!important;min-height:0;gap:12px;padding-bottom:40px}
 #gasView.active .waterItem{padding:16px 14px;min-height:112px}
 </style>
-<link rel="stylesheet" href="./soleil-font.css?v=1.293"><link rel="stylesheet" href="./soleil.css?v=1.293">
+<link rel="stylesheet" href="./soleil-font.css?v=1.294"><link rel="stylesheet" href="./soleil.css?v=1.294">
 </head>
 <body>
 <div class="wrap">
@@ -1055,8 +1055,8 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.293"></script>
-<script src="./route-engine.js?v=1.293"></script>
+<script src="./route-data.js?v=1.294"></script>
+<script src="./route-engine.js?v=1.294"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1398,7 +1398,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.293';
+const GPX_WATER_URL='./water-points.json?v=1.294';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=24;
 const EARTH_METERS=6371008.8;
@@ -1684,7 +1684,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.293"></script>
+<script src="./gas-points.js?v=1.294"></script>
 <script id="gas-search">
 (()=>{
   const rows=window.TRAVERSEE_GAS_POINTS;
@@ -2098,7 +2098,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 }
 .allDaysMode #validation{display:none!important}
 
-</style><link rel="stylesheet" href="./soleil-menu.css?v=1.293"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
+</style><link rel="stylesheet" href="./soleil-menu.css?v=1.294"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
 <div id="prepCard">
       <h1 id="prepTitle" class="prepTitle">Bien manger.<br><em>Bien marcher.</em></h1>
       <p id="prepSubtitle" class="prepSub">Combien de jours d’autonomie ?</p>
@@ -2177,7 +2177,7 @@ const PRODUCTS={
   corn:{name:'Maïs en conserve',pack:140,unit:'boîte',format:'≈ 140 g égouttés'},
   noui:{name:'Nouilles instantanées',pack:85,unit:'sachet',format:'85 g'},
   pur:{name:'Purée en flocons',pack:125,unit:'paquet',format:'125 g'},
-  pas:{name:'Pâtes cuisson rapide',pack:250,unit:'paquet',format:'250 g'},
+  pas:{name:'Pâtes 3 minutes',pack:250,unit:'paquet',format:'250 g'},
   soup:{name:'Soupe déshydratée',pack:60,unit:'sachet',format:'≈ 60 g'},
   tom:{name:'Concentré de tomate en tube',pack:130,unit:'tube',format:'130 g',staple:true},
   semoule:{name:'Semoule',pack:500,unit:'paquet',format:'500 g'},
@@ -2225,8 +2225,8 @@ const DINNER_CATALOG=[
  D('Purée + fromage',{pur:65,cheese:50}),
  D('Nouilles instantanées + saucisson',{noui:85,sauc:50}),
  D('Ramen bomb',{noui:85,pur:65},'1 sachet de nouilles instantanées + une portion de purée en flocons, mélangées ensemble'),
- D('Pâtes + concentré de tomate',{pas:125,tom:20}),
- D('Pâtes + soupe déshydratée',{pas:125,soup:30},'Cuire les pâtes directement dans la soupe pour obtenir un bouillon épais'),
+ D('Pâtes 3 minutes + concentré de tomate',{pas:125,tom:20}),
+ D('Pâtes 3 minutes + soupe déshydratée',{pas:125,soup:30},'Cuire les pâtes directement dans la soupe pour obtenir un bouillon épais'),
  D('Semoule + concentré de tomate',{semoule:125,tom:20}),
  D('Semoule + soupe déshydratée',{semoule:125,soup:30},'Préparer la semoule directement dans la soupe reconstituée'),
  D('Semoule épicée + raisins secs',{semoule:125,spices:5,raisins:40}),
@@ -2240,7 +2240,7 @@ function normalizeCurrentMenuPlan(days){
   const result={...day};
   for(const slot of ['b','l','d']){
    const catalog=MEAL_CATALOGS[slot];
-   result[slot]=clone(catalog.find(meal=>meal.title===day[slot]?.title)||catalog[i%catalog.length]);
+   result[slot]=clone(catalog.find(meal=>meal.title===(day[slot]?.title||'').replace('Pâtes +','Pâtes 3 minutes +'))||catalog[i%catalog.length]);
   }
   if(i>0&&result.l.parts.saladReady)result.l=clone(LUNCH_CATALOG[0]);
   if(i>0&&result.d.parts.mealCan)result.d=clone(DINNER_CATALOG[0]);
@@ -2809,7 +2809,7 @@ function openUnavailable(id){closeUnavailable();const p=PRODUCTS[id],box=menuRoo
 function cycleUnavailable(){if(unavailableOptions.length<2)return;unavailableOptionIndex=(unavailableOptionIndex+1)%unavailableOptions.length;renderUnavailableChoice()}
 function applyUnavailableChange(){if(!pendingUnavailable)return;unavailableProducts=[...new Set([...unavailableProducts,pendingUnavailable.id])];const beforePlan=clone(plan),beforeSnack=snackOverride,beforeSnackIds=snackIdsForOverride(beforeSnack),beforeSim=simulate(plan),nextSim=pendingUnavailable.nextSim||simulateWithSnackOverride(pendingUnavailable.plan,pendingUnavailable.snackOverride);const nextPlan=pendingUnavailable.plan,nextSnack=pendingUnavailable.snackOverride;for(let i=0;i<nextPlan.length;i++){for(const slot of ['b','l','d']){const beforeMeal=beforePlan[i]?.[slot],afterMeal=nextPlan[i]?.[slot];if(beforeMeal&&afterMeal&&beforeMeal.title!==afterMeal.title){replacementMeals[i+'-'+slot]=true;const beforeParts=beforeMeal.parts||{},afterParts=afterMeal.parts||{};for(const id of Object.keys(afterParts)){if((afterParts[id]||0)>(beforeParts[id]||0))replacementProducts[id]=true}}}}const afterSnackIds=snackIdsForOverride(nextSnack);for(const id of afterSnackIds){if(!beforeSnackIds.includes(id))replacementProducts[id]=true}plan=nextPlan;snackOverride=nextSnack;const kept={};for(const [id,on] of Object.entries(checkedShop)){const before=beforeSim.purchases[id]?.count||0,after=nextSim.purchases[id]?.count||0;if(on&&before===after&&after>0)kept[id]=true}checkedShop=kept;for(const id of Object.keys(resolvedEquivalent)){const before=beforeSim.purchases[id]?.count||0,after=nextSim.purchases[id]?.count||0;if(before!==after||!after)delete resolvedEquivalent[id]}closeUnavailable();menuNeedsRender=true;const s=document.scrollingElement||document.documentElement,keepY=s.scrollTop;renderShoppingOnly();s.scrollTop=Math.min(keepY,Math.max(0,s.scrollHeight-s.clientHeight));scheduleDraftSave();toast('')}
 function markEquivalent(id){resolvedEquivalent[id]=true;checkedShop[id]=true;closeUnavailable();renderShoppingOnly();scheduleDraftSave();toast('')}
-const MEAL_IMAGE_TITLES=["Madeleines", "Pâté / terrine + tortillas", "Riz précuit + fromage", "Marbré", "Saucisson sec + fromage + baguette", "Purée + saucisson", "Salade de lentilles + fromage en dés + maïs", "Pâtes + concentré de tomate + saucisson", "Muesli + lait en poudre", "Ravioli en conserve", "Chips + saucisson sec + fromage", "Nouilles instantanées + saucisson", "Salade de pois chiches + Knacki + maïs", "Biscuits sablés", "Ramen bomb", "Quatre-quarts", "Pâtes + soupe déshydratée", "Saucisson sec + fromage + tortillas", "Cassoulet en conserve", "Muesli + lait en poudre + fruits secs", "Semoule + épices", "Semoule épicée + raisins secs", "Semoule + concentré de tomate", "Semoule + pois chiches + épices", "Pains au lait + chocolat en tablette", "Crackers + saucisson sec + fromage", "Semoule + soupe déshydratée", "Knacki + tortillas", "Lentilles-saucisses en conserve", "Semoule + Knacki", "Knacki + pain de mie", "Pâté / terrine + pain de mie", "Chili con carne en conserve", "Purée + fromage", "Brioche + chocolat en tablette", "Salade de lentilles + Knacki", "Couscous en conserve", "Salade de lentilles + Knacki + fromage", "Riz basmati précuit + saucisson", "Nouilles instantanées + fromage", "Pâté / terrine + baguette", "Petit salé aux lentilles en conserve", "Salade de haricots rouges + fromage en dés + maïs", "Riz précuit + Knacki", "Salade de haricots rouges + Knacki + maïs", "Pâtes + concentré de tomate + fromage", "Pâtes + concentré de tomate", "Quinoa aux légumes précuit + saucisson", "Salade de pois chiches + Knacki + fromage"];
+const MEAL_IMAGE_TITLES=["Madeleines", "Pâté / terrine + tortillas", "Riz précuit + fromage", "Marbré", "Saucisson sec + fromage + baguette", "Purée + saucisson", "Salade de lentilles + fromage en dés + maïs", "Pâtes 3 minutes + concentré de tomate + saucisson", "Muesli + lait en poudre", "Ravioli en conserve", "Chips + saucisson sec + fromage", "Nouilles instantanées + saucisson", "Salade de pois chiches + Knacki + maïs", "Biscuits sablés", "Ramen bomb", "Quatre-quarts", "Pâtes 3 minutes + soupe déshydratée", "Saucisson sec + fromage + tortillas", "Cassoulet en conserve", "Muesli + lait en poudre + fruits secs", "Semoule + épices", "Semoule épicée + raisins secs", "Semoule + concentré de tomate", "Semoule + pois chiches + épices", "Pains au lait + chocolat en tablette", "Crackers + saucisson sec + fromage", "Semoule + soupe déshydratée", "Knacki + tortillas", "Lentilles-saucisses en conserve", "Semoule + Knacki", "Knacki + pain de mie", "Pâté / terrine + pain de mie", "Chili con carne en conserve", "Purée + fromage", "Brioche + chocolat en tablette", "Salade de lentilles + Knacki", "Couscous en conserve", "Salade de lentilles + Knacki + fromage", "Riz basmati précuit + saucisson", "Nouilles instantanées + fromage", "Pâté / terrine + baguette", "Petit salé aux lentilles en conserve", "Salade de haricots rouges + fromage en dés + maïs", "Riz précuit + Knacki", "Salade de haricots rouges + Knacki + maïs", "Pâtes 3 minutes + concentré de tomate + fromage", "Pâtes 3 minutes + concentré de tomate", "Quinoa aux légumes précuit + saucisson", "Salade de pois chiches + Knacki + fromage"];
 function mealImage(meal){
  const aliases={'Madeleines fourrées':'Madeleines','Pâté + tortillas':'Pâté / terrine + tortillas','Semoule cold soak + épices':'Semoule + épices'};
  const index=MEAL_IMAGE_TITLES.indexOf(aliases[meal.title]||meal.title);
@@ -3002,16 +3002,16 @@ clearPreparedResults();renderPrepState();alignMenuBack();
 
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.293"></script>
+<script src="./home-bivouac.js?v=1.294"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./offline-core.js?v=1.293"></script>
-<script src="./home-map.js?v=1.293"></script>
-<script src="./gas-tracker.js?v=1.293"></script>
-<script src="./reset-points.js?v=1.293"></script>
-<script src="./reset-engine.js?v=1.293"></script>
-<script src="./reset.js?v=1.293"></script>
-<script src="./home.js?v=1.293"></script><script src="./backups.js?v=1.293"></script>
-<script src="./offline.js?v=1.293"></script>
+<script src="./offline-core.js?v=1.294"></script>
+<script src="./home-map.js?v=1.294"></script>
+<script src="./gas-tracker.js?v=1.294"></script>
+<script src="./reset-points.js?v=1.294"></script>
+<script src="./reset-engine.js?v=1.294"></script>
+<script src="./reset.js?v=1.294"></script>
+<script src="./home.js?v=1.294"></script><script src="./backups.js?v=1.294"></script>
+<script src="./offline.js?v=1.294"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>
