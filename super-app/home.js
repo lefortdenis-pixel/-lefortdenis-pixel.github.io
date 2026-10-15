@@ -219,7 +219,7 @@
   }
   async function loadPoints(){
     try{
-      const response=DATA.routeId==='alpes-mancelles'?{ok:true,json:async()=>window.ALPES_MANCELLES.pois}:await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.295':'./home-pois.json?v=1.295');if(!response.ok)throw Error('points');
+      const response=DATA.routeId==='alpes-mancelles'?{ok:true,json:async()=>window.ALPES_MANCELLES.pois}:await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.296':'./home-pois.json?v=1.296');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}
@@ -277,12 +277,8 @@
     event.preventDefault();if(!input.reportValidity())return;
     ++state.request;gpsBusy(false);setPosition({km:Number(input.value),mode:'km'},{manualEntry:true});closeGps();notice('');input.blur();
   });
-  line.addEventListener('click',event=>{
-    const button=event.target.closest('[data-category]');if(!button||!event.isTrusted)return;
-    event.stopImmediatePropagation();
-    const open=!(nextCardOpen&&activeCategory===button.dataset.category);
-    closeBubble();closeGps();activeCategory=button.dataset.category;setNextCardOpen(open);updateNextCard();
-  },true);
+  // The five navigation buttons already open their modules. Let native clicks
+  // reach those handlers, including clicks forwarded by a point's action.
   let swipeUntil=0;
   q('homeNextOpen').addEventListener('click',()=>{if(Date.now()<swipeUntil)return;const item=categories.find(p=>p.id===activeCategory);q(item.button)?.click();});
   let swipeX=null;const nextCard=q('homeNextOpen');
@@ -302,15 +298,18 @@
     ++state.request;gpsBusy(false);setPosition(event.detail,{center:event.detail?.mode!=='gps',manualEntry:event.detail?.mode==='km'});
   });
   window.addEventListener('traversee-view',event=>{
+    const selectedPoint=state.selectedPoi?.point;
     setNextCardOpen(false);closeBubble();closeGps();const name=event.detail.name,p=state.position;
     if(name==='home'){
       requestAnimationFrame(()=>{state.map?.invalidateSize({pan:false});if(p)state.map?.setPosition(p,true)});
       refreshBivouac();setTimeout(refreshBivouac,800);
     }
-    if(!p)return;
-    if(name==='store')show(p.km,stageFromKm(p.km),lastShown.offRoute);
-    if(name==='water')window.TraverseeWater?.search({lat:p.lat,lon:p.lon},'',p.km);
-    if(name==='gas')window.TraverseeGas?.render(p.km);
+    // Opening a module must also work before GPS is granted or while the user
+    // is still at home. This search origin is not saved as their position.
+    const origin=p||(Number.isFinite(selectedPoint?.km)?selectedPoint:{km:0,...atKm(0)});
+    if(name==='store')show(origin.km,stageFromKm(origin.km),lastShown?.offRoute||0);
+    if(name==='water')window.TraverseeWater?.search({lat:origin.lat,lon:origin.lon},p?'':selectedPoint?'Depuis le point sélectionné · ':'Depuis le départ · ',origin.km);
+    if(name==='gas')window.TraverseeGas?.render(origin.km);
   });
   document.addEventListener('visibilitychange',()=>{
     if(document.visibilityState==='visible'&&root.classList.contains('active')){

@@ -24,7 +24,7 @@ function load(trip='traversee',variant='principal'){
  const html=fs.readFileSync(path.join(base,'index.html'),'utf8');
  for(const filename of ['index.html','bivouac/index.html'])for(const m of fs.readFileSync(path.join(base,filename),'utf8').matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(m[1],{filename});
  const assets={};vm.runInNewContext(fs.readFileSync(path.join(base,'offline-assets.js'),'utf8'),assets);
- assert.equal(assets.TraverseeOfflineAssets.version,'1.295');assert(assets.TraverseeOfflineAssets.essential.includes('./trip-alpes.js?v=1.295'));
+ assert.equal(assets.TraverseeOfflineAssets.version,'1.296');assert(assets.TraverseeOfflineAssets.essential.includes('./trip-alpes.js?v=1.296'));
  for(const file of assets.TraverseeOfflineAssets.essential){const name=file.split('?')[0];assert(fs.existsSync(path.join(base,name)),name)}
  assert(html.indexOf('trip-alpes.js')<html.indexOf('route-engine.js'));
  console.log('PASS: official 89.472 km loop, 39 water candidates, 3 stages, route isolation, retained Brenne choice, storage failure, GPX export, inline JS and offline assets');
