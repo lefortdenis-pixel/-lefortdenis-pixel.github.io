@@ -2,7 +2,7 @@
   "researchedAt": "2026-10-15",
   "route": "GRP Alpes Mancelles officiel fourni, 89.472 km",
   "previousCount": 39,
-  "totalCount": 40,
+  "totalCount": 44,
   "newRetained": [
     "WC — 6 Rue de la Grand Maison, Saint-Rémy-de-Sillé",
     "WC — 8b Rue Robert Triger, Douillet",
@@ -113,5 +113,50 @@
     "Fontaines de France",
     "Sites de communes et PanneauPocket (annonce expirée non utilisée)"
   ],
-  "limits": "Un WC recensé ne confirme ni un robinet ni sa potabilité. Les fontaines naturelles ne sont pas des analyses sanitaires. Disponibilité saisonnière et fonctionnement non garantis. Les détours routés sont des estimations sur le réseau piéton cartographié."
+  "limits": "Un WC recensé ne confirme ni un robinet ni sa potabilité. Les fontaines naturelles ne sont pas des analyses sanitaires. Disponibilité saisonnière et fonctionnement non garantis. Les détours routés sont des estimations sur le réseau piéton cartographié.",
+  "followup": {
+    "previousCount": 40,
+    "totalCount": 44,
+    "newRetained": [
+      "WC derrière la mairie — Assé-le-Boisne",
+      "Cimetière — Saint-Aubin-de-Locquenay",
+      "Cimetière — Montreuil-le-Chétif",
+      "Eau annoncée — parking rue de Dessous, Saint-Céneri",
+      "Eau chez l’habitant — L’Herberie, Saint-Aubin"
+    ],
+    "removed": [
+      {
+        "name": "Borne d’eau — aire du Gué Plard",
+        "reason": "Services de ravitaillement supprimés signalés en juillet 2022 et août 2024 ; avis du 07/02/2024 : pas de robinet, WC fermés.",
+        "sourceUrl": "https://park4night.com/fr/place/3236"
+      }
+    ],
+    "additionalCoverage": [
+      "Avis Google republiés sur Les-meilleurs-camping / Autour de moi (Saint-Céneri)",
+      "Sites municipaux et annuaires Service Public / Acceslibre",
+      "OpenStreetMap API : données complètes des secteurs Assé, Saint-Aubin et Montreuil",
+      "Visorando : descriptifs et avis de randonnées locales",
+      "Randonner Léger : récit GR36/GR36A",
+      "Komoot : listes de points et itinéraires",
+      "En roue libre : récit V44, août 2026",
+      "Patrimoine et lavoirs en Sarthe",
+      "Brochures PDF du circuit de ville de Sillé"
+    ],
+    "notRetained": [
+      {
+        "name": "Borne avenue de la Gare, Fresnay",
+        "reason": "Déjà écartée ; robinet coupé confirmé dans les avis de mai et août 2026.",
+        "sourceUrl": "https://park4night.com/fr/place/532450"
+      },
+      {
+        "name": "Fontaine du Puits-Vallas, Sillé",
+        "reason": "Brochure patrimoniale sur l’alimentation historique ; aucun usage actuel pour remplir une gourde établi."
+      },
+      {
+        "name": "Lavoir rue de La Motte, Assé",
+        "reason": "Bassin derrière une grille ; pas de point de prélèvement accessible documenté."
+      }
+    ],
+    "googleMapsScope": "Avis accessibles par indexation et republication, pas une inspection exhaustive de toutes les fiches Google Maps."
+  }
 }
