@@ -1,0 +1,117 @@
+{
+  "researchedAt": "2026-10-15",
+  "route": "GRP Alpes Mancelles officiel fourni, 89.472 km",
+  "previousCount": 39,
+  "totalCount": 40,
+  "newRetained": [
+    "WC — 6 Rue de la Grand Maison, Saint-Rémy-de-Sillé",
+    "WC — 8b Rue Robert Triger, Douillet",
+    "WC — 3 Place Thiers, Fresnay-sur-Sarthe",
+    "WC — 12bis Rue du Docteur Horeau, Fresnay-sur-Sarthe",
+    "Eau du cimetière — Saint-Rémy-de-Sillé"
+  ],
+  "newCandidateNames": [
+    "WC — 6 Rue de la Grand Maison, Saint-Rémy-de-Sillé",
+    "WC — 8b Rue Robert Triger, Douillet",
+    "WC — 3 Place Thiers, Fresnay-sur-Sarthe",
+    "WC — 8 Rue des Ecoles - 3, Saint-Ouen-de-Mimbré",
+    "WC — 1 Rue des Champagnes, Saint-Ouen-de-Mimbré",
+    "WC — 12bis Rue du Docteur Horeau, Fresnay-sur-Sarthe",
+    "Eau du cimetière — Saint-Rémy-de-Sillé"
+  ],
+  "upgradedCount": 24,
+  "upgraded": [
+    "WC — 14 Rue de Villaines-la-juhel, Saint-Paul-le-Gaultier",
+    "WC — 7 Place de la Gare - 4, Sillé-le-Guillaume",
+    "WC — 5 Rue de Saint Symphorien, Moulins-le-Carbonnel",
+    "WC — 2 Rue des Alpes Mancelles, Saint-Léonard-des-Bois",
+    "WC — 2 Rue de la Bascule - 2, Mont-Saint-Jean",
+    "WC — 2890 Route de Sille Plage 1, Sillé-le-Guillaume",
+    "WC — 88 Route Forestière des Chalets, Sillé-le-Guillaume",
+    "WC — 24 Rue des Alpes Mancelles, Saint-Léonard-des-Bois",
+    "WC — 3 Impasse du Bief, Saint-Paul-le-Gaultier",
+    "WC — Route du Mans, Saint-Rémy-de-Sillé",
+    "WC — 39 Place du Marche aux Bestiaux, Sillé-le-Guillaume",
+    "WC — Rue du Doyenné, Sillé-le-Guillaume",
+    "WC — 6 Allee Gabriel Richefeu, Sillé-le-Guillaume",
+    "WC — 2890 Route de Sille Plage 2, Sillé-le-Guillaume",
+    "WC — 1 Chemin du Presbytère, Saint-Céneri-le-Gérei",
+    "WC — 1 Place de la Résistance - 4, Sillé-le-Guillaume",
+    "WC — 8 Rue du Gué Plard, Saint-Léonard-des-Bois",
+    "WC — 1 Le Gasseau, Saint-Léonard-des-Bois",
+    "WC — 4 Rue de la Vallée - 2, Saint-Léonard-des-Bois",
+    "Sanitaires publics — Boucles de la Sarthe, Saint-Léonard",
+    "Lavabo des sanitaires — Sillé-Plage, allée Richefeu",
+    "WC et point d’eau annoncé — plan d’eau Saint-Paul",
+    "Robinet — Sillé-Plage",
+    "Point d’eau — Moulins-le-Carbonnel, Saint-Symphorien"
+  ],
+  "excluded": [
+    {
+      "name": "Camping du Sans Souci, Fresnay",
+      "reason": "Fermeture pour l’hiver dès le 30/09/2026, hors locatifs ; ne pas compter sur le robinet en accès libre.",
+      "sourceUrl": "https://www.sarthetourisme.com/campings/camping-le-sans-souci/"
+    },
+    {
+      "name": "Borne de la gare de Sillé-le-Guillaume",
+      "reason": "Pas d’eau propre / borne hors service signalés en avril et août 2026.",
+      "sourceUrl": "https://park4night.com/fr/place/9408"
+    },
+    {
+      "name": "Fontaine Saint-Guillaume, Fresnay",
+      "reason": "Fontaine historique arrêtée depuis 1954.",
+      "sourceUrl": "https://www.fontainesdefrance.info/fontaines/la-fontaine-saint-guillaume/"
+    },
+    {
+      "name": "Point d’eau — Fresnay-sur-Sarthe",
+      "reason": "Détour à pied estimé supérieur à 5 km aller-retour",
+      "walkingRoundTripMeters": 6495,
+      "sourceUrl": "https://www.openstreetmap.org/node/2391617802"
+    },
+    {
+      "name": "Cimetière — Fresnay-sur-Sarthe",
+      "reason": "Détour à pied estimé supérieur à 5 km aller-retour",
+      "walkingRoundTripMeters": 6752,
+      "sourceUrl": ""
+    },
+    {
+      "name": "WC — 5 Rue de Saint Symphorien, Moulins-le-Carbonnel",
+      "reason": "Détour à pied estimé supérieur à 5 km aller-retour",
+      "walkingRoundTripMeters": 5028,
+      "sourceUrl": "https://www.toilettespubliques.com/toilette/11549976930"
+    },
+    {
+      "name": "Point d’eau — Moulins-le-Carbonnel, Saint-Symphorien",
+      "reason": "Détour à pied estimé supérieur à 5 km aller-retour",
+      "walkingRoundTripMeters": 5028,
+      "sourceUrl": "https://fontaineeaupotable.fr/fontaines/point-deau-a-moulins-carbonnel-moulins-carbonnel/"
+    },
+    {
+      "name": "WC — 8 Rue des Ecoles - 3, Saint-Ouen-de-Mimbré",
+      "reason": "Détour à pied estimé supérieur à 5 km aller-retour",
+      "walkingRoundTripMeters": 5288,
+      "sourceUrl": "https://www.toilettespubliques.com/toilette/9259606938"
+    },
+    {
+      "name": "WC — 1 Rue des Champagnes, Saint-Ouen-de-Mimbré",
+      "reason": "Détour à pied estimé supérieur à 5 km aller-retour",
+      "walkingRoundTripMeters": 5341,
+      "sourceUrl": "https://www.toilettespubliques.com/toilette/9259607020"
+    }
+  ],
+  "coverage": [
+    "Eau Cyclisme (Sarthe et Orne)",
+    "EauPotable.info",
+    "Fontaine Eau Potable",
+    "ToilettesPubliques.com (45 fiches avec coordonnées et accès)",
+    "Acceslibre",
+    "Park4night",
+    "i-Camping Car",
+    "Pique-Nique.info",
+    "Offices de tourisme Alpes Mancelles, Sarthe et Normandie",
+    "France Vélo Tourisme / Vélobuissonnière",
+    "Fontaines de France",
+    "Sites de communes et PanneauPocket (annonce expirée non utilisée)"
+  ],
+  "limits": "Un WC recensé ne confirme ni un robinet ni sa potabilité. Les fontaines naturelles ne sont pas des analyses sanitaires. Disponibilité saisonnière et fonctionnement non garantis. Les détours routés sont des estimations sur le réseau piéton cartographié."
+}

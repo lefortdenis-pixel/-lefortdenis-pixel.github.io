@@ -13,7 +13,10 @@ function load(trip='traversee',variant='principal'){
  assert.equal(r.data.tracks.flat().length,r.points.length+2);
  assert.equal(r.data.stageEndsKm.at(-1),r.data.routeLengthKm);
  assert(Math.abs(r.pace.travelDays(0,r.data.routeLengthKm)-3)<1e-8);assert.equal(r.pace.windowEnd(0,3),r.data.routeLengthKm);
- assert.equal(t.water.length,39);assert(t.pois.water.every(p=>p.offRouteMeters<=2500&&p.km>=0&&p.km<=t.lengthKm&&p.note));
+ assert.equal(t.water.length,40);assert(t.pois.water.every(p=>p.offRouteMeters<=2500&&p.km>=0&&p.km<=t.lengthKm&&p.note));
+ assert(t.pois.water.every(p=>!Number.isFinite(p.walkingRoundTripMeters)||p.walkingRoundTripMeters<=5000));
+ assert(t.pois.water.some(p=>p.name.includes('Eau du cimetière')&&p.sourceUrl.includes('eau-cyclisme')));
+ assert(t.pois.water.some(p=>p.name.includes('aire de Saint-Céneri')&&p.note.includes('mi-octobre')));
  assert(t.pois.water.filter(p=>p.priority===3).every(p=>p.sourceUrl.startsWith('https://')));
  assert(!t.pois.water.some(p=>/miraculeuse|avenue de la Gare/i.test(p.name)));
  assert(t.pois.water.some(p=>p.name.includes('Gesnes')&&p.note.includes('22/06/2026')));
@@ -24,8 +27,8 @@ function load(trip='traversee',variant='principal'){
  const html=fs.readFileSync(path.join(base,'index.html'),'utf8');
  for(const filename of ['index.html','bivouac/index.html'])for(const m of fs.readFileSync(path.join(base,filename),'utf8').matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(m[1],{filename});
  const assets={};vm.runInNewContext(fs.readFileSync(path.join(base,'offline-assets.js'),'utf8'),assets);
- assert.equal(assets.TraverseeOfflineAssets.version,'1.296');assert(assets.TraverseeOfflineAssets.essential.includes('./trip-alpes.js?v=1.296'));
+ assert.equal(assets.TraverseeOfflineAssets.version,'1.297');assert(assets.TraverseeOfflineAssets.essential.includes('./trip-alpes.js?v=1.297'));
  for(const file of assets.TraverseeOfflineAssets.essential){const name=file.split('?')[0];assert(fs.existsSync(path.join(base,name)),name)}
  assert(html.indexOf('trip-alpes.js')<html.indexOf('route-engine.js'));
- console.log('PASS: official 89.472 km loop, 39 water candidates, 3 stages, route isolation, retained Brenne choice, storage failure, GPX export, inline JS and offline assets');
+ console.log('PASS: official 89.472 km loop, 40 water candidates, 3 stages, route isolation, retained Brenne choice, storage failure, GPX export, inline JS and offline assets');
 })().catch(e=>{console.error(e);process.exitCode=1});

@@ -11,12 +11,12 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-montagnes-v4.png">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon-montagnes-v4.png">
-<title>Traversée 2027 · v1.296 hors ligne</title>
+<title>Traversée 2027 · v1.297 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.296">
-<link rel="stylesheet" href="./offline.css?v=1.296">
-<link rel="stylesheet" href="./reset.css?v=1.296">
+<link rel="stylesheet" href="./home.css?v=1.297">
+<link rel="stylesheet" href="./offline.css?v=1.297">
+<link rel="stylesheet" href="./reset.css?v=1.297">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -640,7 +640,7 @@ html,body{height:100%;overflow:hidden}
 #gasView.active .waterList{display:grid!important;min-height:0;gap:12px;padding-bottom:40px}
 #gasView.active .waterItem{padding:16px 14px;min-height:112px}
 </style>
-<link rel="stylesheet" href="./soleil-font.css?v=1.296"><link rel="stylesheet" href="./soleil.css?v=1.296">
+<link rel="stylesheet" href="./soleil-font.css?v=1.297"><link rel="stylesheet" href="./soleil.css?v=1.297">
 </head>
 <body>
 <dialog id="tripDialog" aria-labelledby="tripDialogTitle"><header><h2 id="tripDialogTitle">Ma randonnée</h2><button type="button" id="tripClose" aria-label="Fermer">×</button></header><button type="button" data-trip="traversee"><b>Ma traversée</b><small>Ouistreham → Estérel · 2027</small></button><button type="button" data-trip="alpes-mancelles"><b>Ma rando de 3 jours</b><small>Alpes Mancelles · boucle de Fresnay</small></button><p id="tripStatus" role="status"></p></dialog>
@@ -1061,9 +1061,9 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.296"></script>
-<script src="./trip-alpes.js?v=1.296"></script>
-<script src="./route-engine.js?v=1.296"></script>
+<script src="./route-data.js?v=1.297"></script>
+<script src="./trip-alpes.js?v=1.297"></script>
+<script src="./route-engine.js?v=1.297"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1405,7 +1405,7 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.296';
+const GPX_WATER_URL='./water-points.json?v=1.297';
 const WATER_RADIUS_METERS=8000;
 const WATER_LIMIT=DATA.routeId==='alpes-mancelles'?100:24;
 const EARTH_METERS=6371008.8;
@@ -1579,7 +1579,7 @@ function waterRouteLabel(point){
   const delta=point.alongDelta,along=Math.abs(delta);
   const direction=delta>=-.15?'dans '+along.toFixed(1).replace('.',',')+' km':along.toFixed(1).replace('.',',')+' km derrière';
   const off=point.offRouteMeters<=40?'sur la trace':(point.offRouteMeters>=1000?(point.offRouteMeters/1000).toFixed(1).replace('.',',')+' km':Math.round(point.offRouteMeters/10)*10+' m')+' hors trace';
-  return direction+' · '+off;
+  return direction+' · '+(Number.isFinite(point.walkingRoundTripMeters)?'détour à pied estimé : '+formatWaterDistance(point.walkingRoundTripMeters)+' aller-retour':off);
 }
 function cleanWaterName(value){
   let name=String(value||'Point d’eau').trim();
@@ -1632,7 +1632,7 @@ async function searchWater(origin,context='',originKm=null){
   let gpxPoints=[];
   try{
     const raw=await loadGpxWater();
-    gpxPoints=raw.map(point=>({lat:Number(point.a),lon:Number(point.o),name:point.n||gpxTypeLabel(point.t),description:point.d||gpxTypeLabel(point.t),category:gpxCategory(point.t),source:point.sourceUrl?'documented':'gpx',sourceUrl:point.sourceUrl,status:point.status,priority:3}));
+    gpxPoints=raw.map(point=>({lat:Number(point.a),lon:Number(point.o),name:point.n||gpxTypeLabel(point.t),description:point.d||gpxTypeLabel(point.t),category:gpxCategory(point.t),source:point.sourceUrl?'documented':'gpx',sourceUrl:point.sourceUrl,status:point.status,walkingRoundTripMeters:point.walkingRoundTripMeters,priority:3}));
   }catch(_){
     waterList.innerHTML='<div class="waterEmpty">Les données hors ligne ne sont pas disponibles.</div>';
   }
@@ -1693,7 +1693,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.296"></script>
+<script src="./gas-points.js?v=1.297"></script>
 <script id="gas-search">
 (()=>{
   const rows=DATA.routeId==='alpes-mancelles'?[]:window.TRAVERSEE_GAS_POINTS;
@@ -2107,7 +2107,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 }
 .allDaysMode #validation{display:none!important}
 
-</style><link rel="stylesheet" href="./soleil-menu.css?v=1.296"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
+</style><link rel="stylesheet" href="./soleil-menu.css?v=1.297"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
 <div id="prepCard">
       <h1 id="prepTitle" class="prepTitle">Bien manger.<br><em>Bien marcher.</em></h1>
       <p id="prepSubtitle" class="prepSub">Combien de jours d’autonomie ?</p>
@@ -3011,16 +3011,16 @@ clearPreparedResults();renderPrepState();alignMenuBack();
 
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.296"></script>
+<script src="./home-bivouac.js?v=1.297"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./offline-core.js?v=1.296"></script>
-<script src="./home-map.js?v=1.296"></script>
-<script src="./gas-tracker.js?v=1.296"></script>
-<script src="./reset-points.js?v=1.296"></script>
-<script src="./reset-engine.js?v=1.296"></script>
-<script src="./reset.js?v=1.296"></script>
-<script src="./home.js?v=1.296"></script><script src="./backups.js?v=1.296"></script>
-<script src="./offline.js?v=1.296"></script>
+<script src="./offline-core.js?v=1.297"></script>
+<script src="./home-map.js?v=1.297"></script>
+<script src="./gas-tracker.js?v=1.297"></script>
+<script src="./reset-points.js?v=1.297"></script>
+<script src="./reset-engine.js?v=1.297"></script>
+<script src="./reset.js?v=1.297"></script>
+<script src="./home.js?v=1.297"></script><script src="./backups.js?v=1.297"></script>
+<script src="./offline.js?v=1.297"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>
