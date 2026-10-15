@@ -48,7 +48,7 @@
   return true;
  }
  function getPoints(){
-  if(!points)points=window.TRAVERSEE_GAS_POINTS.map(p=>{const r=projectGps(p.lat,p.lon);return {...p,...r,offRouteMeters:r.distanceMeters}});
+  if(!points)points=(DATA.routeId==='alpes-mancelles'?[]:window.TRAVERSEE_GAS_POINTS).map(p=>{const r=projectGps(p.lat,p.lon);return {...p,...r,offRouteMeters:r.distanceMeters}});
   return points;
  }
  const fmt=n=>Math.max(0,Number(n)||0).toFixed(1).replace('.',',');

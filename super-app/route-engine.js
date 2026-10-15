@@ -2,9 +2,33 @@
 (()=>{
   'use strict';
   const c=window.TRAVERSEE_ROUTE_CONFIG,key='traversee-route-choice-v1';
+  window.TraverseeTrips={
+    current(){try{return localStorage.getItem('traversee-trip-v1')==='alpes-mancelles'?'alpes-mancelles':'traversee'}catch(_){return 'traversee'}},
+    async choose(next){
+      if(!['traversee','alpes-mancelles'].includes(next)||next===this.current())return;
+      try{
+        await window.TraverseeBivouacFlush?.();
+        await window.TraverseeBackups?.flush();
+        localStorage.setItem('traversee-trip-v1',next);
+      }catch(_){return false}
+      location.reload();return true;
+    }
+  };
+  if(window.TraverseeTrips.current()==='alpes-mancelles'){
+    const t=window.ALPES_MANCELLES,points=t.points,length=t.lengthKm,rate=length/3;
+    const tracks=split(points,[rate,rate*2,length]),ends=[];let walked=0;
+    for(const track of tracks){for(let i=1;i<track.length;i++)walked+=hav(track[i-1],track[i]);ends.push(walked)}
+    window.TraverseeRoutes={id:t.id,version:t.version,points,inactiveLeg:[],camping:[],nightStops:[],branch:{},
+      data:{version:t.version,routeId:t.id,routeLengthKm:walked,tracks,stageEndsKm:ends,stores:[]},
+      pace:{averages:{flat:rate,mountain:rate},profiles:tracks.map((track,i)=>({...terrain(track),startKm:i?ends[i-1]:0,endKm:ends[i]})),
+        windowEnd:(km,days)=>Math.min(walked,Math.max(0,km)+Math.max(0,days)*rate),travelDays:(a,b)=>Math.max(0,b-a)/rate,journeyDays:(a,b,detour=0)=>(Math.abs(b-a)+Math.max(0,detour))/rate,method:'Boucle répartie sur trois jours ; limites indicatives'},
+      choose(){return false},
+      gpx(){return '<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="Ma rando" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>GRP Alpes Mancelles — Fresnay</name><trkseg>'+points.map(p=>'<trkpt lat="'+p[0]+'" lon="'+p[1]+'"><ele>'+p[2]+'</ele></trkpt>').join('')+'</trkseg></trk></gpx>'}
+    };return;
+  }
   let id='principal';try{if(localStorage.getItem(key)==='brenne')id='brenne'}catch(_){}
   const points=id==='brenne'?[...c.main.slice(0,c.joins[0]),...c.variant,...c.main.slice(c.joins[1]+1)]:c.main;
-  const hav=(a,b)=>{const r=Math.PI/180,p1=a[0]*r,p2=b[0]*r;return 2*6371.0088*Math.asin(Math.sqrt(Math.sin((p2-p1)/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin((b[1]-a[1])*r/2)**2));};
+  function hav(a,b){const r=Math.PI/180,p1=a[0]*r,p2=b[0]*r;return 2*6371.0088*Math.asin(Math.sqrt(Math.sin((p2-p1)/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin((b[1]-a[1])*r/2)**2));};
   function split(points,ends){
     const tracks=[];let start=0,walked=0,index=1;
     for(let stage=0;stage<ends.length;stage++){

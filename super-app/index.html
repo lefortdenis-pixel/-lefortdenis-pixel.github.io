@@ -11,12 +11,12 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-montagnes-v4.png">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon-montagnes-v4.png">
-<title>Traversée 2027 · v1.294 hors ligne</title>
+<title>Traversée 2027 · v1.295 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.294">
-<link rel="stylesheet" href="./offline.css?v=1.294">
-<link rel="stylesheet" href="./reset.css?v=1.294">
+<link rel="stylesheet" href="./home.css?v=1.295">
+<link rel="stylesheet" href="./offline.css?v=1.295">
+<link rel="stylesheet" href="./reset.css?v=1.295">
 <style>
 :root{
   --bg:#f0f0ec; --ink:#12130f; --muted:#73756d; --line:#d9dad2;
@@ -640,14 +640,20 @@ html,body{height:100%;overflow:hidden}
 #gasView.active .waterList{display:grid!important;min-height:0;gap:12px;padding-bottom:40px}
 #gasView.active .waterItem{padding:16px 14px;min-height:112px}
 </style>
-<link rel="stylesheet" href="./soleil-font.css?v=1.294"><link rel="stylesheet" href="./soleil.css?v=1.294">
+<link rel="stylesheet" href="./soleil-font.css?v=1.295"><link rel="stylesheet" href="./soleil.css?v=1.295">
 </head>
 <body>
+<dialog id="tripDialog" aria-labelledby="tripDialogTitle"><header><h2 id="tripDialogTitle">Ma randonnée</h2><button type="button" id="tripClose" aria-label="Fermer">×</button></header><button type="button" data-trip="traversee"><b>Ma traversée</b><small>Ouistreham → Estérel · 2027</small></button><button type="button" data-trip="alpes-mancelles"><b>Ma rando de 3 jours</b><small>Alpes Mancelles · boucle de Fresnay</small></button><p id="tripStatus" role="status"></p></dialog>
+<style>
+#tripToggle{font:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;text-align:left;border:0;padding:0;background:none;cursor:pointer;position:relative;pointer-events:auto}
+.tripChevron{font-family:system-ui;font-size:22px;vertical-align:middle;margin-left:8px}#tripToggle:focus-visible{outline:2px solid currentColor;outline-offset:6px;border-radius:8px}
+#tripDialog{width:min(90vw,380px);border:0;border-radius:24px;background:#fff9ed;color:#27291d;padding:24px;box-shadow:0 24px 80px #0004}#tripDialog::backdrop{background:#17251666;backdrop-filter:blur(5px)}#tripDialog header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}#tripDialog h2{font-size:24px;margin:0}#tripClose{border:0;background:none;font-size:30px;padding:0 8px;color:inherit}#tripDialog [data-trip]{display:block;width:100%;text-align:left;border:1px solid #dcdaca;border-radius:16px;padding:18px;margin-top:12px;background:transparent;color:inherit;font:inherit}#tripDialog [data-trip][aria-pressed=true]{background:#f4d45d;border-color:#a58c28}#tripDialog small{display:block;margin-top:6px;font-size:13px}#tripStatus{font-size:13px;margin-bottom:0}
+</style>
 <div class="wrap">
 
   <section class="homeView homeMapView appView active" id="homeView" aria-label="Carte de la traversée">
     <div id="homeMap" aria-label="Carte Plan IGN et trace de la traversée"></div>
-    <div class="soleilWelcome"><h1>Ma<br>traversée<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2"/></svg></h1><button type="button" id="openMenuBtn" class="soleilMenu" aria-label="Trouver un repas"><svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2v6q0 3 3 3t3-3V2M7 2v20M19 2q-4 3-4 10h4V2v20"/></svg><span>Repas</span></button></div>
+    <div class="soleilWelcome"><h1><button type="button" id="tripToggle" aria-haspopup="dialog" aria-controls="tripDialog" aria-label="Changer de randonnée"><span id="tripTitle">Ma<br>traversée</span><span class="tripChevron" aria-hidden="true">⌄</span></button><svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2"/></svg></h1><button type="button" id="openMenuBtn" class="soleilMenu" aria-label="Trouver un repas"><svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2v6q0 3 3 3t3-3V2M7 2v20M19 2q-4 3-4 10h4V2v20"/></svg><span>Repas</span></button></div>
     <header class="homeMapTop">
       <div class="homePosition">
         <button type="button" id="homeGpsToggle" class="homeGpsToggle" aria-label="Position GPS et kilomètre" aria-expanded="false" aria-controls="homeGpsPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg></button>
@@ -1055,8 +1061,9 @@ window.addEventListener("message", e => {
 });
 </script>
 
-<script src="./route-data.js?v=1.294"></script>
-<script src="./route-engine.js?v=1.294"></script>
+<script src="./route-data.js?v=1.295"></script>
+<script src="./trip-alpes.js?v=1.295"></script>
+<script src="./route-engine.js?v=1.295"></script>
 <script>
 const DATA = window.TraverseeRoutes.data;
 const R = 6371008.8;
@@ -1398,9 +1405,9 @@ document.getElementById("storeKmInput")?.addEventListener("keydown",event=>{
 
 <script id="water-search">
 (()=>{
-const GPX_WATER_URL='./water-points.json?v=1.294';
+const GPX_WATER_URL='./water-points.json?v=1.295';
 const WATER_RADIUS_METERS=8000;
-const WATER_LIMIT=24;
+const WATER_LIMIT=DATA.routeId==='alpes-mancelles'?100:24;
 const EARTH_METERS=6371008.8;
 let gpxWaterPromise=null;
 
@@ -1479,6 +1486,7 @@ function fetchTimed(url,options={},timeout=18000){
   return fetch(url,{...options,signal:controller.signal}).finally(()=>clearTimeout(timer));
 }
 function loadGpxWater(){
+  if(DATA.routeId==='alpes-mancelles')return Promise.resolve(window.ALPES_MANCELLES.water);
   if(!gpxWaterPromise)gpxWaterPromise=fetch(GPX_WATER_URL).then(response=>{
     if(!response.ok)throw new Error('GPX indisponible');
     return response.json();
@@ -1586,6 +1594,7 @@ function cleanWaterName(value){
   return /^[A-ZÀ-ÖØ-Þ0-9 '\-]+$/.test(name)&&name.length>3?name.charAt(0)+name.slice(1).toLowerCase():name;
 }
 function waterPointDescription(point){
+  if(DATA.routeId==='alpes-mancelles')return [point.status,point.description].filter(Boolean).join(' · ');
   const routeKm=Number(point?.routeKm);
   const raw=String(point?.description||'').replace(/\s+/g,' ').trim();
   if(!Number.isFinite(routeKm))return raw.replace(/\s+-\s+/g,' · ').replace(/km\s+(\d+)\.(\d+)/gi,'km $1,$2');
@@ -1607,8 +1616,8 @@ function renderWater(points){
   const renderItems=items=>items.map((point,index)=>{
     const name=cleanWaterName(point.name);
     const desc=waterPointDescription(point);
-    const description=desc?'<details class="soleilWaterInfo"><summary>Infos du point</summary><div class="waterDesc">'+waterEscape(desc)+'</div></details>':'';
-    return '<article class="waterItem"><div class="waterItemText"><div class="waterName">'+waterEscape(name)+'</div><div class="waterDistance">'+waterEscape(waterRouteLabel(point))+'</div>'+description+'</div><button type="button" class="gasMapLink" data-water-map="'+index+'">Voir la carte</button></article>';
+    const description=desc?'<details class="soleilWaterInfo"><summary>Infos du point</summary><div class="waterDesc">'+waterEscape(desc)+(point.sourceUrl?'<br><a href="'+waterEscape(point.sourceUrl)+'" target="_blank" rel="noopener">Source ↗</a>':'')+'</div></details>':'';
+    return '<article class="waterItem"><div class="waterItemText"><div class="waterName">'+waterEscape(name)+'</div>'+(DATA.routeId==='alpes-mancelles'?'<div class="waterDesc">'+waterEscape(point.status||'À vérifier')+'</div>':'')+'<div class="waterDistance">'+waterEscape(waterRouteLabel(point))+'</div>'+description+'</div><button type="button" class="gasMapLink" data-water-map="'+index+'">Voir la carte</button></article>';
   }).join('');
   waterList.innerHTML=renderItems(points);
   waterList.onclick=e=>{const button=e.target.closest('[data-water-map]');if(!button)return;const p=points[Number(button.dataset.waterMap)];if(p)window.TraverseeHome.showPoint({...p,lon:p.lon??p.lng,km:p.routeKm??p.km},'water')};
@@ -1623,7 +1632,7 @@ async function searchWater(origin,context='',originKm=null){
   let gpxPoints=[];
   try{
     const raw=await loadGpxWater();
-    gpxPoints=raw.map(point=>({lat:Number(point.a),lon:Number(point.o),name:point.n||gpxTypeLabel(point.t),description:point.d||gpxTypeLabel(point.t),category:gpxCategory(point.t),source:point.sourceUrl?'verified':'gpx',priority:3}));
+    gpxPoints=raw.map(point=>({lat:Number(point.a),lon:Number(point.o),name:point.n||gpxTypeLabel(point.t),description:point.d||gpxTypeLabel(point.t),category:gpxCategory(point.t),source:point.sourceUrl?'documented':'gpx',sourceUrl:point.sourceUrl,status:point.status,priority:3}));
   }catch(_){
     waterList.innerHTML='<div class="waterEmpty">Les données hors ligne ne sont pas disponibles.</div>';
   }
@@ -1684,10 +1693,10 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 })();
 </script>
 
-<script src="./gas-points.js?v=1.294"></script>
+<script src="./gas-points.js?v=1.295"></script>
 <script id="gas-search">
 (()=>{
-  const rows=window.TRAVERSEE_GAS_POINTS;
+  const rows=DATA.routeId==='alpes-mancelles'?[]:window.TRAVERSEE_GAS_POINTS;
   let projected=null;
   const status=document.getElementById('gasStatus');
   const list=document.getElementById('gasList');
@@ -2098,7 +2107,7 @@ waterKmInput?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.p
 }
 .allDaysMode #validation{display:none!important}
 
-</style><link rel="stylesheet" href="./soleil-menu.css?v=1.294"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
+</style><link rel="stylesheet" href="./soleil-menu.css?v=1.295"><div id="menuApp" class="menu-body"><header class="menuToolbar" aria-label="Actions des menus"><div id="topWeight" class="topWeight"></div><button id="innerReset" class="innerReset hide" onclick="resetAll()" aria-label="Reset">Reset</button><button class="innerHome" onclick="goHome()" aria-label="Retour à l’accueil">⌂</button></header>
 <div id="prepCard">
       <h1 id="prepTitle" class="prepTitle">Bien manger.<br><em>Bien marcher.</em></h1>
       <p id="prepSubtitle" class="prepSub">Combien de jours d’autonomie ?</p>
@@ -3002,16 +3011,16 @@ clearPreparedResults();renderPrepState();alignMenuBack();
 
 </script>
 <script src="./vendor/leaflet.js"></script>
-<script src="./home-bivouac.js?v=1.294"></script>
+<script src="./home-bivouac.js?v=1.295"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./offline-core.js?v=1.294"></script>
-<script src="./home-map.js?v=1.294"></script>
-<script src="./gas-tracker.js?v=1.294"></script>
-<script src="./reset-points.js?v=1.294"></script>
-<script src="./reset-engine.js?v=1.294"></script>
-<script src="./reset.js?v=1.294"></script>
-<script src="./home.js?v=1.294"></script><script src="./backups.js?v=1.294"></script>
-<script src="./offline.js?v=1.294"></script>
+<script src="./offline-core.js?v=1.295"></script>
+<script src="./home-map.js?v=1.295"></script>
+<script src="./gas-tracker.js?v=1.295"></script>
+<script src="./reset-points.js?v=1.295"></script>
+<script src="./reset-engine.js?v=1.295"></script>
+<script src="./reset.js?v=1.295"></script>
+<script src="./home.js?v=1.295"></script><script src="./backups.js?v=1.295"></script>
+<script src="./offline.js?v=1.295"></script>
 <!-- deploy-refresh-v194 -->
 </body>
 </html>

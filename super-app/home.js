@@ -5,7 +5,7 @@
   const root=q('homeView'),line=q('homeBottomBar'),bubble=q('homePoiBubble');
   const gps=q('homeGpsToggle'),panel=q('homeGpsPanel'),status=q('homeGpsStatus');
   const input=q('homeKmInput'),refresh=q('homeGpsRefresh'),message=q('homeMapMessage');
-  const POSITION_KEY='traversee-home-position-v1';
+  const POSITION_KEY=DATA.routeId==='alpes-mancelles'?'traversee-home-position-alpes-v1':'traversee-home-position-v1';
   const categories=[{id:'water',label:'Eau',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C9 8 5 12 5 16a7 7 0 0 0 14 0c0-4-4-8-7-13Z"/><path d="M8 16a4 4 0 0 0 3 4"/></svg>',button:'openWaterBtn'},{id:'bivouac',label:'Bivouac',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 19H2L12 2Z M8 21l4-9 4 9"/></svg>',button:'openBivouacBtn'},{id:'store',label:'Magasin',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h3l3 12h12l2-9H6"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/></svg>',button:'openStoreBtn'},{id:'gas',label:'Gaz',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="8" width="14" height="14" rx="3"/><path d="M9 8V4h6v4M11 4V1h2v3M5 16h14"/></svg>',button:'openGasBtn'},{id:'reset',label:'Escale',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10V6a4 4 0 0 1 8 0v2M9 10h8l-2-3h-4Z M9 14v2m4-2v2m4-2v2M9 20v2m4-2v2m4-2v2"/></svg>',button:'openResetBtn'}];
   let activeCategory='water',nextCardOpen=false;
   const state={position:null,data:null,bivouac:null,selected:null,selectedPoi:null,points:[],map:null,markers:new Map(),location:null,request:0,gpsBusy:false,lastGpsAttempt:0};
@@ -219,7 +219,7 @@
   }
   async function loadPoints(){
     try{
-      const response=await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.291':'./home-pois.json?v=1.291');if(!response.ok)throw Error('points');
+      const response=DATA.routeId==='alpes-mancelles'?{ok:true,json:async()=>window.ALPES_MANCELLES.pois}:await fetch(DATA.routeId==='brenne'?'./home-pois-brenne.json?v=1.295':'./home-pois.json?v=1.295');if(!response.ok)throw Error('points');
       const data=await response.json();if(Math.abs(data.routeLengthKm-DATA.routeLengthKm)>.001||data.routeId!==DATA.routeId||!Array.isArray(data.water)||!Array.isArray(data.gas))throw Error('route mismatch');
       state.data=data;closeBubble();render();
     }catch(_){status.textContent='Points indisponibles. Rouvre l’app avec une connexion pour les charger.';notice(status.textContent,0);}
@@ -233,7 +233,7 @@
         r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('projects'))r.result.createObjectStore('projects')};
         r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);
       });
-      const saved=await new Promise((resolve,reject)=>{const r=db.transaction('projects').objectStore('projects').get('current');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
+      const saved=await new Promise((resolve,reject)=>{const r=db.transaction('projects').objectStore('projects').get(DATA.routeId==='alpes-mancelles'?'current-alpes-mancelles':'current');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
       if(request!==bivouacRequest)return;
       const previous=JSON.stringify(state.bivouac);
       const point=window.TraverseeBivouacPoint.fromSaved(saved,{...window.TraverseeRoutes,project:projectGps});
@@ -259,6 +259,19 @@
     syncCompass();
   });
   const routeChoice=q('homeRouteChoice');routeChoice.value=DATA.routeId;
+  const short=DATA.routeId==='alpes-mancelles',tripDialog=q('tripDialog');
+  routeChoice.closest('label')?.setAttribute('hidden','');
+  routeChoice.hidden=short;q('homeGpsPanel').querySelector('label[for="homeRouteChoice"]').hidden=short;
+  q('tripTitle').innerHTML=short?'Ma rando<br>de 3 jours':'Ma<br>traversée';
+  q('tripToggle').setAttribute('aria-label',(short?'Ma rando de 3 jours':'Ma traversée')+' · changer de randonnée');
+  q('offlineRoute')?.querySelector('option[value="traverse"]')?.replaceChildren(document.createTextNode(short?'Ma rando de 3 jours':'Ma traversée'));
+  q('tripToggle').onclick=()=>{tripDialog.querySelectorAll('[data-trip]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.trip===window.TraverseeTrips.current())));tripDialog.showModal()};
+  q('tripClose').onclick=()=>tripDialog.close();
+  tripDialog.addEventListener('click',async event=>{const button=event.target.closest('[data-trip]');if(!button)return;
+    if(button.dataset.trip===window.TraverseeTrips.current()){tripDialog.close();return}
+    tripDialog.querySelectorAll('[data-trip]').forEach(b=>b.disabled=true);q('tripStatus').textContent='Enregistrement et changement de randonnée…';
+    if(await window.TraverseeTrips.choose(button.dataset.trip)===false){q('tripStatus').textContent='Impossible d’enregistrer. Réessaie.';tripDialog.querySelectorAll('[data-trip]').forEach(b=>b.disabled=false)}
+  });
   routeChoice.addEventListener('change',()=>{if(window.TraverseeRoutes.choose(routeChoice.value)===false){routeChoice.value=DATA.routeId;status.textContent='Impossible de mémoriser le parcours.';}});
   q('homeKmForm').addEventListener('submit',event=>{
     event.preventDefault();if(!input.reportValidity())return;
@@ -309,7 +322,7 @@
   const saved=parseJSON(safeStorageGet(POSITION_KEY));
   if(saved&&Number.isFinite(saved.km)){
     if(saved.routeId===DATA.routeId&&saved.routeVersion===DATA.version)setPosition(saved,{persist:false});
-    else if(Number.isFinite(saved.lat)&&Number.isFinite(saved.lon)){
+    else if(DATA.routeId!=='alpes-mancelles'&&Number.isFinite(saved.lat)&&Number.isFinite(saved.lon)){
       const projected=projectGps(saved.lat,saved.lon);
       if(projected&&projected.distanceMeters<=750)setPosition({...saved,km:projected.km});
       else {status.textContent='Choisis ta position sur ce parcours.';openGps();}

@@ -4,7 +4,7 @@
  const fmt=n=>Number(n).toFixed(1).replace('.',','),labels={complete:'Reset complet',usable:'Reset utilisable',backup:'Option de secours'};
  let state=parseJSON(safeStorageGet(KEY))||{history:[],samples:[]};if(!Array.isArray(state.history))state.history=[];if(!Array.isArray(state.samples))state.samples=[];
  let position=null,map=null,userMarker=null,markers=new Map(),selectedId=null,gpsRequest=0;
- const points=E.projectPoints(window.TRAVERSEE_RESET_POINTS,projectGps);
+ const points=E.projectPoints(DATA.routeId==='alpes-mancelles'?[]:window.TRAVERSEE_RESET_POINTS,projectGps);
  function save(){if(safeStorageSet(KEY,JSON.stringify(state)))return true;q('resetMessage').textContent='Impossible d’enregistrer sur cet appareil.';return false}
  function pace(){return E.recentPace(state.samples)}
  function days(distance){const from=position?.km||0,n=window.TraverseeRoutes.pace.travelDays(from,Math.min(DATA.routeLengthKm,from+distance));return n<1?'moins d’un jour de marche':'environ '+Math.round(n)+' jours de marche'}
