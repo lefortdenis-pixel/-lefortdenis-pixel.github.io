@@ -9,7 +9,7 @@
   const categories=[{id:'water',label:'Eau',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C9 8 5 12 5 16a7 7 0 0 0 14 0c0-4-4-8-7-13Z"/><path d="M8 16a4 4 0 0 0 3 4"/></svg>',button:'openWaterBtn'},{id:'bivouac',label:'Bivouac',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 19H2L12 2Z M8 21l4-9 4 9"/></svg>',button:'openBivouacBtn'},{id:'store',label:'Magasin',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h3l3 12h12l2-9H6"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/></svg>',button:'openStoreBtn'},{id:'gas',label:'Gaz',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="8" width="14" height="14" rx="3"/><path d="M9 8V4h6v4M11 4V1h2v3M5 16h14"/></svg>',button:'openGasBtn'},{id:'reset',label:'Escale',icon:'<svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10V6a4 4 0 0 1 8 0v2M9 10h8l-2-3h-4Z M9 14v2m4-2v2m4-2v2M9 20v2m4-2v2m4-2v2"/></svg>',button:'openResetBtn'}];
   let activeCategory='water',nextCardOpen=false;
   const state={position:null,data:null,bivouac:null,selected:null,selectedPoi:null,points:[],map:null,markers:new Map(),location:null,request:0,gpsBusy:false,lastGpsAttempt:0};
-  window.TraverseeHome={getPosition:()=>state.position,showPoint};
+  window.TraverseeHome={getPosition:()=>state.position,getMap:()=>state.map,showPoint};
   function showPoint(point,id='store'){const category=categories.find(c=>c.id===id);if(!category)return;const routeAnchor=id==='store'&&!Number.isFinite(point.lat)&&Number.isFinite(point.km);if(routeAnchor)point={...point,...atKm(point.km),routeAnchor:true};const lat=Number(point.lat),lon=Number(point.lon??point.lng);if(!Number.isFinite(lat)||!Number.isFinite(lon)){notice('Position de ce point indisponible.');return;}const km=Number.isFinite(point.km)?point.km:projectGps(lat,lon)?.km;const p={...point,lat,lon,km,delta:Number.isFinite(state.position?.km)?km-state.position.km:null};openAppView('home');requestAnimationFrame(()=>{state.map?.invalidateSize();state.map?.setView([lat,lon],15);showBubble(id,false,{...category,point:p});renderMapPois()});}
   let messageTimer=0,bivouacRequest=0;
   const kmText=km=>km.toFixed(1).replace('.',',');
@@ -201,22 +201,25 @@
     requestAnimationFrame(()=>state.map.invalidateSize());
   }
   function gpsBusy(value){state.gpsBusy=value;gps.classList.toggle('is-loading',value);refresh.disabled=value;gps.setAttribute('aria-busy',String(value));}
+  let homeWatch=null,homeGpsEnabled=false,homeCenter=true;
+  function stopHomeWatch(){if(homeWatch!==null)navigator.geolocation?.clearWatch(homeWatch);homeWatch=null;gpsBusy(false)}
   function locate(){
+    homeGpsEnabled=true;homeCenter=true;
     if(state.gpsBusy)return;
     if(!navigator.geolocation){status.textContent='GPS indisponible. Saisis ton km.';notice(status.textContent);return;}
     const request=++state.request;state.lastGpsAttempt=Date.now();gpsBusy(true);status.textContent='Recherche de la position…';
-    navigator.geolocation.getCurrentPosition(pos=>{
+    stopHomeWatch();homeWatch=navigator.geolocation.watchPosition(pos=>{
       if(request!==state.request)return;
       gpsBusy(false);
       const accuracy=Number(pos.coords.accuracy),lat=pos.coords.latitude,lon=pos.coords.longitude;
       if(!Number.isFinite(accuracy)||accuracy>150){status.textContent='GPS imprécis. Réessaie ou saisis ton km.';notice(status.textContent);return;}
       const projection=projectGps(lat,lon);
       if(!projection||projection.distanceMeters>750){status.textContent='GPS hors du parcours. Saisis ton km.';notice(status.textContent);return;}
-      setPosition({km:projection.km,lat,lon,mode:'gps',accuracy,offRouteMeters:projection.distanceMeters});closeGps();notice('');
+      setPosition({km:projection.km,lat,lon,mode:'gps',accuracy,offRouteMeters:projection.distanceMeters},{center:homeCenter});homeCenter=false;closeGps();notice('');
     },error=>{
       if(request!==state.request)return;
-      gpsBusy(false);status.textContent=error?.code===1?'GPS refusé. Saisis ton km.':'GPS indisponible. Réessaie ou saisis ton km.';notice(status.textContent);
-    },{enableHighAccuracy:true,timeout:12000,maximumAge:15000});
+      gpsBusy(false);if(error?.code===1){homeGpsEnabled=false;stopHomeWatch()}status.textContent=error?.code===1?'GPS refusé. Saisis ton km.':'GPS indisponible. Réessaie ou saisis ton km.';notice(status.textContent);
+    },{enableHighAccuracy:true,timeout:12000,maximumAge:0});
   }
   async function loadPoints(){
     try{
@@ -276,7 +279,7 @@
   routeChoice.addEventListener('change',()=>{if(window.TraverseeRoutes.choose(routeChoice.value)===false){routeChoice.value=DATA.routeId;status.textContent='Impossible de mémoriser le parcours.';}});
   q('homeKmForm').addEventListener('submit',event=>{
     event.preventDefault();if(!input.reportValidity())return;
-    ++state.request;gpsBusy(false);setPosition({km:Number(input.value),mode:'km'},{manualEntry:true});closeGps();notice('');input.blur();
+    homeGpsEnabled=false;stopHomeWatch();++state.request;gpsBusy(false);setPosition({km:Number(input.value),mode:'km'},{manualEntry:true});closeGps();notice('');input.blur();
   });
   // The five navigation buttons already open their modules. Let native clicks
   // reach those handlers, including clicks forwarded by a point's action.
@@ -296,12 +299,15 @@
   });
   root.addEventListener('keydown',event=>{if(event.key==='Escape'){setNextCardOpen(false);closeBubble();closeGps();gps.focus();}});
   window.addEventListener('traversee-position',event=>{
+    homeGpsEnabled=false;stopHomeWatch();
     ++state.request;gpsBusy(false);setPosition(event.detail,{center:event.detail?.mode!=='gps',manualEntry:event.detail?.mode==='km'});
   });
   window.addEventListener('traversee-view',event=>{
     const selectedPoint=state.selectedPoi?.point;
     setNextCardOpen(false);closeBubble();closeGps();const name=event.detail.name,p=state.position;
+    if(name!=='home')stopHomeWatch();
     if(name==='home'){
+      if(homeGpsEnabled&&homeWatch===null)locate();
       requestAnimationFrame(()=>{state.map?.invalidateSize({pan:false});if(p)state.map?.setPosition(p,true)});
       refreshBivouac();setTimeout(refreshBivouac,800);
     }
@@ -312,10 +318,12 @@
     if(name==='water')window.TraverseeWater?.search({lat:origin.lat,lon:origin.lon},p?'':selectedPoint?'Depuis le point sélectionné · ':'Depuis le départ · ',origin.km);
     if(name==='gas')window.TraverseeGas?.render(origin.km);
   });
+  window.addEventListener('pagehide',stopHomeWatch);
   document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='hidden')stopHomeWatch();
     if(document.visibilityState==='visible'&&root.classList.contains('active')){
       refreshBivouac();requestAnimationFrame(()=>state.map?.invalidateSize({pan:false}));
-      if(state.position?.mode!=='km'&&Date.now()-state.lastGpsAttempt>30000)locate();
+      if(homeGpsEnabled&&homeWatch===null)locate();
     }
   });
   window.addEventListener('pageshow',event=>{if(event.persisted&&root.classList.contains('active')){state.map?.invalidateSize({pan:false});if(state.position?.mode!=='km')locate();}});
@@ -330,4 +338,5 @@
   }
   render();initMap();loadPoints();refreshBivouac();if(state.position?.mode!=='km')locate();
 })();
+
 

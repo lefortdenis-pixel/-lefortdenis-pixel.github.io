@@ -102,9 +102,19 @@ function closeMapPicker(){const picker=q('#mapPicker');if(picker.open)picker.clo
 function previewMapTiles(){const map=activeMapSide()==='left'?S.map:S.mapIgn,center=map.getCenter(),z=Math.min(13,Math.max(6,Math.round(map.getZoom()))),scale=2**z,lat=Math.max(-85.0511,Math.min(85.0511,center.lat))*Math.PI/180,x=((Math.floor((center.lng+180)/360*scale)%scale)+scale)%scale,y=Math.max(0,Math.min(scale-1,Math.floor((1-Math.asinh(Math.tan(lat))/Math.PI)/2*scale)));q('#pickerChoices').querySelectorAll('[data-base]').forEach(button=>{const img=button.querySelector('img'),preview=button.querySelector('.basePreview');preview.classList.remove('loaded');img.hidden=false;img.onload=()=>preview.classList.add('loaded');img.onerror=()=>{img.hidden=true;preview.classList.remove('loaded')};img.src=baseDefs[button.dataset.base].url.replace('{s}','a').replace('{z}',z).replace('{x}',x).replace('{y}',y).replace('{r}','')})}
 function initMapPicker(){q('#pickerChoices').innerHTML=[['photo','Photos aériennes','photos'],['map','Cartes','']].map(([group,title,cls])=>'<section class="pickerGroup"><h3>'+title+'</h3><div class="pickerGrid '+cls+'">'+pickerBases.filter(b=>b.group===group).map(b=>'<button type="button" class="baseChoice" data-base="'+b.key+'" aria-label="'+b.name+' · '+(group==='photo'?'photo aérienne':b.key.startsWith('topo')||b.key==='esritopo'?'carte topographique':'carte classique')+'" aria-pressed="false"><span class="basePreview"><span class="previewFallback">Aperçu indisponible</span><img alt="" hidden></span><span class="baseCheck" aria-hidden="true">✓</span><span class="baseName">'+b.name+'</span></button>').join('')+'</div></section>').join('');q('#pickerChoices').querySelectorAll('[data-base]').forEach(b=>b.onclick=()=>{setBase(activeMapSide(),b.dataset.base);closeMapPicker()});q('#pickerClose').onclick=closeMapPicker;q('#mapPicker').addEventListener('close',()=>q('#layerFab').setAttribute('aria-expanded','false'));q('#mapPicker').onclick=e=>{if(e.target!==q('#mapPicker'))return;const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)closeMapPicker()};q('#mobileHiking').onchange=e=>{q('#hikingOverlay').checked=e.target.checked;q('#hikingOverlay').dispatchEvent(new Event('change'))};q('#mobileGuides').onchange=e=>{q('#guidesOverlay').checked=e.target.checked;q('#guidesOverlay').dispatchEvent(new Event('change'))};q('#mobileCampings').onchange=e=>{setCampingOverlay(e.target.checked)}}
 function openMapPicker(){closeToolsMenu();syncMapPicker();previewMapTiles();q('#mapPicker').showModal();q('#layerFab').setAttribute('aria-expanded','true');q('#pickerChoices [aria-pressed="true"]').focus({preventScroll:true})}
-function setBase(side,n,temporary=false){const left=side==='left',map=left?S.map:S.mapIgn,key=left?'base':'ignBase',select=left?'#basemapLeft':'#basemapRight',fallback=left?'sat':'ign',name=!navigator.onLine?'planign':baseDefs[n]?n:fallback,d=baseDefs[name];if(S[key])map.removeLayer(S[key]);const layer=L.tileLayer(d.url,{...d.opts,...(name==='planign'?{maxNativeZoom:15}:{})});layer.on('tileerror',()=>{if(S[key]!==layer)return;if(name!=='planign'){setBase(side,'planign',true);return;}showBivNotice('Carte indisponible',0)});layer.on('tileload',()=>{if(q('#systemNotice').textContent==='Carte indisponible')showBivNotice('')});S[key]=layer.addTo(map);S[key].bringToBack();q(select).value=name;if(navigator.onLine&&!temporary)safeLsSet('bivouac-basemap-'+side,name);syncMapPicker()}
+function setBase(side,n,temporary=false){
+ const left=side==='left',map=left?S.map:S.mapIgn,key=left?'base':'ignBase',select=left?'#basemapLeft':'#basemapRight';
+ const requested=baseDefs[n]?n:(left?'sat':'ign'),name=navigator.onLine?requested:'planign',d=baseDefs[name];
+ if(!temporary)safeLsSet('bivouac-basemap-'+side,requested);
+ if(S[key])map.removeLayer(S[key]);
+ const layer=L.tileLayer(d.url,{...d.opts,...(name==='planign'?{maxNativeZoom:15}:{})});
+ layer.on('tileerror',()=>{if(S[key]===layer)showBivNotice('Certaines tuiles sont indisponibles. Le fond choisi est conservé.');});
+ S[key]=layer.addTo(map);layer.bringToBack();q(select).value=name;syncMapPicker();
+}
 function addPanes(map){[['routePane',500],['campingPane',575],['zonePane',520],['reliefPane',530],['markerPane2',650],['hitPane',680],['interactionPane',1200]].forEach(([n,z])=>{map.createPane(n);map.getPane(n).style.zIndex=z});map.getPane('interactionPane').style.pointerEvents='none'}
-window.addEventListener('offline',()=>{if(S.map){setBase('left','planign');setBase('right','planign');[S.hiking,S.hikingIgn].forEach((l,i)=>{if(l)(i?S.mapIgn:S.map).removeLayer(l)});showBivNotice('Carte hors ligne : Plan IGN téléchargé.')}});
+window.addEventListener('offline',()=>{if(S.map){setBase('left','planign',true);setBase('right','planign',true);[S.hiking,S.hikingIgn].forEach((l,i)=>{if(l)(i?S.mapIgn:S.map).removeLayer(l)});showBivNotice('Carte hors ligne : Plan IGN téléchargé.')}});
+window.addEventListener('online',()=>{if(S.map){setBase('left',safeLsGet('bivouac-basemap-left')||'sat',true);setBase('right',safeLsGet('bivouac-basemap-right')||'ign',true);if(q('#hikingOverlay').checked){S.hiking.addTo(S.map);S.hikingIgn.addTo(S.mapIgn)}}});
+
 function initMap(){if(S.map)return;S.map=L.map('map',{zoomControl:false,preferCanvas:true});S.mapIgn=L.map('mapIgn',{zoomControl:false,preferCanvas:true});addPanes(S.map);addPanes(S.mapIgn);let savedLeft=safeLsGet('bivouac-basemap-left')||safeLsGet('bivouac-basemap')||'sat',savedRight=safeLsGet('bivouac-basemap-right')||'ign';if(savedLeft==='cycle')savedLeft='sat';if(savedRight==='cycle')savedRight='ign';setBase('left',savedLeft);setBase('right',savedRight);S.hiking=L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png',{maxZoom:18,opacity:.72,attribution:'© Waymarked Trails · OpenStreetMap'});S.hikingIgn=L.tileLayer('https://tile.waymarkedtrails.org/hiking/{z}/{x}/{y}.png',{maxZoom:18,opacity:.72,attribution:'© Waymarked Trails · OpenStreetMap'});S.map.setView([46.7,2.5],6);S.mapIgn.setView([46.7,2.5],6);S.map.sync(S.mapIgn);S.mapIgn.sync(S.map);campingLayers=[{map:S.map,layer:L.layerGroup().addTo(S.map)},{map:S.mapIgn,layer:L.layerGroup().addTo(S.mapIgn)}];for(const {map,layer} of campingLayers)map.on('moveend',()=>renderCampingMarkers(map,layer));if(S.campingsVisible)setCampingOverlay(true);S.map.on('zoomend',()=>S.pts.length&&addDirectionMarkers());S.mapIgn.on('zoomend',()=>S.pts.length&&addDirectionMarkers())}
 function hav(a,b){const R=6371.0088,r=Math.PI/180,dl=(b.lat-a.lat)*r,dn=(b.lng-a.lng)*r,l1=a.lat*r,l2=b.lat*r,h=Math.sin(dl/2)**2+Math.cos(l1)*Math.cos(l2)*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
 function projectStorageKey(){return parentRoute()?.id==='alpes-mancelles'?'current-alpes-mancelles':'current'}
@@ -286,12 +296,16 @@ async function togglePoi(){
  }catch(e){status.textContent=e.message;poiActive=false;q('#poiButton').textContent='Points utiles'}
 }
 
+let gpsWatch=null,gpsEnabled=false,gpsCenter=false,gpsVisible=true;
+function stopGpsWatch(){if(gpsWatch!==null)navigator.geolocation?.clearWatch(gpsWatch);gpsWatch=null}
 function locate(){
+ gpsEnabled=true;gpsCenter=true;
+ if(gpsWatch!==null){if(S.locationMarkers?.size)for(const [map,mark] of S.locationMarkers)map.panTo(mark.getLatLng());return}
  if(!navigator.geolocation){showBivNotice('GPS non disponible. Tu peux continuer à régler le bivouac manuellement.');return}
- navigator.geolocation.getCurrentPosition(pos=>{
+ gpsWatch=navigator.geolocation.watchPosition(pos=>{
   const {latitude:lat,longitude:lng}=pos.coords,accuracy=Number(pos.coords.accuracy)||9999,near=S.total?nearest({lat,lng}):null,offRoute=near?hav({lat,lng},near)*1000:null;
   const accurate=accuracy<=150,closeEnough=offRoute==null||offRoute<=750,canUse=near&&accurate&&closeEnough;
-  if(canUse&&S.mode==='traverse'){
+  if(gpsCenter&&canUse&&S.mode==='traverse'){
    const target=S.zones.length?center(0):near.km;
    S.progressKm=Math.max(0,Math.min(S.total,near.km));S.zones=[{dayKm:Math.max(0,target-S.progressKm)}];S.selected=0;
    normalize();renderCards();drawZones();renderProfile();scheduleSave()
@@ -299,7 +313,7 @@ function locate(){
   [S.map,S.mapIgn].forEach(m=>{
    if(S.locationMarkers?.has(m))m.removeLayer(S.locationMarkers.get(m));else S.locationMarkers??=new Map();
    const mark=L.circleMarker([lat,lng],{radius:9,weight:3,color:'#fff',fillColor:'#1677f2',fillOpacity:1}).addTo(m);
-   S.locationMarkers.set(m,mark);m.panTo([lat,lng]);
+   S.locationMarkers.set(m,mark);if(gpsCenter)m.panTo([lat,lng]);
    let msg='Précision GPS ±'+Math.round(accuracy)+' m';
    if(!near)msg+=' · importe une trace pour calculer ta progression';
    else if(!accurate)msg='GPS trop imprécis (±'+Math.round(accuracy)+' m). Progression non modifiée.';
@@ -308,14 +322,19 @@ function locate(){
    else{const remaining=S.zones.length?Math.max(0,center(0)-near.km):null;msg='Tu es au km '+near.km.toFixed(1)+(remaining!=null?' · '+remaining.toFixed(1)+' km jusqu’au bivouac':'')+' · précision ±'+Math.round(accuracy)+' m'}
    mark.bindPopup(msg)
   });
-  S.locationMarkers.get(S.map)?.openPopup();
+  if(gpsCenter)S.locationMarkers.get(S.map)?.openPopup();gpsCenter=false;q('#locateFab').textContent='Position · GPS';
   if(!accurate)showBivNotice('GPS trop imprécis (±'+Math.round(accuracy)+' m). Je n’ai pas modifié ta progression.');
   else if(!closeEnough)showBivNotice('Position trop éloignée de la trace. Je n’ai pas modifié ta progression.');
  },err=>{
   const msg=err?.code===1?'Accès GPS refusé. Autorise la localisation dans les réglages, ou continue avec le slider.':err?.code===3?'Le GPS met trop de temps à répondre. Réessaie dans un endroit dégagé.':'Position GPS indisponible. Réessaie dehors ou continue avec le slider.';
-  showBivNotice(msg)
- },{enableHighAccuracy:true,timeout:12000,maximumAge:15000})
+  showBivNotice(msg);if(err?.code===1){gpsEnabled=false;stopGpsWatch();q('#locateFab').textContent='Position'}
+ },{enableHighAccuracy:true,timeout:12000,maximumAge:0})
 }
+function resumeGps(){if(gpsEnabled&&gpsVisible&&document.visibilityState!=='hidden'&&gpsWatch===null){locate();gpsCenter=false}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')stopGpsWatch();else resumeGps()});
+window.addEventListener('pagehide',stopGpsWatch);window.addEventListener('pageshow',resumeGps);
+try{if(window.parent!==window)window.parent.addEventListener('traversee-view',event=>{gpsVisible=event.detail.name==='bivouac';if(!gpsVisible)stopGpsWatch();else resumeGps()})}catch(_){}
+
 function resetSliderRange(i){const z=S.zones[i],l=limitsFor(i);z.sliderMin=l.min;z.sliderMax=l.max}
 function syncProfileUi(){
  const tabs=q('#profileTabs');tabs.hidden=S.mode!=='three';
@@ -466,5 +485,6 @@ function resizeMaps(){S.map.invalidateSize({pan:false,debounceMoveend:true});S.m
 </script>
 </body>
 </html>
+
 
 
