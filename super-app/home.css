@@ -115,3 +115,6 @@ html,body{background:#fff}
 .arrivalCandidates{position:absolute;left:16px;right:16px;bottom:calc(154px + env(safe-area-inset-bottom));z-index:1004;max-height:35dvh;overflow:auto;padding:12px;border-radius:18px;background:#fff;box-shadow:0 4px 16px #1828202a;color:#203b30}.arrivalCandidates p{margin:0 0 8px;font-size:13px}.arrivalCandidates button{min-height:44px;margin:4px;padding:8px 14px;border:0;border-radius:12px;background:#edf2e9;color:#203b30;font-weight:750}
 #homeView:has(.homePoiBubble:not([hidden])) .arrivalClear,#homeView.has-next-card .arrivalClear{display:none}
 .homeArrival[hidden],.arrivalCancel[hidden],.arrivalClear[hidden],.arrivalCandidates[hidden]{display:none!important}
+
+/* Direct route choices stay usable while GPS fixes continue. */
+.homeRouteButtons{display:flex;gap:8px;margin-top:7px}.homeRouteButtons button{flex:1;min-height:46px;border:1px solid #dfe5e0;border-radius:12px;padding:10px 12px;background:#fff;color:#203b30;font:inherit;font-size:14px;font-weight:750;cursor:pointer}.homeRouteButtons button[aria-pressed="true"]{background:#203b30;border-color:#203b30;color:#fff}.homeRouteButtons[hidden],#homeRouteChoice[hidden]{display:none!important}

@@ -215,7 +215,7 @@
       if(!Number.isFinite(accuracy)||accuracy>150){status.textContent='GPS imprécis. Réessaie ou saisis ton km.';notice(status.textContent);return;}
       const projection=projectGps(lat,lon);
       if(!projection||projection.distanceMeters>750){status.textContent='GPS hors du parcours. Saisis ton km.';notice(status.textContent);return;}
-      setPosition({km:projection.km,lat,lon,mode:'gps',accuracy,offRouteMeters:projection.distanceMeters},{center:homeCenter});homeCenter=false;closeGps();notice('');
+      setPosition({km:projection.km,lat,lon,mode:'gps',accuracy,offRouteMeters:projection.distanceMeters},{center:homeCenter});homeCenter=false;notice('');
     },error=>{
       if(request!==state.request)return;
       gpsBusy(false);if(error?.code===1){homeGpsEnabled=false;stopHomeWatch()}status.textContent=error?.code===1?'GPS refusé. Saisis ton km.':'GPS indisponible. Réessaie ou saisis ton km.';notice(status.textContent);
@@ -264,8 +264,18 @@
   });
   const routeChoice=q('homeRouteChoice');routeChoice.value=DATA.routeId;
   const short=DATA.routeId==='alpes-mancelles',tripDialog=q('tripDialog');
-  routeChoice.closest('label')?.setAttribute('hidden','');
-  routeChoice.hidden=short;q('homeGpsPanel').querySelector('label[for="homeRouteChoice"]').hidden=short;
+  const routeLabel=panel.querySelector('label[for="homeRouteChoice"]');
+  routeLabel.removeAttribute('for');routeLabel.id='homeRouteLabel';routeLabel.hidden=short;
+  routeChoice.hidden=true;
+  const routeButtons=document.createElement('div');routeButtons.className='homeRouteButtons';routeButtons.hidden=short;
+  routeButtons.setAttribute('role','group');routeButtons.setAttribute('aria-labelledby','homeRouteLabel');
+  for(const [id,label] of [['principal','Principal'],['brenne','Brenne']]){
+    const button=document.createElement('button');button.type='button';button.textContent=label;
+    button.dataset.route=id;button.setAttribute('aria-pressed',String(DATA.routeId===id));
+    button.addEventListener('click',()=>{routeChoice.value=id;routeChoice.dispatchEvent(new Event('change'));});
+    routeButtons.append(button);
+  }
+  routeChoice.after(routeButtons);
   q('tripTitle').innerHTML=short?'Ma rando<br>de 3 jours':'Ma<br>traversée';
   q('tripToggle').setAttribute('aria-label',(short?'Ma rando de 3 jours':'Ma traversée')+' · changer de randonnée');
   q('offlineRoute')?.querySelector('option[value="traverse"]')?.replaceChildren(document.createTextNode(short?'Ma rando de 3 jours':'Ma traversée'));
