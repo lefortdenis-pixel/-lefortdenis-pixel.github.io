@@ -1,4 +1,4 @@
-importScripts('./offline-core.js?v=1.307','./offline-assets.js');
+importScripts('./offline-core.js?v=1.308','./offline-assets.js');
 const A=TraverseeOfflineAssets,C=TraverseeOfflineCore,CACHE='traversee-app-'+A.version,TILE_CACHE='traversee-map-tiles-v1';
 const absolute=p=>new URL(p,self.registration.scope).href;
 async function fetchGood(request,timeout=20000){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);try{const r=await fetch(request,{signal:controller.signal,cache:'no-cache'});if(!r.ok&&r.type!=='opaque')throw Error('HTTP '+r.status);return r}finally{clearTimeout(timer)}}
@@ -58,6 +58,8 @@ self.addEventListener('fetch',event=>{
  }
 });
 self.addEventListener('message',event=>{
+ if(event.data?.type==='GET_APP_VERSION'){event.ports[0]?.postMessage({version:A.version,ready:true});return}
+ if(event.data?.type==='SKIP_WAITING'){event.waitUntil(self.skipWaiting());return}
  if(event.data?.type!=='VERIFY_OFFLINE')return;
  event.waitUntil((async()=>{const cache=await caches.open(CACHE),missing=[];for(const p of A.essential)if(!(await cache.match(absolute(p))))missing.push(p);event.ports[0]?.postMessage({version:A.version,missing,total:A.essential.length});})());
 });
