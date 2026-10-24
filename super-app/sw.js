@@ -1,4 +1,4 @@
-importScripts('./offline-core.js?v=1.305','./offline-assets.js');
+importScripts('./offline-core.js?v=1.306','./offline-assets.js');
 const A=TraverseeOfflineAssets,C=TraverseeOfflineCore,CACHE='traversee-app-'+A.version,TILE_CACHE='traversee-map-tiles-v1';
 const absolute=p=>new URL(p,self.registration.scope).href;
 async function fetchGood(request,timeout=20000){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);try{const r=await fetch(request,{signal:controller.signal,cache:'no-cache'});if(!r.ok&&r.type!=='opaque')throw Error('HTTP '+r.status);return r}finally{clearTimeout(timer)}}
@@ -17,6 +17,24 @@ self.addEventListener('activate',event=>event.waitUntil((async()=>{
 })()));
 function isMapTile(u){return u.hostname==='data.geopf.fr'&&u.pathname==='/wmts'||u.hostname==='server.arcgisonline.com'||u.hostname==='tile.waymarkedtrails.org'||u.hostname==='tile.openstreetmap.org'||u.hostname.endsWith('.tile.openstreetmap.org')||u.hostname.endsWith('.tile.opentopomap.org')||u.hostname.endsWith('.basemaps.cartocdn.com')}
 function ignCanonical(u){if(u.hostname!=='data.geopf.fr'||u.pathname!=='/wmts')return null;const p=Object.fromEntries([...u.searchParams].map(([k,v])=>[k.toLowerCase(),v]));return p.layer==='GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2'?C.tileUrl(p.tilematrix,p.tilecol,p.tilerow):null;}
+// Coalesce simultaneous requests and avoid scanning the entire tile cache per image.
+const tileRequests=new Map();let tileWrites=0,tileTrim=null;
+function trimTileCache(cache){
+ if(++tileWrites%64!==0)return Promise.resolve();
+ if(tileTrim)return tileTrim;
+ return tileTrim=(async()=>{const keys=await cache.keys();for(const key of keys.slice(0,Math.max(0,keys.length-1200)))await cache.delete(key)})().finally(()=>{tileTrim=null});
+}
+async function loadMapTile(request,url,event){
+ const canonical=ignCanonical(url);
+ if(canonical){const pinned=await caches.open(C.MAP_CACHE),saved=await pinned.match(canonical);if(saved)return saved}
+ const cache=await caches.open(TILE_CACHE),saved=await cache.match(request);
+ if(saved&&(request.mode==='no-cors'||saved.type!=='opaque'))return saved;
+ try{
+  const response=await fetchGood(request,8000);
+  if(response.ok||response.type==='opaque')event.waitUntil((async()=>{await cache.put(request,response.clone());await trimTileCache(cache)})().catch(()=>{}));
+  return response;
+ }catch(_){return new Response('',{status:504})}
+}
 self.addEventListener('fetch',event=>{
  if(event.request.method!=='GET')return;const url=new URL(event.request.url);
  if(url.origin===self.location.origin){
@@ -32,13 +50,12 @@ self.addEventListener('fetch',event=>{
    try{const response=await fetchGood(event.request,10000);await cache.put(event.request,response.clone());return response}catch(_){return new Response('',{status:504})}
   })());return;
  }
- if(isMapTile(url))event.respondWith((async()=>{
-  const canonical=ignCanonical(url),pinned=await caches.open(C.MAP_CACHE);
-  if(canonical){const saved=await pinned.match(canonical);if(saved)return saved;}
-  const cache=await caches.open(TILE_CACHE),saved=await cache.match(event.request);
-  if(saved&&(event.request.mode==='no-cors'||saved.type!=='opaque'))return saved;
-  try{const r=await fetchGood(event.request,4000);if(r.ok||r.type==='opaque')event.waitUntil((async()=>{await cache.put(event.request,r.clone());const keys=await cache.keys();for(const k of keys.slice(0,Math.max(0,keys.length-1200)))await cache.delete(k)})());return r}catch(_){return new Response('',{status:504})}
- })());
+ if(isMapTile(url)){
+  const key=event.request.url+'|'+event.request.mode;
+  let pending=tileRequests.get(key);
+  if(!pending){pending=loadMapTile(event.request,url,event).finally(()=>tileRequests.delete(key));tileRequests.set(key,pending);}
+  event.respondWith(pending.then(response=>response.clone()));
+ }
 });
 self.addEventListener('message',event=>{
  if(event.data?.type!=='VERIFY_OFFLINE')return;
