@@ -1,4 +1,4 @@
-#servicesView{max-width:850px;margin:auto;padding:calc(18px + env(safe-area-inset-top)) 16px calc(22px + env(safe-area-inset-bottom));color:#211238;background:#fff4af;min-height:100dvh}
+#servicesView{max-width:850px;margin:auto;padding:calc(18px + env(safe-area-inset-top)) 16px calc(22px + env(safe-area-inset-bottom));color:#211238;background:#fff4af;min-height:0}
 #servicesView header{display:flex;align-items:center;gap:8px;margin-bottom:18px}
 #servicesView h1{margin:0;flex:1;font-size:clamp(21px,6vw,30px)}
 #servicesView input,#servicesView select{width:100%;margin:0 0 12px;padding:12px;border-radius:16px;border:1px solid #21123830;background:#fffbe7;color:inherit;font:inherit}
@@ -13,3 +13,4 @@
 #servicesView a{display:inline-block;color:#194aa8;margin:8px 15px 0 0}
 #servicesView footer{font-size:12px;margin-top:16px}
 @media(max-width:375px){#homeBottomBar #openServicesBtn{font-size:10px}}
+#servicesView.active{box-sizing:border-box;height:100%;overflow-y:auto;overscroll-behavior-y:contain}
