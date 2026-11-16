@@ -12,50 +12,32 @@
   window.TraverseeHome={getPosition:()=>state.position,getMap:()=>state.map,showPoint};
   function showPoint(point,id='store'){const category=categories.find(c=>c.id===id);if(!category)return;const routeAnchor=id==='store'&&!Number.isFinite(point.lat)&&Number.isFinite(point.km);if(routeAnchor)point={...point,...atKm(point.km),routeAnchor:true};const lat=Number(point.lat),lon=Number(point.lon??point.lng);if(!Number.isFinite(lat)||!Number.isFinite(lon)){notice('Position de ce point indisponible.');return;}const km=Number.isFinite(point.km)?point.km:projectGps(lat,lon)?.km;const p={...point,lat,lon,km,delta:Number.isFinite(state.position?.km)?km-state.position.km:null};openAppView('home');requestAnimationFrame(()=>{state.map?.invalidateSize();state.map?.setView([lat,lon],15);showBubble(id,false,{...category,point:p});renderMapPois()});}
 
-  const servicesToggle = q('toggleHomeServices');
-  const serviceMarkers = [];
-  let servicePoints, servicesVisible = false;
   const serviceIcons = {
     'Distributeurs de repas':'🍕', 'Casiers et produits fermiers':'🥚',
     'Autres distributeurs':'🥤', 'Laveries':'◉', 'Supérettes autonomes':'🛒',
     'Autres services':'⋯'
   };
-  servicesToggle.addEventListener('click', async () => {
-    if (servicesVisible) {
-      serviceMarkers.splice(0).forEach(marker => marker.remove());
-      servicesVisible = false;
-      servicesToggle.setAttribute('aria-pressed', 'false');
-      servicesToggle.setAttribute('aria-label', 'Afficher tous les services sur la carte');
-      if (state.selected === 'service') closeBubble();
-      return;
-    }
-    if (!state.map) { notice('La carte est indisponible.'); return; }
-    servicesToggle.disabled = true;
+  async function loadServiceMarkers() {
+    if (DATA.routeId === 'alpes-mancelles') return;
+    const markers = [];
     try {
-      if (!servicePoints) {
-        const response = await fetch('./services-data.json');
-        if (!response.ok) throw new Error('Services indisponibles');
-        servicePoints = (await response.json()).filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lon));
-      }
-      for (const point of servicePoints) {
+      const response = await fetch('./services-data.json');
+      if (!response.ok) throw new Error('Services indisponibles');
+      const points = await response.json();
+      for (const point of points) {
+        if (!Number.isFinite(point.lat) || !Number.isFinite(point.lon)) continue;
         const icon = serviceIcons[point.type] || '•';
-        const marker = state.map.addMarker(point, icon, point.name, () => {
+        markers.push(state.map.addMarker(point, icon, point.name, () => {
           showBubble('service', false, {
-            id:'service', button:'openServicesBtn', label:'Services', point
+            id: 'service', button: 'openServicesBtn', label: 'Services', point
           });
-        }, 'service');
-        serviceMarkers.push(marker);
+        }, 'service'));
       }
-      servicesVisible = true;
-      servicesToggle.setAttribute('aria-pressed', 'true');
-      servicesToggle.setAttribute('aria-label', 'Masquer les services sur la carte');
     } catch {
-      serviceMarkers.splice(0).forEach(marker => marker.remove());
-      notice('Impossible de charger les services. Réessaie.');
-    } finally {
-      servicesToggle.disabled = false;
+      markers.forEach(marker => marker.remove());
+      notice('Impossible de charger les services sur la carte.');
     }
-  });
+  }
 
   let messageTimer=0,bivouacRequest=0;
   const kmText=km=>km.toFixed(1).replace('.',',');
@@ -244,6 +226,7 @@
     if(state.position)setPosition(state.position,{persist:false});else render();
     state.map.on('click',()=>{setNextCardOpen(false);closeBubble();closeGps()});
     state.map.on('moveend',renderMapPois);state.map.on('resize',renderMapPois);renderMapPois();
+    loadServiceMarkers();
     requestAnimationFrame(()=>state.map.invalidateSize());
   }
   function gpsBusy(value){state.gpsBusy=value;gps.classList.toggle('is-loading',value);refresh.disabled=value;gps.setAttribute('aria-busy',String(value));}

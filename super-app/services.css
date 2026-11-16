@@ -15,10 +15,5 @@
 @media(max-width:375px){#homeBottomBar #openServicesBtn{font-size:10px}}
 #servicesView.active{box-sizing:border-box;height:100%;overflow-y:auto;overscroll-behavior-y:contain}
 
-#toggleHomeServices{display:grid;justify-items:center;align-content:center;gap:2px;width:44px;min-height:44px;border:0;border-radius:15px;background:#fffbea;color:#211238;box-shadow:0 3px 10px #21123816;font-size:9px;font-weight:750;cursor:pointer}
-#toggleHomeServices span{font-size:19px;line-height:1}
-#toggleHomeServices[aria-pressed=true]{background:#195bff;color:#fff}
 .homeMapPin.homeMapPin-service{background:#fffbea;border:2px solid #533191;color:#211238}
 
-/* Leave room for the absolutely positioned compass above this control. */
-#toggleHomeServices{position:absolute;top:106px;right:0;height:44px}
