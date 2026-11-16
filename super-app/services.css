@@ -1,0 +1,15 @@
+#servicesView{max-width:850px;margin:auto;padding:calc(18px + env(safe-area-inset-top)) 16px calc(22px + env(safe-area-inset-bottom));color:#211238;background:#fff4af;min-height:100dvh}
+#servicesView header{display:flex;align-items:center;gap:8px;margin-bottom:18px}
+#servicesView h1{margin:0;flex:1;font-size:clamp(21px,6vw,30px)}
+#servicesView input,#servicesView select{width:100%;margin:0 0 12px;padding:12px;border-radius:16px;border:1px solid #21123830;background:#fffbe7;color:inherit;font:inherit}
+#servicesView label{display:block;margin-bottom:5px}
+#servicesView button{min-height:44px;cursor:pointer;border:1px solid #21123830;border-radius:14px;background:#fffbe7;color:inherit;padding:8px;font-weight:700}
+#servicesView button[aria-pressed=true]{background:#211238;color:#fff4af}
+#servicesView h2{font-size:18px;margin:22px 0 10px}
+#servicesView article{padding:14px;background:#fffbe7;border-radius:19px;margin-bottom:9px;display:flow-root}
+#servicesView article button{float:right;min-width:44px;margin-left:9px;font-size:20px}
+#servicesView article h3{font-size:16px;margin:0 0 6px}
+#servicesView article p{font-size:13px;margin:4px 0;overflow-wrap:anywhere}
+#servicesView a{display:inline-block;color:#194aa8;margin:8px 15px 0 0}
+#servicesView footer{font-size:12px;margin-top:16px}
+@media(max-width:375px){#homeBottomBar #openServicesBtn{font-size:10px}}

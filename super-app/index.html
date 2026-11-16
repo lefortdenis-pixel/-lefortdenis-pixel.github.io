@@ -11,10 +11,10 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-montagnes-v4.png">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon-montagnes-v4.png">
-<title>Traversée 2027 · v1.309 hors ligne</title>
+<title>Traversée 2027 · v1.310 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.309">
+<link rel="stylesheet" href="./home.css?v=1.310">
 <link rel="stylesheet" href="./offline.css?v=1.298">
 <link rel="stylesheet" href="./reset.css?v=1.298">
 <style>
@@ -641,6 +641,7 @@ html,body{height:100%;overflow:hidden}
 #gasView.active .waterItem{padding:16px 14px;min-height:112px}
 </style>
 <link rel="stylesheet" href="./soleil-font.css?v=1.298"><link rel="stylesheet" href="./soleil.css?v=1.298">
+<link rel="stylesheet" href="./services.css?v=1.310">
 </head>
 <body>
 <dialog id="tripDialog" aria-labelledby="tripDialogTitle"><header><h2 id="tripDialogTitle">Ma randonnée</h2><button type="button" id="tripClose" aria-label="Fermer">×</button></header><button type="button" data-trip="traversee"><b>Ma traversée</b><small>Ouistreham → Estérel · 2027</small></button><button type="button" data-trip="alpes-mancelles"><b>Ma rando de 3 jours</b><small>Alpes Mancelles · boucle de Fresnay</small></button><p id="tripStatus" role="status"></p></dialog>
@@ -680,7 +681,7 @@ html,body{height:100%;overflow:hidden}
       <button type="button" id="openGasBtn" data-category="gas"><span class="homeToolIcon" aria-hidden="true"><svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="8" width="14" height="14" rx="3"/><path d="M9 8V4h6v4M11 4V1h2v3M5 16h14"/></svg></span><span>Gaz</span><small class="homeToolDistance" data-distance="gas">—</small></button>
       <button type="button" id="openResetBtn" data-category="reset"><span class="homeToolIcon" aria-hidden="true"><svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10V6a4 4 0 0 1 8 0v2M9 10h8l-2-3h-4Z M9 14v2m4-2v2m4-2v2M9 20v2m4-2v2m4-2v2"/></svg></span><span>Escale</span><small class="homeToolDistance" data-distance="reset">—</small></button>
       <button type="button" id="openBivouacBtn" data-category="bivouac"><span class="homeToolIcon" aria-hidden="true"><svg class="soleilIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 19H2L12 2Z M8 21l4-9 4 9"/></svg></span><span>Bivouac</span><small class="homeToolDistance" data-distance="bivouac">—</small></button>
-    </nav>
+    <button type="button" id="openServicesBtn"><span class="homeToolIcon" aria-hidden="true">☷</span><span>Services</span></button></nav>
   </section>
 
   <section class="appView" id="storeView">
@@ -805,8 +806,10 @@ html,body{height:100%;overflow:hidden}
   </div>
 </div>
 
+<section class="appView" id="servicesView"><header><button id="servicesBack" type="button" aria-label="Retour à l’accueil">←</button><h1>Services</h1><button id="servicesFav" type="button" aria-pressed="false">☆ Mes favoris</button></header><input id="servicesSearch" type="search" placeholder="Un village, un service…" aria-label="Rechercher un service"><label for="servicesType">Type de service</label><select id="servicesType"><option value="">Tous</option></select><p id="servicesCount" role="status"></p><div id="servicesList"></div><button id="servicesMore" hidden>Afficher la suite</button><footer>© contributeurs <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a></footer></section>
 <script>
 const appViews = {
+ services: document.getElementById('servicesView'),
   home: document.getElementById("homeView"),
   store: document.getElementById("storeView"),
   water: document.getElementById("waterView"),
@@ -3013,16 +3016,17 @@ clearPreparedResults();renderPrepState();alignMenuBack();
 <script src="./vendor/leaflet.js"></script>
 <script src="./home-bivouac.js?v=1.298"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./offline-core.js?v=1.309"></script>
+<script src="./offline-core.js?v=1.310"></script>
 <script src="./home-map.js?v=1.298"></script>
 <script src="./gas-tracker.js?v=1.298"></script>
 <script src="./reset-points.js?v=1.298"></script>
 <script src="./reset-engine.js?v=1.298"></script>
 <script src="./reset.js?v=1.298"></script>
-<script src="./home.js?v=1.309"></script><script src="./home-arrival.js?v=1.309"></script><script src="./backups.js?v=1.298"></script>
-<script src="./offline.js?v=1.309"></script>
-<script src="./app-update.js?v=1.309"></script>
+<script src="./home.js?v=1.310"></script><script src="./home-arrival.js?v=1.310"></script><script src="./backups.js?v=1.298"></script>
+<script src="./offline.js?v=1.310"></script>
+<script src="./app-update.js?v=1.310"></script>
 <!-- deploy-refresh-v194 -->
+<script src="./services.js?v=1.310"></script>
 </body>
 </html>
 
