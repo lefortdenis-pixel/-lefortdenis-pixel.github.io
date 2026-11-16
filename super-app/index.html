@@ -11,10 +11,10 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-montagnes-v4.png">
 <link rel="apple-touch-icon" href="./icons/apple-touch-icon-montagnes-v4.png">
-<title>Traversée 2027 · v1.312 hors ligne</title>
+<title>Traversée 2027 · v1.313 hors ligne</title>
 <link rel="stylesheet" href="./vendor/leaflet.css">
 <link rel="stylesheet" href="./vendor/maplibre-gl.css">
-<link rel="stylesheet" href="./home.css?v=1.312">
+<link rel="stylesheet" href="./home.css?v=1.313">
 <link rel="stylesheet" href="./offline.css?v=1.298">
 <link rel="stylesheet" href="./reset.css?v=1.298">
 <style>
@@ -641,7 +641,7 @@ html,body{height:100%;overflow:hidden}
 #gasView.active .waterItem{padding:16px 14px;min-height:112px}
 </style>
 <link rel="stylesheet" href="./soleil-font.css?v=1.298"><link rel="stylesheet" href="./soleil.css?v=1.298">
-<link rel="stylesheet" href="./services.css?v=1.312">
+<link rel="stylesheet" href="./services.css?v=1.313">
 </head>
 <body>
 <dialog id="tripDialog" aria-labelledby="tripDialogTitle"><header><h2 id="tripDialogTitle">Ma randonnée</h2><button type="button" id="tripClose" aria-label="Fermer">×</button></header><button type="button" data-trip="traversee"><b>Ma traversée</b><small>Ouistreham → Estérel · 2027</small></button><button type="button" data-trip="alpes-mancelles"><b>Ma rando de 3 jours</b><small>Alpes Mancelles · boucle de Fresnay</small></button><p id="tripStatus" role="status"></p></dialog>
@@ -659,6 +659,7 @@ html,body{height:100%;overflow:hidden}
       <div class="homePosition">
         <button type="button" id="homeGpsToggle" class="homeGpsToggle" aria-label="Position GPS et kilomètre" aria-expanded="false" aria-controls="homeGpsPanel"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg></button>
         <button type="button" id="homeCompassToggle" class="homeCompassToggle" aria-label="Afficher la carte verticale, nord en haut" aria-pressed="false" title="Vue verticale · nord en haut"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path class="compassNorth" d="M12 5 8 13l4-2z"/><path class="compassSouth" d="m12 19 4-8-4 2z"/></svg><span id="homeCompassMode" aria-hidden="true">3D</span></button>
+        <button type="button" id="toggleHomeServices" aria-pressed="false" aria-label="Afficher tous les services sur la carte"><span aria-hidden="true">☷</span>Services</button>
         <div id="homeGpsPanel" class="homeGpsPanel" hidden>
           <button type="button" id="homeGpsRefresh" class="homeGpsRefresh">Actualiser ma position GPS</button>
           <label for="homeRouteChoice">Parcours</label>
@@ -3016,17 +3017,17 @@ clearPreparedResults();renderPrepState();alignMenuBack();
 <script src="./vendor/leaflet.js"></script>
 <script src="./home-bivouac.js?v=1.298"></script>
 <script src="./vendor/maplibre-gl.js"></script>
-<script src="./offline-core.js?v=1.312"></script>
+<script src="./offline-core.js?v=1.313"></script>
 <script src="./home-map.js?v=1.298"></script>
 <script src="./gas-tracker.js?v=1.298"></script>
 <script src="./reset-points.js?v=1.298"></script>
 <script src="./reset-engine.js?v=1.298"></script>
 <script src="./reset.js?v=1.298"></script>
-<script src="./home.js?v=1.312"></script><script src="./home-arrival.js?v=1.312"></script><script src="./backups.js?v=1.298"></script>
-<script src="./offline.js?v=1.312"></script>
-<script src="./app-update.js?v=1.312"></script>
+<script src="./home.js?v=1.313"></script><script src="./home-arrival.js?v=1.313"></script><script src="./backups.js?v=1.298"></script>
+<script src="./offline.js?v=1.313"></script>
+<script src="./app-update.js?v=1.313"></script>
 <!-- deploy-refresh-v194 -->
-<script src="./services.js?v=1.312"></script>
+<script src="./services.js?v=1.313"></script>
 </body>
 </html>
 

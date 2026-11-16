@@ -11,6 +11,52 @@
   const state={position:null,data:null,bivouac:null,selected:null,selectedPoi:null,points:[],map:null,markers:new Map(),location:null,request:0,gpsBusy:false,lastGpsAttempt:0};
   window.TraverseeHome={getPosition:()=>state.position,getMap:()=>state.map,showPoint};
   function showPoint(point,id='store'){const category=categories.find(c=>c.id===id);if(!category)return;const routeAnchor=id==='store'&&!Number.isFinite(point.lat)&&Number.isFinite(point.km);if(routeAnchor)point={...point,...atKm(point.km),routeAnchor:true};const lat=Number(point.lat),lon=Number(point.lon??point.lng);if(!Number.isFinite(lat)||!Number.isFinite(lon)){notice('Position de ce point indisponible.');return;}const km=Number.isFinite(point.km)?point.km:projectGps(lat,lon)?.km;const p={...point,lat,lon,km,delta:Number.isFinite(state.position?.km)?km-state.position.km:null};openAppView('home');requestAnimationFrame(()=>{state.map?.invalidateSize();state.map?.setView([lat,lon],15);showBubble(id,false,{...category,point:p});renderMapPois()});}
+
+  const servicesToggle = q('toggleHomeServices');
+  const serviceMarkers = [];
+  let servicePoints, servicesVisible = false;
+  const serviceIcons = {
+    'Distributeurs de repas':'🍕', 'Casiers et produits fermiers':'🥚',
+    'Autres distributeurs':'🥤', 'Laveries':'◉', 'Supérettes autonomes':'🛒',
+    'Autres services':'⋯'
+  };
+  servicesToggle.addEventListener('click', async () => {
+    if (servicesVisible) {
+      serviceMarkers.splice(0).forEach(marker => marker.remove());
+      servicesVisible = false;
+      servicesToggle.setAttribute('aria-pressed', 'false');
+      servicesToggle.setAttribute('aria-label', 'Afficher tous les services sur la carte');
+      if (state.selected === 'service') closeBubble();
+      return;
+    }
+    if (!state.map) { notice('La carte est indisponible.'); return; }
+    servicesToggle.disabled = true;
+    try {
+      if (!servicePoints) {
+        const response = await fetch('./services-data.json');
+        if (!response.ok) throw new Error('Services indisponibles');
+        servicePoints = (await response.json()).filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lon));
+      }
+      for (const point of servicePoints) {
+        const icon = serviceIcons[point.type] || '•';
+        const marker = state.map.addMarker(point, icon, point.name, () => {
+          showBubble('service', false, {
+            id:'service', button:'openServicesBtn', label:'Services', point
+          });
+        }, 'service');
+        serviceMarkers.push(marker);
+      }
+      servicesVisible = true;
+      servicesToggle.setAttribute('aria-pressed', 'true');
+      servicesToggle.setAttribute('aria-label', 'Masquer les services sur la carte');
+    } catch {
+      serviceMarkers.splice(0).forEach(marker => marker.remove());
+      notice('Impossible de charger les services. Réessaie.');
+    } finally {
+      servicesToggle.disabled = false;
+    }
+  });
+
   let messageTimer=0,bivouacRequest=0;
   const kmText=km=>km.toFixed(1).replace('.',',');
   const escape=value=>escapeHtml(String(value??''));
@@ -158,7 +204,7 @@
     setNextCardOpen(false);closeGps();state.selected=id;state.selectedPoi=item.point?{...item,key:poiKey(id,item.point)}:null;
     const p=item.point;
     const name=p?(id==='water'?cleanWaterName(p):id==='gas'?window.gasPointLabel(p,p.km):p.name):id==='bivouac'?'Choisir un bivouac':item.label;
-    const extra=p?(id==='reset'?'':[offsetText(p),id==='gas'?'':p.note||'',p.hours||'',p.routeAnchor?'Repère d’accès sur la trace':''].filter(Boolean).join(' · ')):(!state.position?'Choisis ta position avec le bouton GPS.':id==='bivouac'?'Ouvre le module pour préparer ce soir.':'Aucun autre point disponible.');
+    const extra=p?(id==='service'?[p.type,p.place,p.hours==='Non renseigné'?'':p.hours].filter(Boolean).join(' · '):id==='reset'?'':[offsetText(p),id==='gas'?'':p.note||'',p.hours||'',p.routeAnchor?'Repère d’accès sur la trace':''].filter(Boolean).join(' · ')):(!state.position?'Choisis ta position avec le bouton GPS.':id==='bivouac'?'Ouvre le module pour préparer ce soir.':'Aucun autre point disponible.');
     bubble.innerHTML='<button type="button" class="homePoiClose" aria-label="Fermer la fiche">×</button><div class="homePoiTitle">'+escape(name)+'</div>'+(p&&Number.isFinite(p.delta)?'<div class="homePoiDistance">'+escape(distanceText(p))+'</div>':'')+(extra?'<div class="homePoiExtra">'+escape(extra)+'</div>':'')+'<button type="button" class="homePoiOpen" data-open-tool="'+item.button+'">'+(id==='reset'?'Voir les escales':id==='bivouac'?'Préparer mon bivouac':id==='water'?'Plus de points d’eau':id==='store'?'Plus de magasins':id==='gas'?'Trouver plus de gaz':'Ouvrir '+item.label.toLowerCase())+' ↗</button>';
     if(p?.phone)bubble.innerHTML+='<a class="homePoiSource" href="tel:'+escape(p.phone.replace(/[^+0-9]/g,''))+'">Appeler '+escape(p.phone)+'</a>';
     if(p?.sourceUrl)bubble.innerHTML+='<a class="homePoiSource" href="'+escape(p.sourceUrl)+'" target="_blank" rel="noopener">Infos du site ↗</a>';
