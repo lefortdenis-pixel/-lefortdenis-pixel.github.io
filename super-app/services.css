@@ -19,3 +19,6 @@
 #toggleHomeServices span{font-size:19px;line-height:1}
 #toggleHomeServices[aria-pressed=true]{background:#195bff;color:#fff}
 .homeMapPin.homeMapPin-service{background:#fffbea;border:2px solid #533191;color:#211238}
+
+/* Leave room for the absolutely positioned compass above this control. */
+#toggleHomeServices{position:absolute;top:106px;right:0;height:44px}
